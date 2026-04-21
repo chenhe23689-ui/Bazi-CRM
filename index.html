@@ -585,6 +585,26 @@ function getYGZ(y){
   let o=(y-4)%60; if(o<0)o+=60;
   return SA[o%10]+["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][o%12];
 }
+function esc(str){
+  return String(str==null?'':str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+const ZHANGSHENG_TABLE={
+  '甲':{'亥':'長生','子':'沐浴','丑':'冠帶','寅':'臨官','卯':'帝旺','辰':'衰','巳':'病','午':'死','未':'墓','申':'絕','酉':'胎','戌':'養'},
+  '乙':{'午':'長生','巳':'沐浴','辰':'冠帶','卯':'臨官','寅':'帝旺','丑':'衰','子':'病','亥':'死','戌':'墓','酉':'絕','申':'胎','未':'養'},
+  '丙':{'寅':'長生','卯':'沐浴','辰':'冠帶','巳':'臨官','午':'帝旺','未':'衰','申':'病','酉':'死','戌':'墓','亥':'絕','子':'胎','丑':'養'},
+  '丁':{'酉':'長生','申':'沐浴','未':'冠帶','午':'臨官','巳':'帝旺','辰':'衰','卯':'病','寅':'死','丑':'墓','子':'絕','亥':'胎','戌':'養'},
+  '戊':{'寅':'長生','卯':'沐浴','辰':'冠帶','巳':'臨官','午':'帝旺','未':'衰','申':'病','酉':'死','戌':'墓','亥':'絕','子':'胎','丑':'養'},
+  '己':{'酉':'長生','申':'沐浴','未':'冠帶','午':'臨官','巳':'帝旺','辰':'衰','卯':'病','寅':'死','丑':'墓','子':'絕','亥':'胎','戌':'養'},
+  '庚':{'巳':'長生','午':'沐浴','未':'冠帶','申':'臨官','酉':'帝旺','戌':'衰','亥':'病','子':'死','丑':'墓','寅':'絕','卯':'胎','辰':'養'},
+  '辛':{'子':'長生','亥':'沐浴','戌':'冠帶','酉':'臨官','申':'帝旺','未':'衰','午':'病','巳':'死','辰':'墓','卯':'絕','寅':'胎','丑':'養'},
+  '壬':{'申':'長生','酉':'沐浴','戌':'冠帶','亥':'臨官','子':'帝旺','丑':'衰','寅':'病','卯':'死','辰':'墓','巳':'絕','午':'胎','未':'養'},
+  '癸':{'卯':'長生','寅':'沐浴','丑':'冠帶','子':'臨官','亥':'帝旺','戌':'衰','酉':'病','申':'死','未':'墓','午':'絕','巳':'胎','辰':'養'}
+};
+function getZhiPhase(stem,branch){
+  if(!stem||!branch)return'';
+  return(ZHANGSHENG_TABLE[stem]||{})[branch]||'';
+}
+
 function gec(c){
   if("甲乙寅卯".includes(c))return"wood";
   if("丙丁巳午".includes(c))return"fire";
@@ -1185,21 +1205,26 @@ async function loadCust(){
     const q=query(collection(db,"Customers"),orderBy("建檔時間","desc"));
     const sn=await getDocs(q);
     if(sn.empty){list.innerHTML='<div class="empty"><div style="font-size:36px;opacity:.3">☯</div><div style="font-size:13px">尚無客戶資料</div></div>';return;}
-    list.innerHTML='';
-    window.allCustData = {};
-    sn.forEach(dc=>{
-      const d=dc.data();
-      window.allCustData[dc.id] = d;
-      list.innerHTML+=`<div class="ccard" onclick="window.openChart('${dc.id}')">
-        <div class="ccard-av">${d['姓名'].charAt(0)}</div>
-        <div class="ccard-info">
-          <div class="ccard-name">${d['姓名']} <span style="font-size:11px;font-weight:400;color:var(--txD)">${d['性別']||''}</span></div>
-          <div class="ccard-meta">🎂 ${d['出生日期']||'未記錄'}</div>
-        </div>
-        <button class="ccard-del" onclick="event.stopPropagation();window.delCust('${dc.id}')">✕</button>
-        <span style="color:var(--goldD);font-size:18px">›</span>
-      </div>`;
-    });
+   // 新的
+list.innerHTML='';
+window.allCustData = {};
+const frags=[];
+sn.forEach(dc=>{
+  const d=dc.data();
+  window.allCustData[dc.id] = d;
+  const name=d['姓名']||'';
+  frags.push(`<div class="ccard" onclick="window.openChart('${dc.id}')">
+    <div class="ccard-av">${esc(name.charAt(0)||'?')}</div>
+    <div class="ccard-info">
+      <div class="ccard-name">${esc(name)} <span style="font-size:11px;font-weight:400;color:var(--txD)">${esc(d['性別']||'')}</span></div>
+      <div class="ccard-meta">🎂 ${esc(d['出生日期']||'未記錄')}</div>
+    </div>
+    <button class="ccard-del" onclick="event.stopPropagation();window.delCust('${dc.id}')">✕</button>
+    <span style="color:var(--goldD);font-size:18px">›</span>
+  </div>`);
+});
+list.innerHTML=frags.join('');
+
     updateMatchSelect();
   }catch(e){list.innerHTML=`<div class="empty"><div>載入失敗</div></div>`;}
 }
@@ -2262,10 +2287,12 @@ window.runMatch = function() {
   const relation = document.getElementById('matchRelation').value;
   let html = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold); font-size:14px; font-weight:bold;">🎯 雙人合盤分析結果</div>`;
 
-  let uDs = curBz.day.charAt(0), uDb = curBz.day.charAt(1);
-  let pDs = pData.day.charAt(0), pDb = pData.day.charAt(1);
-  let uMb = curBz.month.charAt(1), pMb = pData.month.charAt(1);
-  let uYb = curBz.year.charAt(1), pYb = pData.year.charAt(1);
+ // 新的
+let uDs = curBz.day?.charAt(0)||'', uDb = curBz.day?.charAt(1)||'';
+let pDs = pData.day?.charAt(0)||'', pDb = pData.day?.charAt(1)||'';
+let uMb = curBz.month?.charAt(1)||'', pMb = pData.month?.charAt(1)||'';
+let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
+
 
   let uStr = calcStr(curBz);
   let pStr = calcStr(pData);

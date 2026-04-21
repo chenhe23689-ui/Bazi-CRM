@@ -1397,18 +1397,17 @@ document.getElementById('unkTime').addEventListener('change',function(){
 function renderQA() {
   const list = document.getElementById('qaList');
   const qs = [
-    { id: 'wealth', icon: '💰', title: '天生有自帶「財庫」嗎？', desc: '分析地支四庫 (辰戌丑未)' },
-    { id: 'peach', icon: '🌸', title: '天生自帶「桃花」人緣嗎？', desc: '分析地支四正 (子午卯酉)' },
-    { id: 'move', icon: '🐎', title: '適合外出發展或業務工作嗎？', desc: '分析地支驛馬 (寅申巳亥)' },
     { id: 'love', icon: '💖', title: '今年有機會脫單/遇到對象嗎？', desc: '分析流年桃花與姻緣引動' },
-    // 👇 請在下面新增這一行
+    { id: 'peach', icon: '🌸', title: '天生自帶「桃花」人緣嗎？', desc: '分析地支四正 (子午卯酉)' },
+    { id: 'talent', icon: '🧭', title: '我的天賦在哪？適合什麼產業？', desc: '分析原局十神與五行喜用賽道' },
+{ id: 'biz', icon: '👑', title: '現在適合創業嗎？合夥還是獨資？', desc: '分析流年食傷生財與破財地雷' },
+    { id: 'move', icon: '🐎', title: '適合外出發展或業務工作嗎？', desc: '分析地支驛馬 (寅申巳亥)' },
     { id: 'career', icon: '🚀', title: '現在適合換工作嗎？會升官嗎？', desc: '分析流年事業宮與十神衝突' },
  { id: 'exam', icon: '📝', title: '今年考運好嗎？能順利上榜嗎？', desc: '分析流年官印與文昌能量' },
-{ id: 'biz', icon: '👑', title: '現在適合創業嗎？合夥還是獨資？', desc: '分析流年食傷生財與破財地雷' },
-{ id: 'talent', icon: '🧭', title: '我的天賦在哪？適合什麼產業？', desc: '分析原局十神與五行喜用賽道' },
+    { id: 'wealth', icon: '💰', title: '天生有自帶「財庫」嗎？', desc: '分析地支四庫 (辰戌丑未)' },
+{ id: 'loss', icon: '☔', title: '今年會破財嗎？財富天氣預報', desc: '掃描流年破財地雷與流月防守時機' },
 { id: 'invest', icon: '📈', title: '我的專屬投資理財與風險指南？', desc: '分析原局財星結構與流年破財風險' },
 { id: 'wealth_ceiling', icon: '🏦', title: '我的財富天花板在哪？能躍升嗎？', desc: '分析財庫容量、階級躍升與大運品質' },
-{ id: 'loss', icon: '☔', title: '今年會破財嗎？財富天氣預報', desc: '掃描流年破財地雷與流月防守時機' },
 { id: 'lottery', icon: '🎰', title: '我有偏財運嗎？容易中大獎嗎？', desc: '分析原局偏財星與財庫爆發時機' }
   ];
   // ... 後面不變

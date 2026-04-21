@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>宸和 · 命理</title>
+<style>
+:root {
+  --bg: #001A3B;
+  --sf: #002F6C;
+  --sf2: #154585;
+  --gold: #C9A84C;
+  --goldD: rgba(201,168,76,.15);
+  --goldB: rgba(201,168,76,.22);
+  --tx: #F4EDDE;
+  --txD: #8BA4C4;
+  --txM: #52739E;
+  --wood: #5DBB75; --fire: #E85D5D; --earth: #A0714F; --metal: #E8B86D; --water: #5D9DE8;
+  --nav: 64px; --hdr: 52px; --tab: 42px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);
+  font-family:'PingFang TC','Microsoft JhengHei','Noto Sans TC',sans-serif;
+  -webkit-font-smoothing:antialiased;}
+.pg{position:fixed;top:0;left:0;right:0;bottom:var(--nav);
+  display:none;flex-direction:column;overflow:hidden;}
+.pg.on{display:flex;animation:fi .18s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hdr{height:var(--hdr);padding:0 16px;display:flex;align-items:center;gap:10px;
+  background:var(--bg);border-bottom:1px solid var(--goldB);flex-shrink:0;}
+.hdr-title{font-size:15px;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.hdr-sub{font-size:11px;color:var(--txD);margin-top:2px;letter-spacing:1px;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+.scroll::-webkit-scrollbar{display:none;}
+.srch-wrap{padding:10px 16px;flex-shrink:0;background:var(--bg);position:relative;}
+.srch{width:100%;background:var(--sf2);border:1px solid var(--goldB);border-radius:12px;
+  padding:9px 14px 9px 38px;color:var(--tx);font-size:14px;outline:none;}
+.srch-ico{position:absolute;left:28px;top:50%;transform:translateY(-50%);
+  color:var(--txD);font-size:13px;pointer-events:none;}
+.ccard{background:var(--sf);border:1px solid var(--goldB);border-radius:14px;
+  padding:14px;margin-bottom:9px;display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all .12s;position:relative;overflow:hidden;}
+.ccard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(to bottom,var(--gold),transparent);}
+.ccard:active{transform:scale(.985);background:var(--sf2);}
+.ccard-av{width:42px;height:42px;border-radius:50%;background:var(--goldD);
+  border:1px solid var(--goldB);display:flex;align-items:center;justify-content:center;
+  font-size:17px;color:var(--gold);flex-shrink:0;font-weight:700;}
+.ccard-info{flex:1;min-width:0;}
+.ccard-name{font-size:15px;font-weight:700;}
+.ccard-meta{font-size:11px;color:var(--txD);margin-top:3px;}
+.ccard-del{background:rgba(232,93,93,.12);border:1px solid rgba(232,93,93,.3);
+  border-radius:8px;padding:4px 8px;font-size:11px;color:#E85D5D;cursor:pointer;
+  display:none;position:absolute;top:8px;right:8px;}
+.ccard:hover .ccard-del,.ccard:focus .ccard-del{display:block;}
+.fsec{margin-bottom:16px;}
+.fsec-ttl{font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:600;
+  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--goldB);}
+.frow{display:flex;gap:10px;margin-bottom:10px;}
+.ff{display:flex;flex-direction:column;gap:5px;flex:1;}
+.flb{font-size:11px;color:var(--txD);letter-spacing:1px;}
+.fi,.fsel{background:var(--sf2);border:1px solid var(--goldB);border-radius:10px;
+  padding:10px 12px;color:var(--tx);font-size:13px;outline:none;width:100%;
+  -webkit-appearance:none;}
+.fi:focus,.fsel:focus{border-color:var(--gold);}
+.fsel option{background:var(--sf2);}
+.gbtn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--goldB);
+  background:transparent;color:var(--txD);font-size:14px;cursor:pointer;transition:.12s;}
+.gbtn.on{background:var(--goldD);border-color:var(--gold);color:var(--gold);font-weight:700;}
+.pg-foot{padding:12px 16px;flex-shrink:0;background:var(--bg);border-top:1px solid var(--goldB);}
+.btn-main{width:100%;padding:13px;background:linear-gradient(135deg,#C9A84C,#7A5010);
+  border:none;border-radius:13px;color:#070710;font-size:15px;font-weight:700;
+  letter-spacing:2px;cursor:pointer;transition:opacity .12s;}
+.btn-main:active{opacity:.8;}
+.btn-main:disabled{opacity:.5;}
+.btn-sm{background:var(--goldD);border:1px solid var(--goldB);border-radius:9px;
+  padding:7px 14px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;}
+.itabs{height:var(--tab);display:flex;flex-shrink:0;background:var(--sf);
+  border-bottom:1px solid var(--goldB);}
+.itab{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;
+  color:rgba(255,255,255,0.85);cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .12s;letter-spacing:1px;}
+.itab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700;}
+.ipg{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.ipg.on{display:flex;}
+.bazi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px;}
+.pc{background:var(--sf);border:1px solid var(--goldB);border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;padding:8px 4px 6px;gap:3px;
+  cursor:pointer;transition:all .12s;}
+.pc:active{border-color:var(--gold);background:var(--goldD);}
+.pc-lb{font-size:10px;color:var(--txD);}
+.pc-tg{font-size:10px;color:var(--gold);min-height:13px;text-align:center;}
+.pc-gan,.pc-zhi{font-size:26px;font-weight:800;line-height:1.1;}
+.pc-div{width:80%;height:1px;background:var(--goldB);}
+.pc-hid{display:flex;flex-direction:column;gap:3px;width:100%;align-items:center;margin-top:4px;}
+.pc-hid span[style*="var(--txM)"] { color: #3B5270 !important; font-weight: 700; }
+.elems{padding:0 14px 12px;display:flex;flex-direction:column;gap:7px;}
+.erow{display:flex;align-items:center;gap:9px;}
+.elb{width:14px;font-size:13px;font-weight:700;}
+.ebar-bg{flex:1;height:7px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;}
+.ebar{height:100%;border-radius:4px;transition:width .6s ease;}
+.epct{width:30px;text-align:right;font-size:10px;color:var(--txD);}
+.strip-lbl{padding:4px 16px 2px;font-size:10px;color:var(--gold);letter-spacing:2px;flex-shrink:0;}
+.strip{padding:0 16px 6px;display:flex;gap:7px;overflow-x:auto;
+  overflow-y:hidden;flex-shrink:0;-webkit-overflow-scrolling:touch;}
+.strip::-webkit-scrollbar{display:none;}
+.gc{flex-shrink:0;width:54px;background:var(--sf);border:1px solid var(--goldB);
+  border-radius:11px;display:flex;flex-direction:column;align-items:center;
+  padding:4px 2px;gap:2px;cursor:pointer;transition:all .12s;}
+.gc.on{border-color:var(--gold);background:var(--goldD);}
+.gc:active{transform:scale(.95);}
+.gc-yr{font-size:9px;color:var(--txM);}
+.gc-age{font-size:9px;color:var(--txD);background:var(--sf2);padding:1px 4px;border-radius:4px;}
+.gc-tg{font-size:9px;color:var(--gold);min-height:12px;}
+.gc-box{background:rgba(0,0,0,.25);border-radius:7px;width:34px;padding:3px 0;
+  text-align:center;border:1px solid rgba(255,255,255,.05);}
+.gc-g,.gc-z{font-size:18px;font-weight:800;line-height:1.1;}
+.gc-dv{width:100%;height:1px;background:rgba(255,255,255,.07);}
+.gc-hid{font-size:8px;color:var(--txD);text-align:center;line-height:1.4;min-height:18px;}
+.ac{border-radius:10px;padding:10px 12px;margin-bottom:7px;font-size:12px;line-height:1.6;}
+.ac-ttl{font-weight:700;margin-bottom:3px;}
+.ac-imp{font-size:10px;opacity:.7;}
+.ac-adv{font-size:10px;color:#9090D0;margin-top:4px;}
+.a-chong{background:rgba(232,93,93,.1);border:1px solid rgba(232,93,93,.3);}
+.a-he{background:rgba(93,187,117,.1);border:1px solid rgba(93,187,117,.3);}
+.a-hai{background:rgba(232,184,109,.1);border:1px solid rgba(232,184,109,.3);}
+.a-po{background:rgba(150,150,150,.1);border:1px solid rgba(150,150,150,.3);}
+.a-xing{background:rgba(180,100,220,.1);border:1px solid rgba(180,100,220,.3);}
+.a-fy{background:rgba(255,200,50,.1);border:1px solid rgba(255,200,50,.3);}
+.a-ml{background:rgba(100,100,160,.1);border:1px solid rgba(100,100,160,.3);}
+#nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);
+  background:var(--sf);border-top:1px solid var(--goldB);
+  display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);z-index:200;}
+.nbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;padding:8px 0;border:none;background:transparent;
+  color:rgba(255,255,255,0.85);-webkit-tap-highlight-color:transparent;}
+.nbtn.on{color:var(--gold);}
+.nico{font-size:19px;}
+.nlb{font-size:10px;letter-spacing:1px;}
+.tp-bd{position:fixed;left:0;right:0;top:0;bottom:var(--nav);background:rgba(0,0,0,.55);z-index:80;
+  display:none;backdrop-filter:blur(3px);}
+.tp-bd.on{display:block;}
+.tp-ov{position:fixed;left:0;right:0;bottom:var(--nav);height:82%;
+  background:var(--sf);border-top:1px solid var(--goldB);
+  border-radius:18px 18px 0 0;z-index:90;display:flex;flex-direction:column;
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);}
+.tp-ov.on{transform:translateY(0);}
+.tp-handle{width:34px;height:4px;background:var(--txM);border-radius:2px;margin:9px auto 0;flex-shrink:0;}
+.tp-hdr{padding:9px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--goldB);flex-shrink:0;}
+.tp-title{font-size:14px;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.tp-close{background:var(--sf2);border:1px solid var(--goldB);border-radius:8px;
+  padding:4px 10px;color:var(--txD);font-size:13px;cursor:pointer;}
+.tp-body{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
+.tp-body::-webkit-scrollbar{display:none;}
+.tp-tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;
+  font-weight:600;cursor:pointer;margin:3px;border:1px solid var(--goldB);
+  background:var(--goldD);color:var(--gold);}
+.tp-card{background:var(--sf2);border-radius:11px;padding:13px;margin-top:11px;
+  line-height:1.8;font-size:13px;border:1px solid var(--goldB);}
+.tp-sec{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:5px;}
+.tp-sub{background:rgba(201,168,76,.08);border:1px solid var(--goldB);
+  border-radius:9px;padding:11px;margin-top:8px;font-size:12px;line-height:1.7;
+  color:var(--txD);display:none;}
+.tp-sub.on{display:block;}
+.ntxt{width:100%;background:var(--sf2);border:1px solid var(--goldB);border-radius:11px;
+  padding:11px;color:var(--tx);font-size:13px;resize:none;outline:none;line-height:1.7;}
+.ntxt:focus{border-color:var(--gold);}
+.sc{background:var(--sf2);border:1px solid rgba(180,100,220,.2);border-radius:11px;
+  padding:11px;margin-bottom:8px;}
+.sc-dt{font-size:11px;color:#CE93D8;margin-bottom:5px;}
+.sbadge{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700;display:inline-block;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;gap:10px;color:var(--txM);}
+.back-btn{background:transparent;border:none;color:var(--gold);font-size:22px;
+  cursor:pointer;padding:4px 8px 4px 0;line-height:1;}
+.loading{display:flex;align-items:center;justify-content:center;padding:30px;
+  color:var(--txD);font-size:13px;}
+.sp{flex-shrink:0;}
+.wood{color:var(--wood);}.fire{color:var(--fire);}.earth{color:var(--earth);}
+.metal{color:var(--metal);}.water{color:var(--water);}
+/* 🚨 日主受剋專屬警報特效 */
+@keyframes pulse-red { 
+  0% { box-shadow: 0 0 0 0 rgba(232,93,93,0.6); border-color: #E85D5D; } 
+  70% { box-shadow: 0 0 0 12px rgba(232,93,93,0); border-color: #E85D5D; } 
+  100% { box-shadow: 0 0 0 0 rgba(232,93,93,0); border-color: transparent; } 
+}
+.danger-mode { 
+  animation: pulse-red 1.5s infinite !important; 
+  border: 2px solid #E85D5D !important; 
+}
+</style>
+</head>
+<body>
+<div id="p-login" class="pg on" style="z-index:999; background:var(--bg); bottom:0; justify-content:center; padding:20px;">
+  <div style="width:100%; max-width:400px; margin-top:15vh;">
+    <div style="text-align:center; margin-bottom:40px;">
+      <div style="font-size:28px; font-weight:700; color:var(--gold); letter-spacing:4px; margin-bottom:8px;">宸 和 · 命理</div>
+      <div style="font-size:13px; color:var(--txD); letter-spacing:2px;">系統安全登入</div>
+    </div>
+    <div class="fsec">
+      <div class="ff" style="margin-bottom:16px;">
+        <div class="flb">管理員帳號 (Email)</div>
+        <input class="fi" id="loginEmail" type="email" placeholder="請輸入信箱">
+      </div>
+      <div class="ff" style="margin-bottom:24px;">
+        <div class="flb">系統密碼</div>
+        <input class="fi" id="loginPwd" type="password" placeholder="請輸入密碼">
+      </div>
+      <button class="btn-main" id="loginBtn" onclick="window.doLogin()">登 入 系 統</button>
+      <div id="loginMsg" style="color:#E85D5D; font-size:12px; text-align:center; margin-top:16px; min-height:18px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE: HOME ══ -->
+<div id="p-home" class="pg"> <div class="hdr" style="justify-content:space-between;">
+    <div>
+      <div class="hdr-title">宸 和 · 命理</div>
+      <div class="hdr-sub">命理客戶管理系統</div>
+    </div>
+    <button onclick="window.doLogout()" style="background:transparent; border:1px solid var(--goldB); color:var(--txD); padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer;">🔒 登出</button>
+  </div>
+  <div class="srch-wrap" style="display:flex;gap:8px;align-items:center">
+    <div style="position:relative;flex:1">
+      <span class="srch-ico">🔍</span>
+      <input class="srch" id="srchIn" type="text" placeholder="搜尋姓名或生日...">
+    </div>
+    <button onclick="navTo('p-add')" style="flex-shrink:0;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#C9A84C,#7A5010);border:none;color:#070710;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">+</button>
+  </div>
+  <div class="scroll" style="padding:8px 14px 14px">
+    <div id="custList"><div class="loading">☯ 載入中...</div></div>
+  </div>
+</div>
+
+<!-- ══ PAGE: ADD ══ -->
+<!-- ✅ 修正：移除了原本重複嵌套的 <div id="p-add"> -->
+<div id="p-add" class="pg">
+  <div class="hdr"><div class="hdr-title">新 增 客 戶</div></div>
+  <div class="scroll" style="padding:14px 14px 0">
+    <div class="fsec">
+      <div class="fsec-ttl">基本資料</div>
+      <div class="ff" style="margin-bottom:10px">
+        <div class="flb">客戶姓名</div>
+        <input class="fi" id="custName" type="text" placeholder="請輸入姓名">
+      </div>
+      <div class="flb" style="margin-bottom:6px">性別</div>
+      <div style="display:flex;gap:8px;margin-bottom:4px">
+        <button class="gbtn on" id="g-m" onclick="selGender('男')">男 ♂</button>
+        <button class="gbtn" id="g-f" onclick="selGender('女')">女 ♀</button>
+      </div>
+    </div>
+    <div class="fsec">
+      <div class="fsec-ttl">出生資訊</div>
+      <div class="ff" style="margin-bottom:10px">
+        <div class="flb">出生日期（國曆）</div>
+        <input class="fi" id="birthDate" type="date">
+      </div>
+      <div class="frow">
+        <div class="ff">
+          <div class="flb">出生時間</div>
+          <input class="fi" id="birthTime" type="time">
+        </div>
+        <div class="ff">
+          <div class="flb">子時設定</div>
+          <select class="fsel" id="ziHour">
+            <option value="2">晚子算隔天</option>
+            <option value="1">早晚子分開</option>
+          </select>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txD);margin:6px 0 10px;cursor:pointer">
+        <input type="checkbox" id="unkTime"> 不知道出生時間
+      </label>
+      <div class="ff">
+        <div class="flb">出生地經度（台灣預設120）</div>
+        <input class="fi" id="longi" type="number" value="120" step="0.1">
+      </div>
+    </div>
+    <div class="fsec">
+      <div class="fsec-ttl">諮詢資訊</div>
+      <div class="ff">
+        <div class="flb">諮詢日期</div>
+        <input class="fi" id="consultDate" type="date">
+      </div>
+    </div>
+  </div>
+  <div class="pg-foot">
+    <button class="btn-main" id="saveBtn">☯ 排盤並儲存至雲端</button>
+  </div>
+</div>
+
+<!-- ══ PAGE: CHART ══ -->
+<div id="p-chart" class="pg">
+  <div class="hdr">
+    <button class="back-btn" onclick="navTo('p-home')">‹</button>
+    <div style="flex:1;min-width:0">
+      <div class="hdr-title" id="chartName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">命盤</div>
+      <div class="hdr-sub" id="chartSub"></div>
+    </div>
+  </div>
+  <div class="itabs">
+    <div class="itab on" onclick="switchIT('tab-bazi',this)">命盤</div>
+    <div class="itab" onclick="switchIT('tab-dayun',this)">大運</div>
+    <div class="itab" onclick="switchIT('tab-anal',this)">互動</div>
+    <div class="itab" onclick="switchIT('tab-qa',this)">問答</div>
+    <div class="itab" onclick="switchIT('tab-match',this)">合盤</div>
+    <div class="itab" onclick="switchIT('tab-note',this)">筆記</div>
+  </div>
+
+  <div id="tab-bazi" class="ipg on">
+    <div class="scroll">
+      <div id="baziGrid" class="bazi-grid"></div>
+      <div id="elemGrid" class="elems"></div>
+    </div>
+  </div>
+
+  <div id="tab-dayun" class="ipg">
+    <div class="sp strip-lbl">⏳ 十年大運</div>
+    <div class="strip" id="dyStrip"></div>
+    <div id="lnSec" style="display:none">
+      <div class="sp strip-lbl" id="lnLbl">📅 流年</div>
+      <div class="strip" id="lnStrip"></div>
+    </div>
+    <div id="lySec" style="display:none">
+      <div class="sp strip-lbl" id="lyLbl">🌙 流月</div>
+      <div class="strip" id="lyStrip"></div>
+    </div>
+  </div>
+
+  <div id="tab-anal" class="ipg">
+    <div class="scroll" style="padding:12px 14px">
+      <div style="font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">原局分析</div>
+      <div id="statAnal"></div>
+      <div id="dynAnal" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <div id="tab-qa" class="ipg">
+    <div class="scroll" style="padding:12px 14px">
+      <div style="font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">💡 智能問答與話術</div>
+      <div id="qaList"></div>
+    </div>
+  </div>
+
+  <!-- ✅ 修正：補上 matchExistCust 下拉選單 與 manualMatchInput 容器 -->
+  <div id="tab-match" class="ipg">
+    <div class="scroll" style="padding:14px 14px 24px;">
+      <div class="fsec">
+        <div class="fsec-ttl">選擇資料庫既有客戶</div>
+        <div class="ff" style="margin-bottom:12px">
+          <div class="flb">從客戶列表中選擇對象</div>
+          <select class="fsel" id="matchExistCust" onchange="syncMatchUI()">
+            <option value="">-- 手動輸入資料 (不使用資料庫) --</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="manualMatchInput">
+        <div class="fsec">
+          <div class="fsec-ttl">設定合盤對象（手動輸入）</div>
+          <div class="ff" style="margin-bottom:12px">
+            <div class="flb">對方的性別</div>
+            <div style="display:flex;gap:8px;">
+              <button class="gbtn on" id="mg-m" onclick="selMatchGender('男')" style="padding:8px;">男 ♂</button>
+              <button class="gbtn" id="mg-f" onclick="selMatchGender('女')" style="padding:8px;">女 ♀</button>
+            </div>
+          </div>
+          <div class="ff" style="margin-bottom:12px">
+            <div class="flb">對方出生日期（國曆）</div>
+            <input class="fi" id="matchDate" type="date">
+          </div>
+          <div class="frow" style="margin-bottom:6px">
+            <div class="ff">
+              <div class="flb">對方出生時間</div>
+              <input class="fi" id="matchTime" type="time">
+            </div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txD);margin:0 0 14px;cursor:pointer">
+            <input type="checkbox" id="matchUnkTime" onchange="document.getElementById('matchTime').disabled=this.checked"> 不知道出生時間
+          </label>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-ttl">合盤關係設定</div>
+        <div class="ff" style="margin-bottom:14px">
+          <div class="flb">對方是你的...</div>
+          <select class="fsel" id="matchRelation">
+            <option value="love">💞 伴侶 / 曖昧對象</option>
+            <option value="boss">🏢 老闆 / 上司 / 長官</option>
+            <option value="client">🤝 重要客戶 / 投資人</option>
+            <option value="team">👥 下屬 / 員工 / 合夥人</option>
+          </select>
+        </div>
+        <button class="btn-main" onclick="runMatch()" style="padding:12px;font-size:14px;background:linear-gradient(135deg,#5DBB75,#2E7D32);color:#fff;">☯ 產生專屬合盤報告</button>
+      </div>
+
+      <div id="matchResult" style="margin-top:16px;">
+        <div style="text-align:center;color:var(--txM);font-size:12px;padding:24px;background:var(--sf2);border-radius:12px;border:1px dashed var(--goldB);">
+          請輸入對方資料以啟動雙人合盤引擎
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: 筆記 -->
+  <div id="tab-note" class="ipg" style="flex-direction:column">
+    <div style="display:flex;border-bottom:1px solid var(--goldB);flex-shrink:0">
+      <div class="itab on" id="nt-crm" onclick="switchNT('crm',this)" style="flex:1">CRM筆記</div>
+      <div class="itab" id="nt-sp" onclick="switchNT('sp',this)" style="flex:1">牌卡頌缽</div>
+    </div>
+    <div id="nc-crm" class="scroll" style="padding:12px 14px">
+      <textarea class="ntxt" id="notesTxt" rows="9" placeholder="記錄諮詢重點、個人觀察..."></textarea>
+      <button class="btn-sm" id="saveNotesBtn" style="margin-top:9px">💾 儲存筆記</button>
+    </div>
+    <div id="nc-sp" class="scroll" style="padding:12px 14px;display:none">
+      <textarea class="ntxt" id="spNote" rows="3" placeholder="記錄牌卡、頌缽或脈輪狀態..."></textarea>
+      <button class="btn-sm" id="saveSPBtn" style="margin-top:8px;background:rgba(180,100,220,.1);border-color:rgba(180,100,220,.3);color:#CE93D8">✨ 新增紀錄</button>
+      <div style="margin-top:14px;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">歷史紀錄</div>
+      <div id="spList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<nav id="nav" style="display:none;">
+  <button class="nbtn on" id="nb-home" onclick="navTo('p-home')">
+    <span class="nico">☰</span><span class="nlb">客戶</span>
+  </button>
+  <button class="nbtn" id="nb-add" onclick="navTo('p-add')">
+    <span class="nico">⊕</span><span class="nlb">新增</span>
+  </button>
+  <!-- ✅ 修正：移除 style="display:none"，改由 JS 控制顯示 -->
+  <button class="nbtn" id="nb-chart" onclick="navTo('p-chart')" style="display:none">
+    <span class="nico">◉</span><span class="nlb">命盤</span>
+  </button>
+</nav>
+
+<!-- ══ TELEPROMPTER OVERLAY ══ -->
+<div class="tp-bd" id="tpBD" onclick="closeTP()"></div>
+<div class="tp-ov" id="tpOV">
+  <div class="tp-handle"></div>
+  <div class="tp-hdr">
+    <span class="tp-title" id="tpTtl">命書提詞</span>
+    <button class="tp-close" onclick="closeTP()">✕ 關閉</button>
+  </div>
+  <div class="tp-body" id="tpBody"></div>
+</div>
+
+<script src="https://unpkg.com/lunar-javascript/lunar.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import{getFirestore,collection,addDoc,getDocs,deleteDoc,doc,query,orderBy,getDoc,updateDoc}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import{getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCue7LFplCgSa7-PB2-E050Mmp8ZB131ME",
+  authDomain:"bazi-crm-system.firebaseapp.com",
+  projectId:"bazi-crm-system",
+  storageBucket:"bazi-crm-system.firebasestorage.app",
+  messagingSenderId:"576018022252",
+  appId:"1:576018022252:web:a76db8286d0d062a033d49"
+};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+// ════════════════════════════════════════
+// 📚 核心字典
+// ════════════════════════════════════════
+const TS={
+  '甲':{elem:'wood',pol:'yang'},'乙':{elem:'wood',pol:'yin'},
+  '丙':{elem:'fire',pol:'yang'},'丁':{elem:'fire',pol:'yin'},
+  '戊':{elem:'earth',pol:'yang'},'己':{elem:'earth',pol:'yin'},
+  '庚':{elem:'metal',pol:'yang'},'辛':{elem:'metal',pol:'yin'},
+  '壬':{elem:'water',pol:'yang'},'癸':{elem:'water',pol:'yin'}
+};
+const HS={
+  '子':['癸'],'丑':['己','癸','辛'],'寅':['甲','丙','戊'],
+  '卯':['乙'],'辰':['戊','乙','癸'],'巳':['丙','戊','庚'],
+  '午':['丁','己'],'未':['己','丁','乙'],'申':['庚','壬','戊'],
+  '酉':['辛'],'戌':['戊','辛','丁'],'亥':['壬','甲']
+};
+const ER={
+  wood:{gen:'fire',con:'earth'},fire:{gen:'earth',con:'metal'},
+  earth:{gen:'metal',con:'water'},metal:{gen:'water',con:'wood'},water:{gen:'wood',con:'fire'}
+};
+const EI={
+  wood:{l:'木',c:'var(--wood)',bg:'#5DBB75'},fire:{l:'火',c:'var(--fire)',bg:'#E85D5D'},
+  earth:{l:'土',c:'var(--earth)',bg:'#A0714F'},metal:{l:'金',c:'var(--metal)',bg:'#E8B86D'},
+  water:{l:'水',c:'var(--water)',bg:'#5D9DE8'}
+};
+const HW = {
+  '子': { '癸': 10 },
+  '丑': { '己': 6, '癸': 3, '辛': 1 },
+  '寅': { '甲': 6, '丙': 3, '戊': 1 },
+  '卯': { '乙': 10 },
+  '辰': { '戊': 6, '乙': 3, '癸': 1 },
+  '巳': { '丙': 6, '戊': 3, '庚': 1 },
+  '午': { '丁': 7, '己': 3 },
+  '未': { '己': 6, '丁': 3, '乙': 1 },
+  '申': { '庚': 6, '壬': 3, '戊': 1 },
+  '酉': { '辛': 10 },
+  '戌': { '戊': 6, '辛': 3, '丁': 1 },
+  '亥': { '壬': 7, '甲': 3 }
+};
+const BR={
+  "沖":{"子":"午","丑":"未","寅":"申","卯":"酉","辰":"戌","巳":"亥","午":"子","未":"丑","申":"寅","酉":"卯","戌":"辰","亥":"巳"},
+  "合":{"子":"丑","丑":"子","寅":"亥","亥":"寅","卯":"戌","戌":"卯","辰":"酉","酉":"辰","巳":"申","申":"巳","午":"未","未":"午"},
+  "三合":[["申","子","辰"],["亥","卯","未"],["寅","午","戌"],["巳","酉","丑"]],
+  "三會":[["亥","子","丑"],["寅","卯","辰"],["巳","午","未"],["申","酉","戌"]],
+  "刑":{"無恩":["寅","巳","申"],"恃勢":["丑","戌","未"],"無禮":["子","卯"],"自刑":["辰","午","酉","亥"]},
+  "害":{"子":"未","未":"子","丑":"午","午":"丑","寅":"巳","巳":"寅","卯":"辰","辰":"卯","申":"亥","亥":"申","酉":"戌","戌":"酉"},
+  "破":{"子":"酉","酉":"子","卯":"午","午":"卯","辰":"丑","丑":"辰","戌":"未","未":"戌","寅":"亥","亥":"寅","申":"巳","巳":"申"}
+};
+const SM={'甲':'己','己':'甲','乙':'庚','庚':'乙','丙':'辛','辛':'丙','丁':'壬','壬':'丁','戊':'癸','癸':'戊'};
+const SC={'甲':'庚','庚':'甲','乙':'辛','辛':'乙','丙':'壬','壬':'丙','丁':'癸','癸':'丁'};
+const CK={"沖":"改變・衝突・失去・走動・打破現狀","合":"得到・穩定・糾纏・合作","刑":"內耗・官司・痛苦的抉擇・折磨","害":"背後小人・暗算・委屈・慢性發炎","破":"破壞・中斷・出現瑕疵・好事多磨・關係出現裂痕"};
+
+const JD={};
+const ND={};
+const CD={};
+const SD={};
+const TGC = {
+    '食傷生財': { type:'生', title:'【才華變現，靈感成金】', business_msg:'絕佳的商業轉化力！用創意、技術或口才，成功打開市場並帶來實質營收。', action:'動手去做！把腦中的企劃案拿出來提案，現在是你靠實力大賺一筆的黃金時刻。' },
+    '財生官殺': { type:'生', title:'【砸錢換權，花錢消災】', business_msg:'用金錢資源去鞏固地位、打通政商關係，或是花錢解決法規與管理上的麻煩。', action:'這筆錢該花！適合用來投資品牌公關、買廣告、或是請客送禮建立高層人脈，這是買「保護傘」。' },
+    '官殺生印': { type:'生', title:'【權力系統化，名利雙收】', business_msg:'將龐大的壓力與管理權限，轉化為公司的標準作業流程（SOP）與品牌權威。', action:'適合申請專利、考取官方證照、或將團隊經驗寫成教材，讓市場地位徹底穩固。' },
+    '印生比劫': { type:'生', title:'【資源共享，招兵買馬】', business_msg:'用公司的名聲、福利或長輩的資源，吸引到一群願意為你賣命的兄弟與團隊。', action:'適合招募新員工、建立企業文化、或是尋求長輩/創投的資金挹注來擴大團隊。' },
+    '比劫生食傷': { type:'生', title:'【團隊激盪，研發爆發】', business_msg:'透過團隊的集思廣益，激發出強大的創造力與破壞性創新。', action:'不要閉門造車！立刻召集團隊開腦力激盪會議，眾人的力量能把產品推向新高度。' },
+    '食傷制官殺': { type:'剋', title:'【挑戰體制，打破常規】', business_msg:'對現有體制感到不滿，用強烈的個人意志或新技術力去衝撞舊有的規矩與長官。', action:'⚠️ 雙面刃！適合推動企業改革、解決延宕的老問題；但極易惹怒高層或引發公關災難，發言請三思。' },
+    '官殺制比劫': { type:'剋', title:'【鐵腕管理，淘汰競爭】', business_msg:'用嚴格的紀律、法規或權力，去壓制不聽話的員工，或是強勢打擊市場上的競爭對手。', action:'慈不掌兵！現在是整頓公司內部紀律、開除冗員，或是用專利戰對付競品的最佳時機。' },
+    '比劫奪財': { type:'剋', title:'【惡性競爭，利潤瓜分】', business_msg:'市場出現削價競爭、合夥人分錢不均、或是因朋友牽拖而導致嚴重的財務流失。', action:'⚠️ 護好錢包！嚴禁借貸、合資或盲目擴張。親兄弟明算帳，重要客戶必須親自拜訪防流失。' },
+    '財會壞印': { type:'剋', title:'【利益衝突，名聲受損】', business_msg:'為了短期的利潤與金錢誘惑，犧牲了公司的名聲、合約的誠信或是穩定的後勤基石。', action:'⚠️ 決策地雷！請拒絕眼前看起來很賺但遊走灰色地帶的案子。此時簽約極易出包，請法務嚴格把關。' },
+    '印剋食傷': { type:'剋', title:'【靈感枯竭，資源斷層】', business_msg:'過度保守的規矩、長輩的干預、或是資訊量超載，導致創意被扼殺、財源的入口被堵死。', action:'⚠️ 停滯警告！不要再輸入新資訊了，你現在需要的是放空。推掉不必要的顧問意見，找回自己的節奏。' }
+};
+const TGD = {
+    '正財坐劫財': { tag:'💣 破財地雷', title:'【表面風光，私下漏財】', business_msg:'招牌掛得很大，但利潤被嚴重瓜分。', action:'神探錦囊：請立刻重新檢視合約利潤分配，親兄弟明算帳，財務必須獨立核算！' },
+    '偏財坐食神': { tag:'💰 印鈔機配置', title:'【點子變現，財源滾滾】', business_msg:'絕佳的商業直覺加上強大的創造力。', action:'神探錦囊：大膽相信你的商業靈感，現在是擴大行銷預算、推出新產品的最佳時機！' },
+    '正官坐傷官': { tag:'🔥 權力危機', title:'【犯上作亂，招惹是非】', business_msg:'表面上有職位與權力，但私底下的行為或言論卻在破壞公司體制。', action:'神探錦囊：今日宜封口！收起你的傲氣與批評，凡事照著SOP走，別在長官背後抱怨。' },
+    '七殺坐偏印': { tag:'🦅 梟雄配置', title:'【權謀極致，跨界奇才】', business_msg:'魄力與深沉的謀略完美結合。', action:'神探錦囊：不要走傳統路線！用最冷門的策略去打擊對手，這個案子需要你的「狠勁」與「直覺」。' },
+    '正印坐正官': { tag:'👑 巔峰配置', title:'【名利雙收，步步高升】', business_msg:'官印相生，是最完美的職場晉升密碼。', action:'神探錦囊：大膽爭取更高的職位或投標大案子！現在你的招牌就是最好的通行證。' },
+    '偏印坐食神': { tag:'⚠️ 枯竭警報', title:'【梟神奪食，靈感斷線】', business_msg:'原本賺錢的點子被扼殺了。', action:'神探錦囊：暫停所有產出！你現在處於嚴重的內耗狀態，請放下工作去放空，硬做只會搞砸招牌。' },
+    '傷官坐正財': { tag:'📈 業務戰神', title:'【口才變現，精準行銷】', business_msg:'用絕佳的口才與技術，精準命中客戶的荷包。', action:'神探錦囊：立刻安排與最難搞的客戶開會！今天你的說服力滿分，能把石頭說成黃金。' },
+    '食神坐比肩': { tag:'🤝 團隊配置', title:'【和氣生財，共同研發】', business_msg:'與同儕、朋友之間有著極佳的默契。', action:'神探錦囊：今天不要單打獨鬥，找你的核心團隊一起喝杯咖啡開個會，金點子就在閒聊中誕生！' }
+};
+const BCA = {
+    SanHui: {
+        '寅卯辰': { element:'木', name:'東方木局', effect:'巨大擴張與生長能量。', crm_msg:'「同業結盟、勢不可擋」這是一股排山倒海的推進力，適合大舉擴張版圖。' },
+        '巳午未': { element:'火', name:'南方火局', effect:'極度曝光與爆發能量。', crm_msg:'「聲名大噪、烈火燎原」能見度達到此生巔峰，適合推動大型品牌行銷。' },
+        '申酉戌': { element:'金', name:'西方金局', effect:'肅殺與重組能量。', crm_msg:'「大刀闊斧、鐵腕改革」適合進行企業重組、裁員或是確立嚴格的商業規則。' },
+        '亥子丑': { element:'水', name:'北方水局', effect:'深沉與流動能量。', crm_msg:'「暗中佈局、資源匯聚」檯面下湧動著龐大的資源與金流，適合進行隱密協商。' }
+    },
+    SanHe: {
+        '申子辰': { element:'水', name:'三合水局', effect:'資源與人脈的跨界大整合。', crm_msg:'將不同領域的力量完美匯聚成大水庫。只要有共同利益，原本不相干的人事物都能為你所用。' },
+        '亥卯未': { element:'木', name:'三合木局', effect:'從無到有的創造力大爆發。', crm_msg:'適合啟動大型專案、新事業研發或空間設計，這股生氣盎然的能量能讓你的點子迅速落地生根。' },
+        '寅午戌': { element:'火', name:'三合火局', effect:'熱情與能見度的完美連動。', crm_msg:'團隊向心力極強，群眾魅力無法擋，是將才華轉化為實質影響力的黃金期。' },
+        '巳酉丑': { element:'金', name:'三合金局', effect:'利益導向的精準合作。', crm_msg:'大家為了「錢與目標」緊密結合，效率極高。這段期間談判特別順利，適合簽署能帶來實質利潤的硬合約。' }
+    },
+    BanHe: {
+        '申子': { element:'水', name:'半合水局', effect:'水氣蓄勢待發', crm_msg:'資源正在快速匯集，萬事俱備，只欠東風（辰）。' },
+        '子辰': { element:'水', name:'半合水局', effect:'水庫準備開閘', crm_msg:'後勤系統已建置完畢，等待發動的時機（申）。' },
+        '亥卯': { element:'木', name:'半合木局', effect:'生機萌芽', crm_msg:'合作案已有初步的雛形與創意，正等待落實。' }
+    },
+    LiuHe: {
+        '子丑': { element:'土', name:'泥水之合', crm_msg:'緊密但略帶拖泥帶水的合作關係，感情上代表互相依賴。' },
+        '寅亥': { element:'木', name:'生長之合', crm_msg:'彼此滋養的健康合夥，對方是能讓你安心的貴人。' },
+        '卯戌': { element:'火', name:'化火之合', crm_msg:'容易擦出強烈火花的關係，但也可能因為過度熱情而燃燒殆盡。' },
+        '辰酉': { element:'金', name:'暗金之合', crm_msg:'表面客氣，私下卻有龐大金錢利益綁定的穩固合作。' },
+        '巳申': { element:'水', name:'刑合交加', crm_msg:'相愛相殺！一邊合作賺錢，一邊又互相猜忌防備。' },
+        '午未': { element:'土', name:'日月之合', crm_msg:'光明正大且穩定的結合，適合公開發布的結盟關係。' }
+    }
+};
+
+// ════════════════════════════════════════
+// 🛠️ 計算函式
+// ════════════════════════════════════════
+const SA=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const BMA=["寅","卯","辰","巳","午","未","申","酉","戌","亥","子","丑"];
+const WXS={'木':'火','火':'土','土':'金','金':'水','水':'木'};
+
+function getYGZ(y){
+  let o=(y-4)%60; if(o<0)o+=60;
+  return SA[o%10]+["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"][o%12];
+}
+function gec(c){
+  if("甲乙寅卯".includes(c))return"wood";
+  if("丙丁巳午".includes(c))return"fire";
+  if("戊己辰戌丑未".includes(c))return"earth";
+  if("庚辛申酉".includes(c))return"metal";
+  if("壬癸亥子".includes(c))return"water";
+  return"";
+}
+function gecCls(c){return gec(c)||"";}
+function getTG(dm,t){
+  if(!dm||!t||t==='？')return"";
+  const d=TS[dm],s=TS[t];if(!d||!s)return"";
+  const r=ER[d.elem];
+  if(s.elem===Object.keys(ER).find(k=>ER[k].gen===d.elem))return d.pol===s.pol?"偏印":"正印";
+  if(s.elem===d.elem)return d.pol===s.pol?"比肩":"劫財";
+  if(s.elem===r.gen)return d.pol===s.pol?"食神":"傷官";
+  if(s.elem===Object.keys(ER).find(k=>ER[k].con===d.elem))return d.pol===s.pol?"七殺":"正官";
+  if(s.elem===r.con)return d.pol===s.pol?"偏財":"正財";
+  return"";
+}
+function getWX(c){
+  if("甲乙寅卯".includes(c))return"木";
+  if("丙丁巳午".includes(c))return"火";
+  if("戊己辰戌丑未".includes(c))return"土";
+  if("庚辛申酉".includes(c))return"金";
+  if("壬癸亥子".includes(c))return"水";
+  return"";
+}
+function calcStr(bz){
+  let sc=0; let sk=Array(8).fill(false);
+  let uk=(bz.time==="？？"||bz.time==="--");
+  const ps=[bz.year?.charAt(0), bz.year?.charAt(1), bz.month?.charAt(0), bz.month?.charAt(1),
+    bz.day?.charAt(0), bz.day?.charAt(1), uk?'？':bz.time?.charAt(0), uk?'？':bz.time?.charAt(1)];
+  let els=ps.map(c=>c!=='？'?getWX(c):'');
+  const me=els[4];
+  if(!me) return {sc:0, r:"無法判定", cl:""};
+  const wt = uk ? [5, 20, 5, 40, 0, 30, 0, 0] : [5, 20, 5, 35, 0, 20, 5, 10];
+  const isFav = (el) => el === me || WXS[el] === me;
+  const adjustKu = (zhiIdx, ganIdx) => {
+    let z = ps[zhiIdx], gEl = els[ganIdx];
+    if (z === '辰') els[zhiIdx] = ['木','水','土'].includes(gEl) ? gEl : '土';
+    if (z === '戌') els[zhiIdx] = ['火','金','土'].includes(gEl) ? gEl : '土';
+    if (z === '丑') els[zhiIdx] = ['金','水','土'].includes(gEl) ? gEl : '土';
+    if (z === '未') els[zhiIdx] = ['火','木','土'].includes(gEl) ? gEl : '土';
+  };
+  adjustKu(1, 0); adjustKu(3, 2); adjustKu(5, 4); if(!uk) adjustKu(7, 6);
+  const zhiArr = [ps[1], ps[3], ps[5], ps[7]];
+  const has = (arr) => arr.every(z => zhiArr.includes(z));
+  const combos = [
+    {el:'水', req:['申','子','辰']}, {el:'水', req:['亥','子','丑']},
+    {el:'木', req:['亥','卯','未']}, {el:'木', req:['寅','卯','辰']},
+    {el:'火', req:['寅','午','戌']}, {el:'火', req:['巳','午','未']},
+    {el:'金', req:['巳','酉','丑']}, {el:'金', req:['申','酉','戌']},
+    {el:'水', req:['申','子']}, {el:'水', req:['子','辰']},
+    {el:'木', req:['亥','卯']}, {el:'木', req:['卯','未']},
+    {el:'火', req:['寅','午']}, {el:'火', req:['午','戌']},
+    {el:'金', req:['巳','酉']}, {el:'金', req:['酉','丑']}
+  ];
+  combos.forEach(combo => {
+    if (isFav(combo.el) && has(combo.req)) {
+      combo.req.forEach(z => {
+        let idx = ps.indexOf(z);
+        if (idx > 0 && idx % 2 !== 0) els[idx] = combo.el;
+        let lastIdx = ps.lastIndexOf(z);
+        if (lastIdx !== idx && lastIdx % 2 !== 0) els[lastIdx] = combo.el;
+      });
+    }
+  });
+  for(let i=0; i<8; i++){
+    if(i===4 || (uk && i>=6)) continue;
+    if(isFav(els[i])){ sc += wt[i]; sk[i] = true; }
+  }
+  if (!sk[3] && WXS[els[3]] === els[2] && WXS[els[2]] === me) { sc += wt[3]; sk[3] = true; }
+  if (!uk && !sk[7] && WXS[els[7]] === els[6] && WXS[els[6]] === me) { sc += wt[7]; sk[7] = true; }
+  if (!sk[0] && WXS[els[0]] === els[2] && WXS[els[2]] === me) { sc += wt[0]; sk[0] = true; }
+  if (!sk[1] && WXS[els[1]] === els[0] && WXS[els[0]] === els[2] && WXS[els[2]] === me) { sc += wt[1]; sk[1] = true; }
+  let r="", cl="";
+  if(sc <= 20){ r=`從弱格 (${sc}分)`; cl="border:1px solid #888;color:#AAA;"; }
+  else if(sc < 40){ r=`身弱 (${sc}分)`; cl="border:1px solid var(--water);color:var(--water)"; }
+  else if(sc <= 50){ r=`中和格 (${sc}分)`; cl="border:1px solid #5DBB75;color:#5DBB75"; }
+  else if(sc <= 80){ r=`身強 (${sc}分)`; cl="border:1px solid var(--fire);color:var(--fire)"; }
+  else { r=`從強格 (${sc}分)`; cl="border:1px solid #CE93D8;color:#CE93D8"; }
+  const C2E = {'木':'wood', '火':'fire', '土':'earth', '金':'metal', '水':'water'};
+  const E2C = {wood:'木', fire:'火', earth:'土', metal:'金', water:'水'};
+  let meE = C2E[me];
+  let genMe = Object.keys(ER).find(k => ER[k].gen === meE);
+  let meGen = ER[meE].gen;
+  let meCon = ER[meE].con;
+  let conMe = Object.keys(ER).find(k => ER[k].con === meE);
+  let yongShen = "", jiShen = "";
+  if (sc >= 40 && sc <= 50) {
+    yongShen = "皆可 (視流年與環境調候)";
+    jiShen = "忌單一五行極度過旺";
+  } else {
+    let xi = [], ji = [];
+    if(sc <= 20 || (sc >= 51 && sc <= 80)){
+      xi = [meGen, meCon, conMe];
+      ji = [genMe, meE];
+    } else {
+      xi = [genMe, meE];
+      ji = [meGen, meCon, conMe];
+    }
+    yongShen = xi.map(e => E2C[e]).join('、');
+    jiShen = ji.map(e => E2C[e]).join('、');
+  }
+  return {sc, r, cl, yongShen, jiShen};
+}
+function calcElems(bz){
+  let sc={wood:0, fire:0, earth:0, metal:0, water:0}, tot=0;
+  const add = (g, w) => {
+    if(g && g !== '？' && TS[g]){
+      sc[TS[g].elem] += w;
+      tot += w;
+    }
+  };
+  const pillars = ['year', 'month', 'day', 'time'];
+  pillars.forEach(p => {
+    let s = bz[p];
+    if(s && s !== '？？' && s !== '--'){
+      let gan = s.charAt(0);
+      let zhi = s.charAt(1);
+      let ganWeight = (p === 'day') ? 0 : 10;
+      add(gan, ganWeight);
+      let zhiWeight = (p === 'month') ? 3 : 1;
+      if (HW[zhi]) {
+        Object.entries(HW[zhi]).forEach(([hGan, ratio]) => {
+          add(hGan, ratio * zhiWeight * 1.5);
+        });
+      }
+    }
+  });
+  return {sc, tot};
+}
+function calcBZ(dt,tm,uk,lon,sect,gen){
+  if(!dt)return null;
+  let[y,mo,d]=dt.split('-').map(Number);
+  let hr=uk?12:parseInt(tm.split(':')[0]||0);
+  let mn=uk?0:parseInt(tm.split(':')[1]||0);
+  let td=((parseFloat(lon)||120)-120)*4;
+  let dd=new Date(y,mo-1,d,hr,mn);dd.setMinutes(dd.getMinutes()+td);
+  let sol=Solar.fromYmdHms(dd.getFullYear(),dd.getMonth()+1,dd.getDate(),dd.getHours(),dd.getMinutes(),0);
+  let lun=sol.getLunar();let bz=lun.getEightChar();bz.setSect(parseInt(sect));
+  let gn=gen==='男'?1:0;let yu=bz.getYun(gn);let da=yu.getDaYun();let dl=[];
+  for(let i=1;i<da.length;i++){let dy=da[i];dl.push({startAge:dy.getStartAge(),startYear:dy.getStartYear(),ganzhi:dy.getGanZhi()});}
+  let sY = yu.getStartYear(), sM = yu.getStartMonth(), sD = yu.getStartDay();
+  let cDate = new Date(dd.getFullYear() + sY, dd.getMonth() + sM, dd.getDate() + sD);
+  let cSolar = Solar.fromYmdHms(cDate.getFullYear(), cDate.getMonth() + 1, cDate.getDate(), 12, 0, 0);
+  let cLunar = cSolar.getLunar();
+  let cGan = cLunar.getEightChar().getYear().charAt(0);
+  let cGan2 = SA[(SA.indexOf(cGan) + 5) % 10];
+  let jq = cLunar.getPrevJieQi();
+  let diffDays = Math.floor(cSolar.getJulianDay() - jq.getSolar().getJulianDay());
+  let dayStr = diffDays === 0 ? "當天" : `後 ${diffDays} 天`;
+  let qiYunStr = `每逢 ${cGan} 或 ${cGan2} 年 ${jq.getName()} ${dayStr} 交大運`;
+  return{
+    year:bz.getYear(), month:bz.getMonth(), day:bz.getDay(), time:uk?"？？":bz.getTime(),
+    daYun:dl, qiYun:qiYunStr
+  };
+}
+
+// ════════════════════════════════════════
+// 🔍 碰撞引擎
+// ════════════════════════════════════════
+function analOrig(bz,age){
+  let res=[];
+  const bs=[
+    {n:'年',z:bz.year?.charAt(1)||'？',gz:bz.year},
+    {n:'月',z:bz.month?.charAt(1)||'？',gz:bz.month},
+    {n:'日',z:bz.day?.charAt(1)||'？',gz:bz.day},
+    {n:'時',z:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(1):'？',gz:bz.time}
+  ].filter(b=>b.z&&b.z!=='？');
+  const PL={'年':'長輩・環境','月':'事業・平輩','日':'配偶・內心','時':'子女・晚年'};
+  for(let i=0;i<bs.length;i++)for(let j=i+1;j<bs.length;j++){
+    let b1=bs[i],b2=bs[j];
+    let adv="";
+    if(b1.gz&&b2.gz){
+      if(BCA[b1.gz]?.[b2.gz])adv=BCA[b1.gz][b2.gz];
+      else if(BCA[b2.gz]?.[b1.gz])adv=BCA[b2.gz][b1.gz];
+    }
+    const add=(cl,ic,tt,ds,isHe)=>{
+      let av=(isHe&&adv)?`<div class="ac-adv">👉 ${adv}</div>`:'';
+      res.push(`<div class="ac ${cl}"><div class="ac-ttl">${ic} ${tt}</div><div class="ac-imp">📍 ${PL[b1.n]} ↔ ${PL[b2.n]}</div><div class="ac-imp">${ds}</div>${av}</div>`);
+    };
+    if(BR["沖"][b1.z]===b2.z)add('a-chong','💥',`${b1.n}柱${b1.z} 衝 ${b2.n}柱${b2.z}`,CK["沖"],false);
+    if(BR["合"][b1.z]===b2.z)add('a-he','🤝',`${b1.n}柱${b1.z} 合 ${b2.n}柱${b2.z}`,CK["合"],true);
+    if(BR["害"][b1.z]===b2.z)add('a-hai','⚠️',`${b1.n}柱${b1.z} 害 ${b2.n}柱${b2.z}`,CK["害"],false);
+    if(BR["破"][b1.z]===b2.z)add('a-po','💔',`${b1.n}柱${b1.z} 破 ${b2.n}柱${b2.z}`,CK["破"],false);
+    let xing=false;
+    if(BR["刑"]["無禮"].includes(b1.z)&&BR["刑"]["無禮"].includes(b2.z)&&b1.z!==b2.z)xing=true;
+    if(b1.z===b2.z&&BR["刑"]["自刑"].includes(b1.z))xing=true;
+    if(BR["刑"]["無恩"].includes(b1.z)&&BR["刑"]["無恩"].includes(b2.z)&&b1.z!==b2.z)xing=true;
+    if(BR["刑"]["恃勢"].includes(b1.z)&&BR["刑"]["恃勢"].includes(b2.z)&&b1.z!==b2.z)xing=true;
+    if(xing)add('a-xing','⚖️',`${b1.n}柱${b1.z} 刑 ${b2.n}柱${b2.z}`,CK["刑"],false);
+  }
+  let zs=bs.map(b=>b.z);
+  BR["三合"].forEach(g=>{if(g.every(z=>zs.includes(z)))res.push(`<div class="ac a-he">🌟 ${g.join('')}三合局・強大凝聚力</div>`);});
+  BR["三會"].forEach(g=>{if(g.every(z=>zs.includes(z)))res.push(`<div class="ac a-he">🌊 ${g.join('')}三會方陣・同氣連枝</div>`);});
+  return res.length?res.join(''):'<div style="text-align:center;color:var(--txM);padding:18px;font-size:12px">原局無明顯刑沖合會破害</div>';
+}
+
+function analDyn(bz,dy,ln,ly){
+  let alerts=[];
+  const ps=[
+    {n:'年柱',g:bz.year?.charAt(0)||'？',z:bz.year?.charAt(1)||'？',gz:bz.year, desc:'長輩・環境'},
+    {n:'月柱',g:bz.month?.charAt(0)||'？',z:bz.month?.charAt(1)||'？',gz:bz.month, desc:'事業・職場'},
+    {n:'日柱',g:bz.day?.charAt(0)||'？',z:bz.day?.charAt(1)||'？',gz:bz.day, desc:'配偶・內心'},
+    {n:'時柱',g:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(0):'？',z:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(1):'？',gz:bz.time, desc:'子女・晚年'}
+  ];
+  const chk=(dn,dg,dz,dgz)=>{
+    if(!dg||!dz)return;
+    let grouped = {};
+    ps.forEach(p=>{
+      if(p.g==='？'||p.z==='？')return;
+      let type = "", icon = "", title = "", desc = CK["沖"], isHe = false;
+      let specialType = "";
+      if(p.g===dg && p.z===dz) specialType = "伏吟";
+      else if(SC[p.g]===dg && BR["沖"][p.z]===dz) specialType = "天剋地衝";
+      else if(SM[p.g]===dg && BR["合"][p.z]===dz) specialType = "天合地合";
+      if(specialType){
+        let spCls = specialType==="伏吟"?"a-fy":(specialType==="天剋地衝"?"a-chong":"a-ml");
+        let spIco = specialType==="伏吟"?"⚠️":(specialType==="天剋地衝"?"💥":"🕸️");
+        let spTxt = specialType==="伏吟"?"諸事不順・思想起伏":(specialType==="天剋地衝"?"劇烈變動・易有意外":"糾纏阻滯・動彈不得");
+        let key = `${spCls}_${specialType}`;
+        if(!grouped[key]) grouped[key] = { cls:spCls, ico:spIco, ttl:`${dn} ${specialType}`, d:spTxt, targets:[], locs:[], adv:"" };
+        grouped[key].targets.push(p.n);
+        grouped[key].locs.push(p.desc);
+        return;
+      }
+      if(BR["沖"][p.z]===dz) { type="a-chong"; icon="⚡"; title="衝"; desc=CK["沖"]; }
+      else if(BR["合"][p.z]===dz) { type="a-he"; icon="🤝"; title="合"; desc=CK["合"]; isHe=true; }
+      else if(BR["害"][p.z]===dz) { type="a-hai"; icon="⚠️"; title="害"; desc=CK["害"]; }
+      else if(BR["破"][p.z]===dz) { type="a-po"; icon="💔"; title="破"; desc=CK["破"]; }
+      let isXing = false;
+      if(BR["刑"]["無禮"].includes(p.z)&&BR["刑"]["無禮"].includes(dz)&&p.z!==dz) isXing=true;
+      if(p.z===dz&&BR["刑"]["自刑"].includes(p.z)) isXing=true;
+      if(BR["刑"]["無恩"].includes(p.z)&&BR["刑"]["無恩"].includes(dz)&&p.z!==dz) isXing=true;
+      if(BR["刑"]["恃勢"].includes(p.z)&&BR["刑"]["恃勢"].includes(dz)&&p.z!==dz) isXing=true;
+      if(isXing) { type="a-xing"; icon="⚖️"; title="刑"; desc=CK["刑"]; }
+      if(type){
+        let key = `${type}_${title}`;
+        if(!grouped[key]) grouped[key] = { cls:type, ico:icon, ttl:`${dn}${dz} ${title}`, d:desc, targets:[], locs:[], adv:"" };
+        if(isHe){
+          if(dgz && p.gz && BCA[dgz]?.[p.gz]) grouped[key].adv = BCA[dgz][p.gz];
+          else if(dgz && p.gz && BCA[p.gz]?.[dgz]) grouped[key].adv = BCA[p.gz][dgz];
+        }
+        grouped[key].targets.push(p.n);
+        grouped[key].locs.push(p.desc);
+      }
+    });
+    Object.values(grouped).forEach(v => {
+      let targetNames = v.targets.join('與');
+      let locNames = v.locs.join('、');
+      let adviceHtml = v.adv ? `<div class="ac-adv">👉 ${v.adv}</div>` : "";
+      alerts.push(`<div class="ac ${v.cls}"><div class="ac-ttl">${v.ico} ${v.ttl} ${targetNames}</div><div class="ac-imp">📍 ${locNames}</div><div class="ac-imp">${v.d}</div>${adviceHtml}</div>`);
+    });
+  };
+  if(dy)chk("大運",dy.charAt(0),dy.charAt(1),dy);
+  if(ln)chk("流年",ln.charAt(0),ln.charAt(1),ln);
+  if(ly)chk("流月",ly.charAt(0),ly.charAt(1),ly);
+  return alerts.join('');
+}
+
+// ════════════════════════════════════════
+// 📱 狀態 & 導航
+// ════════════════════════════════════════
+let curId=null,curBz=null,curDM=null,curGender='男',curDY=null,curLN=null;
+
+window.navTo=function(pid){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(pid).classList.add('on');
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));
+  const nm={'p-home':'nb-home','p-add':'nb-add','p-chart':'nb-chart'};
+  if(nm[pid])document.getElementById(nm[pid])?.classList.add('on');
+};
+
+// ✅ 修正：簡化 switchIT，只需傳 tab id 與點擊的元素
+window.switchIT=function(tid,el){
+  document.querySelectorAll('#p-chart .itab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#p-chart .ipg').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById(tid).classList.add('on');
+};
+
+window.switchNT=function(tab,el){
+  document.querySelectorAll('#nt-crm,#nt-sp').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('nc-crm').style.display=tab==='crm'?'block':'none';
+  document.getElementById('nc-sp').style.display=tab==='sp'?'block':'none';
+};
+window.selGender=function(g){
+  curGender=g;
+  document.getElementById('g-m').classList.toggle('on',g==='男');
+  document.getElementById('g-f').classList.toggle('on',g==='女');
+};
+
+// ════════════════════════════════════════
+// 📖 提詞機
+// ════════════════════════════════════════
+window.openTP=function(gz,pn,tg){
+  document.getElementById('tpTtl').innerText=`【${gz}】${pn?'· '+pn:''}`;
+  const body=document.getElementById('tpBody');
+  const d=JD[gz];
+  if(!d){
+    body.innerHTML=`<div style="text-align:center;color:var(--txM);padding:40px">【${gz}】命書尚未建檔<br><span style="font-size:11px">請將60甲子字典貼入 JD 變數</span></div>`;
+  }else{
+    let stars=(d.stars||'').split(/[、,・]/).filter(Boolean);
+    let tags=`<div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px">
+      <span class="tp-tag" onclick="showTPS('${gz}','納音','${d.naYin||''}')">⚔️ ${d.naYin||'—'}</span>
+      <span class="tp-tag" style="background:rgba(93,187,117,.1);color:var(--wood)" onclick="showTPS('${gz}','長生','${d.phase||''}')">🌱 ${d.phase||'—'}</span>
+      ${stars.map(s=>`<span class="tp-tag" onclick="showTPS('${gz}','神煞','${s.trim()}')">${s.trim()}</span>`).join('')}
+    </div><div id="tp-sub" class="tp-sub"></div>`;
+    let isOrig=["年","月","日","時"].includes(pn);
+    let main='';
+    if(isOrig){
+      let pt=d.pillars?.[pn]||'（無此宮位資料）';
+      main=`<div class="tp-card"><div class="tp-sec">📍 【${gz}】在【${pn}柱】的展現</div>${pt}</div>`;
+      if(tg&&TGD[tg]?.[pn])main+=`<div class="tp-card" style="border-color:rgba(93,187,117,.3)"><div class="tp-sec">🎭 十神【${tg}】在【${pn}柱】</div>${TGD[tg][pn]}</div>`;
+    }else{
+      let at=d.atmosphere||{};
+      main=`<div class="tp-card">
+        <div style="margin-bottom:9px"><span style="font-weight:700;color:var(--gold)">總論</span>：${at["總論"]||"—"}</div>
+        <div style="margin-bottom:9px"><span style="font-weight:700;color:var(--wood)">事業</span>：${at["事業"]||"—"}</div>
+        <div style="margin-bottom:9px"><span style="font-weight:700;color:var(--fire)">感情</span>：${at["感情"]||"—"}</div>
+        <div><span style="font-weight:700;color:var(--water)">健康</span>：${at["健康"]||"—"}</div>
+      </div>`;
+    }
+    body.innerHTML=tags+main;
+  }
+  document.getElementById('tpBD').classList.add('on');
+  document.getElementById('tpOV').classList.add('on');
+};
+window.showTPS=function(gz,type,term){
+  let exp="";let d=JD[gz];
+  if(d){
+    if(type==='納音'&&d.naYinDesc)exp=d.naYinDesc;
+    if(type==='長生'&&d.phaseDesc)exp=d.phaseDesc;
+    if(type==='神煞'&&d.starsDesc?.[term])exp=d.starsDesc[term];
+  }
+  if(!exp){
+    if(type==='納音')exp=ND[term]||"尚未建檔";
+    else if(type==='長生')exp=CD[term]||"尚未建檔";
+    else if(type==='神煞')exp=SD[term]||"尚未建檔";
+  }
+  const sub=document.getElementById('tp-sub');
+  sub.innerHTML=`<strong style="color:var(--gold)">${term}</strong>：${exp}`;
+  sub.classList.add('on');
+};
+window.closeTP=function(){
+  document.getElementById('tpBD').classList.remove('on');
+  document.getElementById('tpOV').classList.remove('on');
+};
+
+// ════════════════════════════════════════
+// 🔮 命盤渲染
+// ════════════════════════════════════════
+function renderPillars(bz){
+  const g=document.getElementById('baziGrid');
+  const str=calcStr(bz);const dm=curDM;
+  const ph=(s,lb)=>{
+    let uk=!s||s==='？？'||s==='--';
+    let gan=uk?'？':s.charAt(0);let zhi=uk?'？':s.charAt(1);
+    let tg=(lb==='日'||uk)?'':getTG(dm,gan);
+    let top=lb==='日'?`<span class="sbadge" style="${str.cl}">${str.r}</span>`:
+      `<span class="${gecCls(gan)}" style="font-size:9px;font-weight:700">${tg}</span>`;
+    let pureTG=(lb==='日'||uk)?'':tg;
+    let hs=uk?[]:(HS[zhi]||[]);
+    let hh=hs.map(h=>`<div class="${gecCls(h)}" style="font-size:10px">${h} <span style="color:var(--txD);font-size:9px;margin-left:1px">${getTG(dm,h)}</span></div>`).join('');
+    return`<div class="pc" onclick="window.openTP('${gan}${zhi}','${lb}','${pureTG}')">
+      <div class="pc-lb">${lb}柱</div><div class="pc-tg">${top}</div>
+      <div class="pc-gan ${gecCls(gan)}">${gan}</div>
+      <div class="pc-div"></div>
+      <div class="pc-zhi ${gecCls(zhi)}">${zhi}</div>
+      <div class="pc-hid">${hh||'<div style="color:var(--txM);font-size:10px">—</div>'}</div>
+    </div>`;
+  };
+  g.innerHTML=ph(bz.year,'年')+ph(bz.month,'月')+ph(bz.day,'日')+ph(bz.time,'時');
+}
+
+const healthLogic = {
+    '木': { organ:'肝膽 / 筋骨神經', over:'肝火較旺，容易肩頸僵硬、偏頭痛、眼睛痠澀，情緒上容易急躁易怒。', under:'容易疲勞、筋骨無力、指甲易斷，情緒上容易缺乏動力或感到壓抑。', advice:'多接觸大自然、做伸展瑜伽，適度閉目養神，釋放神經緊繃。' },
+    '火': { organ:'心血管 / 腦神經', over:'容易心悸、發炎上火、失眠多夢，大腦無法關機，情緒容易焦慮浮躁。', under:'手腳冰冷、血液循環較差、氣血虛弱，容易感到缺乏活力。', advice:'注意作息規律，睡前避免過度滑手機。非常適合透過頌缽的低頻聲波，讓腦波深層放鬆。' },
+    '土': { organ:'脾胃 / 消化代謝', over:'容易胃脹氣、水腫、代謝機能變慢導致脂肪囤積，思慮過度容易打結。', under:'消化吸收不良、食慾不振、肌肉無力，常覺得身體沉重疲倦。', advice:'飲食定時定量，減少精緻澱粉，可適度搭配有助代謝的營養補充品，減輕身體負擔。' },
+    '金': { organ:'肺 / 呼吸道 / 大腸', over:'容易有呼吸道過敏、皮膚乾燥、便秘等問題，個性上容易過於執著完美。', under:'免疫力較低、容易感冒、胸悶，情緒上比較容易感到悲觀或陷入回憶。', advice:'多做深呼吸練習，保持室內空氣流通。練習「斷捨離」，放掉不需要的執念。' },
+    '水': { organ:'腎 / 泌尿 / 內分泌', over:'容易水腫、頻尿、內分泌失調，情緒上容易莫名感到恐懼或極度不安。', under:'容易腰痠背痛、記憶力減退、容易受驚嚇、泌尿系統反覆發炎。', advice:'多喝溫熱水，注重腰腹部保暖。適合透過穩定的能量調頻來安定底層的安全感。' }
+};
+
+function renderElems(bz){
+  const g = document.getElementById('elemGrid');
+  const {sc, tot} = calcElems(bz);
+  const strInfo = calcStr(bz);
+  let html = '<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">';
+  let healthHtml = '<div style="border-top:1px solid var(--goldB); padding-top:16px;">';
+  healthHtml += '<div style="font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:10px;font-weight:700;">⚕️ 專屬健康與能量指引</div>';
+  let patternAdvice = "";
+  let dynamicYongShen = strInfo.yongShen;
+  let dynamicJiShen = strInfo.jiShen;
+  if (strInfo.r.includes('中和')) {
+      let cy = new Date().getFullYear();
+      let cyGz = getYGZ(cy);
+      let cGanEl = getWX(cyGz.charAt(0));
+      let cZhiEl = getWX(cyGz.charAt(1));
+      let me = getWX(bz.day.charAt(0));
+      const isFav = (el) => el === me || WXS[el] === me;
+      let favCount = (isFav(cGanEl) ? 1 : 0) + (isFav(cZhiEl) ? 1 : 0);
+      const C2E = {'木':'wood', '火':'fire', '土':'earth', '金':'metal', '水':'water'};
+      const E2C = {wood:'木', fire:'火', earth:'土', metal:'金', water:'水'};
+      let meE = C2E[me];
+      let genMe = E2C[Object.keys(ER).find(k => ER[k].gen === meE)];
+      let meGen = E2C[ER[meE].gen];
+      let meCon = E2C[ER[meE].con];
+      let conMe = E2C[Object.keys(ER).find(k => ER[k].con === meE)];
+      if (favCount === 0) {
+          patternAdvice = `🛣️ 【流年動態：上坡路】\n今年 (${cy} ${cyGz}年) 走的是消耗較多的運勢，有如開車遇上坡。建議多補充「${genMe}、${me}」能量來踩油門，適度休息，避免過度勞累。`;
+          dynamicYongShen = `${genMe}、${me}`;
+          dynamicJiShen = `${meGen}、${meCon}、${conMe}`;
+      } else if (favCount === 2) {
+          patternAdvice = `🛣️ 【流年動態：下坡路】\n今年 (${cy} ${cyGz}年) 走的是生扶強旺的運勢，有如開車遇下坡，動力十足。建議多利用「${meGen}、${meCon}、${conMe}」能量來踩煞車、發揮才華，將多餘精力轉化為實質成果。`;
+          dynamicYongShen = `${meGen}、${meCon}、${conMe}`;
+          dynamicJiShen = `${genMe}、${me}`;
+      } else {
+          patternAdvice = `🛣️ 【流年動態：平緩路】\n今年 (${cy} ${cyGz}年) 氣場平穩，有如行駛在平坦的大道上。順應您的直覺即可，遇到卡關時稍微轉換心情就能順利通過。`;
+      }
+  }
+  else if (strInfo.r.includes('身強')) patternAdvice = "您的格局能量較為充沛，健康保養首重「疏通與釋放」，請留意五行過旺所帶來的發炎、緊繃或亢奮狀態。";
+  else if (strInfo.r.includes('身弱')) patternAdvice = "您的格局能量較易耗損，健康保養首重「滋補與安神」，請留意過度勞累，宜適度補充營養與充足睡眠。";
+  else if (strInfo.r.includes('從強')) patternAdvice = "您的格局能量高度集中，五行呈現極端狀態，須特別留意氣血過度淤積於特定器官，首重身心平衡。";
+  else if (strInfo.r.includes('從弱')) patternAdvice = "您的體質較為敏感，易受外在氣場影響，健康保養首重「溫和調養」，避免過度激烈的飲食變化與運動。";
+  if(patternAdvice) {
+      healthHtml += `<div style="background:rgba(201,168,76,0.06); border-radius:8px; border-left:3px solid var(--gold); padding:12px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:700; font-size:13px;">
+              <span style="color:#5DBB75;">✅ 喜用：${dynamicYongShen}</span>
+              <span style="color:#E85D5D;">❌ 忌仇：${dynamicJiShen}</span>
+          </div>
+          <div style="font-size:12px; color:var(--txD); line-height:1.6; white-space:pre-wrap;">${patternAdvice}</div>
+      </div>`;
+  }
+  let hasHealthTips = false;
+  Object.entries(EI).map(([k,i])=>{
+    let p = tot > 0 ? Math.round((sc[k]/tot)*100) : 0;
+    html += `<div class="erow"><span class="elb" style="color:${i.c}">${i.l}</span>
+      <div class="ebar-bg"><div class="ebar" style="width:${p}%;background:${i.bg}"></div></div>
+      <span class="epct">${p}%</span></div>`;
+    let hName = i.l;
+    let hData = healthLogic[hName];
+    if (hData) {
+        let state = '';
+        let desc = '';
+        if (p >= 30) { state = '過旺'; desc = hData.over; }
+        else if (p <= 10) { state = '不足'; desc = hData.under; }
+        if (state) {
+            hasHealthTips = true;
+            healthHtml += `<div style="background:var(--sf2); border:1px solid var(--goldB); border-radius:10px; padding:12px; margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="color:${i.c}; font-weight:bold; font-size:13px;">${hName} (${hData.organ})</span>
+                    <span style="font-size:10px; padding:3px 8px; border-radius:6px; font-weight:700; background:${state==='過旺'?'rgba(232,93,93,.15)':'rgba(93,157,232,.15)'}; color:${state==='過旺'?'#E85D5D':'#5D9DE8'};">${state}</span>
+                </div>
+                <div style="font-size:12px; color:var(--tx); line-height:1.6; margin-bottom:8px;">${desc}</div>
+                <div style="font-size:11px; color:var(--txD); line-height:1.5; border-top:1px dashed rgba(201,168,76,.25); padding-top:8px;">💡 建議：${hData.advice}</div>
+            </div>`;
+        }
+    }
+  });
+  html += '</div>';
+  if (!hasHealthTips) {
+     healthHtml += `<div style="text-align:center;font-size:12px;color:var(--txM);padding:14px;background:var(--sf2);border-radius:10px;">五行能量相對均衡，請保持良好作息，維持身心靈平衡。</div>`;
+  }
+  healthHtml += '</div>';
+  g.innerHTML = html + healthHtml;
+}
+
+function renderDaYun(bz){
+  const strip=document.getElementById('dyStrip');const dm=curDM;
+  const cy=new Date().getFullYear();
+  if (strip.previousElementSibling) {
+    let qiYunText = bz.qiYun ? `✨ ${bz.qiYun}` : `✨ 請重新點擊新增儲存，以顯示交運時間`;
+    strip.previousElementSibling.innerHTML = `⏳ 十年大運 <span style="font-size:10px;color:var(--txD);margin-left:8px;font-weight:normal;">${qiYunText}</span>`;
+  }
+  if(!bz.daYun?.length){strip.innerHTML='<div style="color:var(--txM);padding:8px;font-size:12px">舊資料，無大運紀錄</div>';return;}
+  strip.innerHTML=bz.daYun.map(dy=>{
+    let g=dy.ganzhi.charAt(0),z=dy.ganzhi.charAt(1);
+    let tg=getTG(dm,g);let cur=(cy>=dy.startYear&&cy<dy.startYear+10);
+    let hs=(HS[z]||[]);
+    let hh=hs.map(h=>`<div class="${gecCls(h)}" style="font-size:9px">${h} <span style="color:var(--txD);font-size:8px;margin-left:1px">${getTG(dm,h)}</span></div>`).join('');
+    return`<div class="gc ${cur?'on':''}" id="dy-${dy.startYear}" onclick="window.clickDY(${dy.startYear},${dy.startAge},'${dy.ganzhi}',this)">
+      <div class="gc-yr">${dy.startYear}</div><div class="gc-age">${dy.startAge}歲</div>
+      <div class="gc-tg">${tg}</div>
+      <div class="gc-box"><div class="gc-g ${gecCls(g)}">${g}</div><div class="gc-dv"></div><div class="gc-z ${gecCls(z)}">${z}</div></div>
+      <div class="gc-hid" style="margin-top:2px;">${hh}</div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>{
+    let cur=bz.daYun.find(dy=>cy>=dy.startYear&&cy<dy.startYear+10);
+    if(cur){
+      let el=document.getElementById(`dy-${cur.startYear}`);
+      if(el){el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});window.clickDY(cur.startYear,cur.startAge,cur.ganzhi,el,true);}
+    }
+  },300);
+}
+window.clickDY=function(sy,sa,gz,el,auto=false){
+  document.querySelectorAll('#dyStrip .gc').forEach(c=>c.classList.remove('on'));
+  el?.classList.add('on');curDY=gz;
+  const dm=curDM;const cy=new Date().getFullYear();
+  document.getElementById('lnLbl').innerText=`📅 流年 (大運：${gz})`;
+  document.getElementById('lnStrip').innerHTML=Array.from({length:10},(_,i)=>{
+    let y=sy+i,age=sa+i;let lgz=getYGZ(y);let g=lgz.charAt(0),z=lgz.charAt(1);
+    let tg=getTG(dm,g);let cur=(y===cy);
+    let hs=(HS[z]||[]);
+    let hh=hs.map(h=>`<div class="${gecCls(h)}" style="font-size:9px">${h} <span style="color:var(--txD);font-size:8px;margin-left:1px">${getTG(dm,h)}</span></div>`).join('');
+    return`<div class="gc ${cur?'on':''}" id="ln-${y}" onclick="window.clickLN(${y},${age},'${lgz}','${gz}',this)">
+      <div class="gc-yr">${y}</div><div class="gc-age">${age}歲</div><div class="gc-tg">${tg}</div>
+      <div class="gc-box"><div class="gc-g ${gecCls(g)}">${g}</div><div class="gc-dv"></div><div class="gc-z ${gecCls(z)}">${z}</div></div>
+      <div class="gc-hid" style="margin-top:2px;">${hh}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('lnSec').style.display='block';
+  document.getElementById('lySec').style.display='none';
+  document.getElementById('statAnal').innerHTML=analOrig(curBz,sa);
+  document.getElementById('dynAnal').innerHTML=analDyn(curBz,gz,null,null);
+  //if(!auto)window.openTP(gz,'大運');
+  if(auto)setTimeout(()=>{
+    let el2=document.getElementById(`ln-${cy}`);
+    if(el2){el2.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});window.clickLN(cy,sa+(cy-sy),getYGZ(cy),gz,el2,true);}
+  },200);
+};
+window.clickLN=function(y,age,gz,dygz,el,auto=false){
+  document.querySelectorAll('#lnStrip .gc').forEach(c=>c.classList.remove('on'));
+  el?.classList.add('on');curLN=gz;
+  document.getElementById('lyLbl').innerText=`🌙 流月 (${y}年 ${gz})`;
+  const dm=curDM;const si=SA.indexOf(gz.charAt(0));const ms=((si%5)*2+2)%10;
+  document.getElementById('lyStrip').innerHTML=Array.from({length:12},(_,i)=>{
+    let mg=SA[(ms+i)%10],mz=BMA[i];let tg=getTG(dm,mg);
+    let hs=(HS[mz]||[]);
+    let hh=hs.map(h=>`<div class="${gecCls(h)}" style="font-size:9px">${h} <span style="color:var(--txD);font-size:8px;margin-left:1px">${getTG(dm,h)}</span></div>`).join('');
+    return`<div class="gc" onclick="window.clickLY('${mg+mz}','${dygz}','${gz}',${age},this)">
+      <div class="gc-yr" style="font-size:10px">${i+1}月</div><div class="gc-tg">${tg}</div>
+      <div class="gc-box"><div class="gc-g ${gecCls(mg)}">${mg}</div><div class="gc-dv"></div><div class="gc-z ${gecCls(mz)}">${mz}</div></div>
+      <div class="gc-hid" style="margin-top:2px;">${hh}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('lySec').style.display='block';
+  document.getElementById('statAnal').innerHTML=analOrig(curBz,age);
+  document.getElementById('dynAnal').innerHTML=analDyn(curBz,dygz,gz,null);
+  //if(!auto)window.openTP(gz,'流年');
+};
+window.clickLY = function(lygz, dygz, lngz, age, el) {
+  document.querySelectorAll('#lyStrip .gc').forEach(c => c.classList.remove('on'));
+  el?.classList.add('on');
+  document.getElementById('statAnal').innerHTML = analOrig(curBz, age);
+  document.getElementById('dynAnal').innerHTML = analDyn(curBz, dygz, lngz, lygz);
+  
+  // 🚨 組合大運、流年、流月的 60 甲子字典
+  document.getElementById('tpTtl').innerText = `【流月提詞】運:${dygz} / 年:${lngz} / 月:${lygz}`;
+  const body = document.getElementById('tpBody');
+  
+  // 建立共用的卡片渲染器
+  const renderDict = (gz, label) => {
+    const d = JD[gz];
+    if(!d) return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;"><div class="tp-sec">📍 【${label}】${gz}</div><div style="color:var(--txM);font-size:12px">尚未建檔</div></div>`;
+    
+    let stars = (d.stars || '').split(/[、,・]/).filter(Boolean);
+    let tags = `<div style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:5px">
+      <span class="tp-tag" onclick="showTPS('${gz}','納音','${d.naYin||''}')">⚔️ ${d.naYin||'—'}</span>
+      <span class="tp-tag" style="background:rgba(93,187,117,.1);color:var(--wood)" onclick="showTPS('${gz}','長生','${d.phase||''}')">🌱 ${d.phase||'—'}</span>
+      ${stars.map(s => `<span class="tp-tag" onclick="showTPS('${gz}','神煞','${s.trim()}')">${s.trim()}</span>`).join('')}
+    </div>`;
+    let at = d.atmosphere || {};
+    let main = `
+      <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--gold)">總論</span>：${at["總論"]||"—"}</div>
+      <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--wood)">事業</span>：${at["事業"]||"—"}</div>
+      <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--fire)">感情</span>：${at["感情"]||"—"}</div>
+      <div style="font-size:12px;"><span style="font-weight:700;color:var(--water)">健康</span>：${at["健康"]||"—"}</div>
+    `;
+    return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;">
+      <div class="tp-sec">📍 【${label}】${gz}</div>${tags}${main}
+    </div>`;
+  };
+
+  // 將三個層級的資料疊加，並放上標籤說明的容器 (tp-sub)
+  let html = `<div id="tp-sub" class="tp-sub" style="margin-bottom:12px;"></div>`; 
+  html += renderDict(dygz, '大運');
+  html += renderDict(lngz, '流年');
+  html += renderDict(lygz, '流月');
+
+  body.innerHTML = html;
+  document.getElementById('tpBD').classList.add('on');
+  document.getElementById('tpOV').classList.add('on');
+};
+
+// ════════════════════════════════════════
+// 👥 客戶操作
+// ════════════════════════════════════════
+window.allCustData = {};
+
+async function loadCust(){
+  const list=document.getElementById('custList');
+  list.innerHTML='<div class="loading">☯ 載入中...</div>';
+  try{
+    const q=query(collection(db,"Customers"),orderBy("建檔時間","desc"));
+    const sn=await getDocs(q);
+    if(sn.empty){list.innerHTML='<div class="empty"><div style="font-size:36px;opacity:.3">☯</div><div style="font-size:13px">尚無客戶資料</div></div>';return;}
+    list.innerHTML='';
+    window.allCustData = {};
+    sn.forEach(dc=>{
+      const d=dc.data();
+      window.allCustData[dc.id] = d;
+      list.innerHTML+=`<div class="ccard" onclick="window.openChart('${dc.id}')">
+        <div class="ccard-av">${d['姓名'].charAt(0)}</div>
+        <div class="ccard-info">
+          <div class="ccard-name">${d['姓名']} <span style="font-size:11px;font-weight:400;color:var(--txD)">${d['性別']||''}</span></div>
+          <div class="ccard-meta">🎂 ${d['出生日期']||'未記錄'}</div>
+        </div>
+        <button class="ccard-del" onclick="event.stopPropagation();window.delCust('${dc.id}')">✕</button>
+        <span style="color:var(--goldD);font-size:18px">›</span>
+      </div>`;
+    });
+    updateMatchSelect();
+  }catch(e){list.innerHTML=`<div class="empty"><div>載入失敗</div></div>`;}
+}
+
+// ✅ 修正：補全 openChart 函式，填入被省略的關鍵程式碼
+window.openChart=async function(id){
+  const sn=await getDoc(doc(db,"Customers",id));
+  if(!sn.exists())return;
+  const data=sn.data();
+  const bz=data['八字']||{};
+  curId=id;
+  curBz=bz;
+  curDM=bz.day?.charAt(0)||'';
+  curGender=data['性別']||'男';  // ✅ 修正：設定客戶性別
+  curDY=null;
+  curLN=null;
+
+  // ✅ 修正：設定命盤頁頂部標題與副標題
+  document.getElementById('chartName').innerText = data['姓名']||'命盤';
+  document.getElementById('chartSub').innerText = `${data['性別']||''} ・ 生日 ${data['出生日期']||'未記錄'}`;
+
+  // ✅ 修正：載入筆記內容
+  document.getElementById('notesTxt').value = data['專屬筆記']||'';
+
+  // ✅ 修正：顯示底部命盤 Nav 按鈕
+  document.getElementById('nb-chart').style.display = 'flex';
+
+  // ✅ 修正：重置內頁 tabs 到第一頁（命盤）
+  document.querySelectorAll('#p-chart .itab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  document.querySelectorAll('#p-chart .ipg').forEach((p,i)=>p.classList.toggle('on',i===0));
+
+  renderSPList(data['身心靈紀錄']||[]);
+  renderPillars(bz);
+  renderElems(bz);
+  renderDaYun(bz);
+  renderQA();
+
+  document.getElementById('statAnal').innerHTML=analOrig(bz,null);
+  document.getElementById('dynAnal').innerHTML='';
+
+  // 刷新合盤下拉選單（排除自己）
+  updateMatchSelect();
+  const matchExistEl = document.getElementById('matchExistCust');
+  if(matchExistEl) { matchExistEl.value = ""; syncMatchUI(); }
+
+  navTo('p-chart');
+};
+
+// 💡 修改這裡：確保 delCust 準時結束，登入系統獨立出來
+window.delCust=async function(id){
+  if(!confirm("確定要刪除這筆資料嗎？"))return;
+  await deleteDoc(doc(db,"Customers",id));
+  loadCust(); // 刪除後重新載入列表
+}; // 👈 檢查這行，要有這個分號結束！
+
+// ════════════════════════════════════════
+// 🔐 安全登入與權限驗證系統 (已獨立出來)
+// ════════════════════════════════════════
+
+// 監聽登入狀態
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // ✅ 登入成功：隱藏大門，顯示功能，進入首頁
+    document.getElementById('p-login').classList.remove('on');
+    document.getElementById('p-login').style.display = 'none'; // 強制消失
+    document.getElementById('nav').style.display = 'flex';
+    navTo('p-home');
+    loadCust(); 
+  } else {
+    // ❌ 未登入：只顯示登入頁面
+    document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+    document.getElementById('p-login').classList.add('on');
+    document.getElementById('p-login').style.display = 'flex'; // 強制顯示
+    document.getElementById('nav').style.display = 'none';
+  }
+});
+
+// 執行登入
+window.doLogin = function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd = document.getElementById('loginPwd').value;
+  const btn = document.getElementById('loginBtn');
+  const msg = document.getElementById('loginMsg');
+  
+  if(!email || !pwd) { msg.innerText = "請輸入帳號與密碼！"; return; }
+  if(btn.disabled) return; // 💡 防止連點兩下導致報錯
+  
+  btn.disabled = true; btn.innerText = "驗證身分中..."; msg.innerText = "";
+  
+  signInWithEmailAndPassword(auth, email, pwd)
+    .then((userCredential) => {
+       // 登入成功後，狀態監聽器會處理畫面切換，我們只需清空按鈕狀態
+       btn.disabled = false; btn.innerText = "登 入 系 統";
+       document.getElementById('loginPwd').value = '';
+    })
+    .catch((error) => {
+       btn.disabled = false; btn.innerText = "登 入 系 統";
+       msg.innerText = "⛔ 帳號或密碼錯誤，請重新輸入！";
+    });
+};
+
+// 執行登出
+window.doLogout = function() {
+  if(confirm("確定要登出系統並上鎖嗎？")) {
+     signOut(auth).then(() => {
+        document.getElementById('custList').innerHTML = '';
+        window.allCustData = {};
+        // 登出後會自動觸發 onAuthStateChanged 顯示登入頁面
+     });
+  }
+};
+
+document.getElementById('saveBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('saveBtn');
+  const name=document.getElementById('custName').value;
+  const bd=document.getElementById('birthDate').value;
+  if(!name||!bd){alert("請填寫姓名與出生日期");return;}
+  btn.disabled=true;btn.innerText='☯ 排盤中...';
+  try{
+    const bt=document.getElementById('birthTime').value;
+    const uk=document.getElementById('unkTime').checked;
+    const ln=document.getElementById('longi').value;
+    const sc=document.getElementById('ziHour').value;
+    const bz=calcBZ(bd,bt,uk,ln,sc,curGender);
+    await addDoc(collection(db,"Customers"),{
+      姓名:name,性別:curGender,出生日期:bd,
+      諮詢日期:document.getElementById('consultDate').value,
+      專屬筆記:"",八字:bz,建檔時間:new Date()
+    });
+    document.getElementById('custName').value='';
+    document.getElementById('birthDate').value='';
+    btn.innerText='✓ 儲存成功！';
+    setTimeout(()=>{btn.innerText='☯ 排盤並儲存至雲端';btn.disabled=false;},2000);
+    loadCust();navTo('p-home');
+  }catch(e){btn.innerText='✕ 儲存失敗';btn.disabled=false;}
+});
+document.getElementById('saveNotesBtn').addEventListener('click',async()=>{
+  if(!curId)return;
+  await updateDoc(doc(db,"Customers",curId),{專屬筆記:document.getElementById('notesTxt').value});
+  document.getElementById('saveNotesBtn').innerText='✓ 已儲存';
+  setTimeout(()=>document.getElementById('saveNotesBtn').innerText='💾 儲存筆記',2000);
+});
+document.getElementById('saveSPBtn').addEventListener('click',async()=>{
+  if(!curId)return;const txt=document.getElementById('spNote').value.trim();if(!txt)return;
+  const sn=await getDoc(doc(db,"Customers",curId));
+  let recs=sn.data()['身心靈紀錄']||[];
+  const t=new Date();
+  recs.push({id:Date.now(),date:`${t.getFullYear()}/${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')}`,text:txt});
+  await updateDoc(doc(db,"Customers",curId),{身心靈紀錄:recs});
+  document.getElementById('spNote').value='';renderSPList(recs);
+});
+function renderSPList(recs){
+  const l=document.getElementById('spList');
+  if(!recs?.length){l.innerHTML='<div style="color:var(--txM);font-size:12px;text-align:center;padding:18px">尚無紀錄</div>';return;}
+  l.innerHTML=[...recs].sort((a,b)=>b.id-a.id).map(r=>`
+    <div class="sc"><div class="sc-dt">📅 ${r.date}</div>
+    <div style="font-size:13px;line-height:1.7">${r.text}</div></div>`).join('');
+}
+document.getElementById('srchIn').addEventListener('input',function(){
+  const kw=this.value.toLowerCase();
+  document.querySelectorAll('.ccard').forEach(c=>{c.style.display=c.innerText.toLowerCase().includes(kw)?'flex':'none';});
+});
+document.getElementById('unkTime').addEventListener('change',function(){
+  document.getElementById('birthTime').disabled=this.checked;
+});
+
+// ════════════════════════════════════════
+// 💡 智能問答引擎
+// ════════════════════════════════════════
+function renderQA() {
+  const list = document.getElementById('qaList');
+  const qs = [
+    { id: 'wealth', icon: '💰', title: '天生有自帶「財庫」嗎？', desc: '分析地支四庫 (辰戌丑未)' },
+    { id: 'peach', icon: '🌸', title: '天生自帶「桃花」人緣嗎？', desc: '分析地支四正 (子午卯酉)' },
+    { id: 'move', icon: '🐎', title: '適合外出發展或業務工作嗎？', desc: '分析地支驛馬 (寅申巳亥)' },
+    { id: 'love', icon: '💖', title: '今年有機會脫單/遇到對象嗎？', desc: '分析流年桃花與姻緣引動' },
+    // 👇 請在下面新增這一行
+    { id: 'career', icon: '🚀', title: '現在適合換工作嗎？會升官嗎？', desc: '分析流年事業宮與十神衝突' },
+ { id: 'exam', icon: '📝', title: '今年考運好嗎？能順利上榜嗎？', desc: '分析流年官印與文昌能量' },
+{ id: 'biz', icon: '👑', title: '現在適合創業嗎？合夥還是獨資？', desc: '分析流年食傷生財與破財地雷' },
+{ id: 'talent', icon: '🧭', title: '我的天賦在哪？適合什麼產業？', desc: '分析原局十神與五行喜用賽道' },
+{ id: 'invest', icon: '📈', title: '我的專屬投資理財與風險指南？', desc: '分析原局財星結構與流年破財風險' },
+{ id: 'wealth_ceiling', icon: '🏦', title: '我的財富天花板在哪？能躍升嗎？', desc: '分析財庫容量、階級躍升與大運品質' },
+{ id: 'loss', icon: '☔', title: '今年會破財嗎？財富天氣預報', desc: '掃描流年破財地雷與流月防守時機' },
+{ id: 'lottery', icon: '🎰', title: '我有偏財運嗎？容易中大獎嗎？', desc: '分析原局偏財星與財庫爆發時機' }
+  ];
+  // ... 後面不變
+  list.innerHTML = qs.map(q => `
+    <div class="ccard" onclick="window.clickQA('${q.id}')">
+      <div class="ccard-av" style="font-size:18px; border:none; background:transparent;">${q.icon}</div>
+      <div class="ccard-info">
+        <div class="ccard-name" style="color:var(--gold);">${q.title}</div>
+        <div class="ccard-meta">${q.desc}</div>
+      </div>
+      <span style="color:var(--txD);font-size:18px">›</span>
+    </div>
+  `).join('');
+}
+
+window.clickQA = function(type) {
+  if(!curBz) return;
+  const zhis = [curBz.year?.charAt(1), curBz.month?.charAt(1), curBz.day?.charAt(1), curBz.time?.charAt(1)].filter(z => z && z !== '？');
+  let title = "";
+  let ans = "";
+
+  // 💰 1. 財庫分析
+  if (type === 'wealth') {
+    title = "💰 財庫分析 (辰、戌、丑、未)";
+    const ku = ['辰', '戌', '丑', '未'];
+    let myKu = zhis.filter(z => ku.includes(z));
+    if (myKu.length > 0) {
+      ans = `<strong style="color:#5DBB75">命中帶有 ${myKu.length} 個財庫（${myKu.join('、')}）</strong><br><br>👉 <strong>話術提詞：</strong><br>您的命盤天生自帶財庫，具備「把錢留住」的潛力！比較有理財觀念，或是喜歡把錢變成實體資產。當流年遇到跟財庫相衝的年份，往往是大筆財富進出的關鍵時刻！`;
+    } else {
+      ans = `<strong style="color:#E85D5D">命中無明顯財庫</strong><br><br>👉 <strong>話術提詞：</strong><br>您的原局沒有明顯的財庫。這代表您對金錢的態度比較隨緣，「財來財去比較快」。建議您可以強制自己養成定存的習慣，把現金轉為黃金、房產等資產，用「外在環境」幫自己打造財庫！`;
+    }
+  }
+  // 🌸 2. 桃花分析
+  else if (type === 'peach') {
+    title = "🌸 桃花分析 (子、午、卯、酉)";
+    const peach = ['子', '午', '卯', '酉'];
+    let myPeach = zhis.filter(z => peach.includes(z));
+    if (myPeach.length > 0) {
+      ans = `<strong style="color:#CE93D8">命中帶有 ${myPeach.length} 個桃花（${myPeach.join('、')}）</strong><br><br>👉 <strong>話術提詞：</strong><br>您天生自帶桃花星！這代表「人緣好、自帶魅力」。非常適合從事需要面對人群、建立個人品牌、自媒體或是需要群眾魅力的工作，能靠「人氣」帶來財氣！`;
+    } else {
+      ans = `<strong style="color:var(--txD)">命中無明顯桃花</strong><br><br>👉 <strong>話術提詞：</strong><br>您的命盤屬於比較「實力派」的類型。比起靠外表吸引人，您更傾向用真實的才華、穩重與長時間的相處來建立關係。您的感情與人脈通常比較重質不重量。`;
+    }
+  }
+  // 🐎 3. 驛馬分析
+  else if (type === 'move') {
+    title = "🐎 驛馬變動分析 (寅、申、巳、亥)";
+    const move = ['寅', '申', '巳', '亥'];
+    let myMove = zhis.filter(z => move.includes(z));
+    if (myMove.length > 0) {
+      ans = `<strong style="color:#E8B86D">命中帶有 ${myMove.length} 個驛馬（${myMove.join('、')}）</strong><br><br>👉 <strong>話術提詞：</strong><br>您的命盤帶有驛馬星，適應力極強，非常適合離鄉背井發展、頻繁出差、或是跑動的業務工作。「動中求財」是您的致富密碼，越動越旺！`;
+    } else {
+      ans = `<strong style="color:var(--txD)">命中無明顯驛馬</strong><br><br>👉 <strong>話術提詞：</strong><br>您的氣場比較安穩，喜歡「謀定而後動」。不喜歡過度頻繁的環境變動，適合在一個領域深耕、累積專業，或是待在制度完善的體系內。穩紮穩打是您最舒適的發展路線。`;
+    }
+  }
+ // 💖 4. 流年脫單分析 (✨男女專屬分流版)
+  else if (type === 'love') {
+    title = "💖 流年脫單運勢分析";
+    let cy = new Date().getFullYear(); let cyGz = curLN ? curLN : getYGZ(cy);
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1);
+    let dStem = curBz.day?.charAt(0); let dBranch = curBz.day?.charAt(1);
+    let yBranch = curBz.year?.charAt(1); let mBranch_bz = curBz.month?.charAt(1);
+    
+    let tgStem = getTG(dStem, cyStem); 
+    let tgBranch = getTG(dStem, HS[cyBranch] ? HS[cyBranch][0] : '');
+    let messages = [];
+
+    // 💡 男女防呆分流機制：男生找財星，女生找官殺
+    let isMale = (curGender === '男');
+    let spouseStars = isMale ? ['正財', '偏財'] : ['正官', '七殺'];
+    let spouseLabel = isMale ? '財星 (女性緣分)' : '官殺 (男性緣分)';
+
+    // 🌟 年度大氣候掃描
+    if (spouseStars.includes(tgStem) || spouseStars.includes(tgBranch)) {
+        if (SM[dStem] === cyStem) {
+            messages.push(`<strong style="color:#E85D5D">💘 正緣合身，命中注定</strong><br>今年流年天干與你相合，且剛好是你的配偶星！這代表強烈的『正緣降臨』，對方會主動靠近，且你會非常有想穩定下來成家、被照顧的念頭，請務必把握！`);
+        } else {
+            messages.push(`<strong style="color:#E8B86D">✨ 配偶星現，緣分降臨</strong><br>今年的流年氣場帶有你的『${spouseLabel}』，這代表非常有機會遇到心儀的對象，或是你主動尋求愛情的動力變強了！`);
+        }
+    } else if (SM[dStem] === cyStem) {
+        messages.push(`<strong style="color:#5D9DE8">💫 天干五合，人緣桃花</strong><br>今年流年與你的日主相合。雖然不一定是配偶星，但代表你今年的人際關係極佳，很容易受到他人喜愛，也會有想談戀愛、尋求歸屬感的心情。`);
+    }
+
+    if ((BR["合"][dBranch] === cyBranch) || BR["三合"].some(arr => arr.includes(dBranch) && arr.includes(cyBranch) && dBranch !== cyBranch)) {
+         messages.push(`<strong style="color:#CE93D8">🌸 夫妻宮合，心房解鎖</strong><br>代表感情歸屬的夫妻宮被『合動』了！原本像堡壘般的感情世界被溫柔解鎖，極度容易有人闖進你的生活圈，請多參加社交活動。`);
+    }
+    if (BR["沖"][dBranch] === cyBranch) {
+         messages.push(`<strong style="color:#5DBB75">⚡ 夫妻宮衝，閃電變動</strong><br>死水一攤的單身狀態被『強制打破』！今年的脫單通常非常戲劇化、極容易在突發狀況或聚會上一見鍾情！（若已有對象則需防感情生變）`);
+    }
+    if (['子','午','卯','酉'].includes(cyBranch) && ((BR["合"][yBranch] === cyBranch) || (BR["合"][mBranch_bz] === cyBranch) || BR["三合"].some(arr => arr.includes(cyBranch) && (arr.includes(yBranch) || arr.includes(mBranch_bz))))) {
+         messages.push(`<strong style="color:#C9A84C">🤝 社交桃花，貴人牽線</strong><br>流年桃花星跟外在社交圈連線了！脫單機會藏在『長輩介紹、相親、公司/朋友聚會』中，請不要拒絕別人的牽線！`);
+    }
+
+    // 🚀 流月雷達掃描 (加入男女辨識)
+    let cyStemIdx = SA.indexOf(cyStem);
+    let startMonthIdx = ((cyStemIdx % 5) * 2 + 2) % 10;
+    let monthMsgs = [];
+    for (let i = 0; i < 12; i++) {
+        let mStem = SA[(startMonthIdx + i) % 10]; let mBranch = BMA[i];
+        let mTG_stem = getTG(dStem, mStem);
+        let mTG_branch = getTG(dStem, HS[mBranch] ? HS[mBranch][0] : '');
+        let reasons = [];
+
+        // 精準尋找專屬配偶星
+        if (spouseStars.includes(mTG_stem) || spouseStars.includes(mTG_branch)) reasons.push(`配偶星現(容易遇到心儀對象)`);
+        
+        // 天干五合細分
+        if (SM[dStem] === mStem) {
+            if (spouseStars.includes(mTG_stem)) reasons.push('正緣合身(強烈動心/想穩定下來)');
+            else reasons.push('天干五合(人緣變好/尋求歸屬感)');
+        }
+        
+        if (BR["合"][dBranch] === mBranch || BR["三合"].some(arr => arr.includes(dBranch) && arr.includes(mBranch) && dBranch !== mBranch)) reasons.push('夫妻宮合(感情升溫/確認關係)');
+        if (BR["沖"][dBranch] === mBranch) reasons.push('夫妻宮衝(戲劇化相遇/直球對決)');
+        if (['子','午','卯','酉'].includes(mBranch) && (BR["合"][yBranch] === mBranch || BR["合"][mBranch_bz] === mBranch)) reasons.push('社交桃花(長輩/朋友牽線)');
+
+        if (reasons.length > 0) monthMsgs.push(`👉 <strong>${i+1}月 (${mStem}${mBranch})</strong>：[${reasons.join('、')}]`);
+    }
+
+    let finalHtml = messages.length > 0 ? messages.join('<br><br>') : `<strong style="color:var(--txD)">今年感情磁場較為平靜</strong><br><br>流年未強烈引動感情宮位或配偶星。適合先把重心放在事業與自我提升上，或主動出擊創造機會！`;
+    
+    if (monthMsgs.length > 0) {
+        finalHtml += `<div style="margin-top:16px; padding:15px; background:rgba(206,147,216,0.1); border-left:3px solid #CE93D8; border-radius:8px;"><strong style="color:#CE93D8; font-size:14px;">📅 流月桃花雷達 (專屬${curGender}命)</strong><br><span style="font-size:13px; color:var(--txD); display:inline-block; margin-top:5px; margin-bottom:8px;">以下是你今年感情能量最強的月份，請多安排約會或社交活動：</span><br><span style="color:var(--tx); font-size:13px; line-height:1.8;">${monthMsgs.join('<br>')}</span></div>`;
+    }
+    ans = `<div style="margin-bottom:8px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold);">🎯 【${cyGz}年】感情運勢掃描</div>` + finalHtml;
+  }
+  // 🚀 5. 職涯變動掃描 (✨已升級流月引擎)
+  else if (type === 'career') {
+    title = "🚀 職涯變動與轉職時機掃描";
+    let cy = new Date().getFullYear(); let cyGz = curLN ? curLN : getYGZ(cy); 
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1);
+    let dStem = curBz.day?.charAt(0); let mBranch_bz = curBz.month?.charAt(1);
+    
+    let strInfo = calcStr(curBz); let selfStrength = strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和');
+    let tenGodsNow = [getTG(dStem, cyStem), getTG(dStem, HS[cyBranch] ? HS[cyBranch][0] : '')];
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => { let gz = curBz[p]; if(gz && gz !== '？？') { myOriginalTenGods.push(getTG(dStem, gz.charAt(0))); myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : '')); }});
+    let allTenGods = [...myOriginalTenGods, ...tenGodsNow];
+
+    let tenGodConflict = '無';
+    if (allTenGods.includes('傷官') && allTenGods.includes('正官')) tenGodConflict = '傷官見官';
+    else if ((allTenGods.includes('正財') || allTenGods.includes('偏財')) && (allTenGods.includes('正印') || allTenGods.includes('偏印'))) tenGodConflict = '財破印';
+    else if (allTenGods.includes('正官') && (allTenGods.includes('正印') || allTenGods.includes('偏印'))) tenGodConflict = '官印相生';
+    else if ((allTenGods.includes('食神') || allTenGods.includes('傷官')) && (allTenGods.includes('正財') || allTenGods.includes('偏財'))) tenGodConflict = '食傷生財';
+
+    let isHorseTriggered = ['寅', '申', '巳', '亥'].includes(cyBranch);
+    let isMonthClash = (BR["沖"][mBranch_bz] === cyBranch);
+    let isMonthCombine = (BR["合"][mBranch_bz] === cyBranch) || BR["三合"].some(arr => arr.includes(mBranch_bz) && arr.includes(cyBranch) && mBranch_bz !== cyBranch);
+    let messages = [];
+
+    // 年度大氣候
+    if (isMonthClash && tenGodConflict === '傷官見官') messages.push(`<strong style="color:#E85D5D">🌋 強震地雷，冷靜止損</strong><br>目前處於『被迫轉職』高危險期！對體制極度不滿，容易衝動做決定。神探建議：容易『剛出虎口又入狼穴』，請務必找好下家再跳，切忌裸辭！`);
+    else if (isMonthCombine && tenGodConflict === '官印相生') messages.push(`<strong style="color:#5DBB75">🚀 順風啟航，職位升遷</strong><br>『順勢轉職』大好機會！有貴人提拔或權力交接。能帶來職位提升與好合約，請勇敢邁出舒適圈！`);
+    else if (selfStrength === '身強' && tenGodConflict === '食傷生財') messages.push(`<strong style="color:#E8B86D">💡 點子變現，適合轉型</strong><br>能量爆棚，靈感處於巔峰！想靠才華闖一闖。現在轉職或開啟副業成功率極高。${isHorseTriggered ? '驛馬星動，遠方機會將帶來財富。' : ''}`);
+    else if (tenGodConflict === '財破印') messages.push(`<strong style="color:#8BA4C4">📄 合約到期，重新定位</strong><br>對穩定感到疲躁，合約面臨到期。這股『破壞穩定』的力量是推動你走向更有利潤的方向，請爭取更好的條件。`);
+    else if (selfStrength === '身弱' && tenGodsNow.some(t => t.includes('財'))) messages.push(`<strong style="color:#B0B0B0">🛡️ 宜守不宜攻，先強身再出發</strong><br>現在不是換工作的好時機。你的『身弱』狀態扛不住新環境的壓力，強行跳槽容易陷入過勞。神探建議：留在原地累積底氣。`);
+
+    // 🚀 流月雷達掃描
+    let cyStemIdx = SA.indexOf(cyStem);
+    let startMonthIdx = ((cyStemIdx % 5) * 2 + 2) % 10;
+    let monthMsgs = [];
+    for (let i = 0; i < 12; i++) {
+        let mStem = SA[(startMonthIdx + i) % 10]; let mBranch = BMA[i]; let reasons = [];
+        if (BR["沖"][mBranch_bz] === mBranch) reasons.push('事業宮被衝(環境震盪/轉職衝動)');
+        if (BR["合"][mBranch_bz] === mBranch || BR["三合"].some(arr => arr.includes(mBranch_bz) && arr.includes(mBranch) && mBranch_bz !== mBranch)) reasons.push('事業宮相合(順風順水/貴人提拔)');
+        if (['寅', '申', '巳', '亥'].includes(mBranch)) reasons.push('驛馬星動(出差跑動/遠方機會)');
+        if (reasons.length > 0) monthMsgs.push(`👉 <strong>${i+1}月 (${mStem}${mBranch})</strong>：[${reasons.join('、')}]`);
+    }
+
+    let finalHtml = messages.length > 0 ? messages.join('<br><br>') : `<strong style="color:var(--txD)">今年事業磁場較為平穩</strong><br><br>這段時間適合在原崗位默默累積實力、優化流程。若想換工作，建議採『騎驢找馬』策略，不宜衝動。`;
+    if (monthMsgs.length > 0) {
+        finalHtml += `<div style="margin-top:16px; padding:15px; background:rgba(93,187,117,0.1); border-left:3px solid #5DBB75; border-radius:8px;"><strong style="color:#5DBB75; font-size:14px;">📅 流月職場氣象</strong><br><span style="font-size:13px; color:var(--txD); display:inline-block; margin-top:5px; margin-bottom:8px;">以下是事業宮產生變動或順風的關鍵月份：</span><br><span style="color:var(--tx); font-size:13px; line-height:1.8;">${monthMsgs.join('<br>')}</span></div>`;
+    }
+    ans = `<div style="margin-bottom:8px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold);">🎯 【${cyGz}年】事業異動掃描</div>` + finalHtml;
+  }
+  // 📝 6. 考運與升學掃描
+  else if (type === 'exam') {
+    title = "📝 考運與升學預測掃描";
+    let cy = new Date().getFullYear(); let cyGz = curLN ? curLN : getYGZ(cy);
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1);
+    let dStem = curBz.day?.charAt(0);
+    
+    let strInfo = calcStr(curBz); let selfStrength = strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和');
+    let is_JoyGod = strInfo.yongShen.includes(getWX(cyStem)) || strInfo.yongShen.includes(getWX(cyBranch));
+
+    let tenGodsNow = [getTG(dStem, cyStem), getTG(dStem, HS[cyBranch] ? HS[cyBranch][0] : '')];
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => { let gz = curBz[p]; if(gz && gz !== '？？') { myOriginalTenGods.push(getTG(dStem, gz.charAt(0))); myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : '')); }});
+    let allTenGods = [...myOriginalTenGods, ...tenGodsNow];
+
+    let is_GuanYin_Flow = allTenGods.some(g => g === '正官' || g === '七殺') && allTenGods.some(g => g === '正印' || g === '偏印');
+    let is_ShiShang_Show = allTenGods.includes('食神') || allTenGods.includes('傷官');
+    let is_CaiPoYin = allTenGods.some(g => g === '正財' || g === '偏財') && allTenGods.some(g => g === '正印' || g === '偏印');
+    let is_ShangGuanJianGuan = allTenGods.includes('傷官') && allTenGods.includes('正官');
+    let is_GuanSha_Overload = allTenGods.filter(g => g === '正官' || g === '七殺').length >= 2;
+
+    const tianYiMap = {'甲':['丑','未'],'乙':['子','申'],'丙':['亥','酉'],'丁':['亥','酉'],'戊':['丑','未'],'己':['子','申'],'庚':['丑','未'],'辛':['午','寅'],'壬':['卯','巳'],'癸':['卯','巳']};
+    const wenChangMap = {'甲':'巳','乙':'午','丙':'申','丁':'酉','戊':'申','己':'酉','庚':'亥','辛':'子','壬':'寅','癸':'卯'};
+    let has_Nobleman = (tianYiMap[dStem] && tianYiMap[dStem].includes(cyBranch)) || (wenChangMap[dStem] === cyBranch);
+
+    let messages = []; let baseRate = 50; let scenarioMatched = false;
+
+    if (is_ShangGuanJianGuan) { baseRate = 15; messages.push(`<strong style="color:#E85D5D">💣 傷官見官，口舌危機</strong><br>挑戰權威！考試易粗心看錯題目；面試容易不自覺跟考官頂嘴。對考公職極度不利，請收斂鋒芒！`); scenarioMatched = true; } 
+    else if (is_CaiPoYin) { baseRate = 30; messages.push(`<strong style="color:#E8B86D">⚠️ 財破印，誘惑過多</strong><br>心思有點飄，貪玩誤事！財星慾望破壞了代表證書的印星。今年考試需要『斷捨離』，把手機關機，否則容易成為陪考組！`); scenarioMatched = true; } 
+    else if (selfStrength === '身弱' && is_GuanSha_Overload) { baseRate = 20; messages.push(`<strong style="color:#B0B0B0">🧱 官殺重壓，失常預警</strong><br>壓力太大導致失眠焦慮，實力發揮不出來。不要死讀書了！多去拜拜、找學長姐要考古題，先定心才是上策。`); scenarioMatched = true; } 
+    else if (is_GuanYin_Flow && is_JoyGod) { baseRate = 90; messages.push(`<strong style="color:#C9A84C">🏆 官印相生，金榜題名</strong><br>考運最強信號！官家或學術界會主動把錄取通知送到你手上。維持正常發揮，閉著眼睛都會上！`); scenarioMatched = true; } 
+    else if (selfStrength === '身強' && is_ShiShang_Show) { baseRate = 80; messages.push(`<strong style="color:#5DBB75">💡 食傷洩秀，實力輾壓</strong><br>『輸出能力』極強！考卷寫得順，靈感泉湧。臨場反應佳，適合申論題或面試關卡，大膽展現才華！`); scenarioMatched = true; }
+
+    if (!scenarioMatched) { baseRate = 60; messages.push(`<strong style="color:var(--txD)">📚 考運平穩，天道酬勤</strong><br>今年考運磁場平穩，沒有大起大落。『一分耕耘，一分收穫』，請按部就班讀書，穩紮穩打取得成績。`); }
+    if (has_Nobleman) { baseRate = Math.min(99, baseRate + 10); messages.push(`<div style="margin-top:12px; padding:10px; background:rgba(93,187,117,0.1); border-radius:8px; border-left:3px solid #5DBB75;"><strong style="color:#5DBB75">✨ 幸運星加持：貴人降臨</strong><br><span style="font-size:12px; color:var(--txD);">流年帶『文昌/天乙貴人』，讀書效率事半功倍，猜題機率高，考運如虎添翼！</span></div>`); }
+
+    ans = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold);">🎯 【${cyGz}年】考運與升學預測 <span style="float:right; font-weight:bold; color:${baseRate >= 60 ? '#5DBB75' : '#E85D5D'}">預估勝率：${baseRate}%</span></div>` + messages.join('<br><br>');
+  }
+  // 👑 7. 創業與商業模式掃描 (✨已升級流月引擎)
+  else if (type === 'biz') {
+    title = "👑 創業時機與商業模式掃描";
+    let cy = new Date().getFullYear(); let cyGz = curLN ? curLN : getYGZ(cy);
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1);
+    let dStem = curBz.day?.charAt(0); let mBranch_bz = curBz.month?.charAt(1);
+
+    let strInfo = calcStr(curBz); let selfStrength = strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和');
+    let baziPattern = (getZhiPhase(dStem, mBranch_bz) === '臨官') ? '建祿格' : '其他';
+
+    let tenGodsNow = [getTG(dStem, cyStem), getTG(dStem, HS[cyBranch] ? HS[cyBranch][0] : '')];
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => { let gz = curBz[p]; if(gz && gz !== '？？') { myOriginalTenGods.push(getTG(dStem, gz.charAt(0))); myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : '')); }});
+    let allTenGods = [...myOriginalTenGods, ...tenGodsNow];
+
+    let has_ShiShangShengCai = (allTenGods.includes('食神') || allTenGods.includes('傷官')) && (allTenGods.includes('正財') || allTenGods.includes('偏財'));
+    let has_BreakawayForce = (allTenGods.some(g => g === '正財' || g === '偏財') && allTenGods.some(g => g === '正印' || g === '偏印')) || (allTenGods.includes('傷官') && allTenGods.includes('正官'));
+    let has_BiJieDuoCai = (allTenGods.includes('比肩') || allTenGods.includes('劫財')) && (allTenGods.includes('正財') || allTenGods.includes('偏財'));
+    let has_XiaoShenDuoShi = allTenGods.includes('偏印') && allTenGods.includes('食神');
+    let has_YiMaPianCai = ['寅', '申', '巳', '亥'].includes(cyBranch) && allTenGods.includes('偏財');
+
+    let messages = []; let isLandmine = false;
+
+    // 年度大氣候
+    if (has_BiJieDuoCai || has_XiaoShenDuoShi) {
+        isLandmine = true; let warningType = has_BiJieDuoCai ? '比劫奪財' : '梟神奪食';
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">💣 凶星攔路，強制觀望 (創業指數：⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">嚴重破財警報！流年遇『${warningType}』。此時創業極度容易被合夥人坑錢、對手抄襲，或資金鏈斷裂。神探強烈建議：切勿砸錢創業，現金留身邊才是贏家！</span>`);
+    }
+    if (!isLandmine) {
+        if (selfStrength === '身強' && has_ShiShangShengCai) {
+            let extraJianLu = (baziPattern === '建祿格') ? '<br><br><span style="color:#C9A84C;">✨ 你命帶建祿，天生具備白手起家、百折不撓的創業家底氣！</span>' : '';
+            messages.push(`<strong style="color:#5DBB75; font-size:15px;">👑 大將入陣，天時地利 (創業指數：⭐⭐⭐⭐⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">創業的最強黃金期！『食傷生財』代表點子爆棚；『身強』代表抗壓性強。極度適合『獨資』或擔任『領導者』。大膽去闖！</span>${extraJianLu}`);
+        } else if (selfStrength === '身弱' && has_ShiShangShengCai) {
+            messages.push(`<strong style="color:#E8B86D; font-size:15px;">🤝 財多壓身，急需合夥 (創業指數：⭐⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">『財多壓身』！你容易因壓力過大而焦慮。這時不適合單打獨鬥，必須找一個強而有力的股東或合夥人（比劫）幫忙分擔火力，或是走『技術入股』模式！</span>`);
+        } else if (has_YiMaPianCai) {
+            messages.push(`<strong style="color:#5D9DE8; font-size:15px;">🚚 驛馬偏財，動中求財 (創業指數：⭐⭐⭐⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">驛馬星引動！你的創業模式絕不能死守一家店面。極度適合做進出口貿易、跨縣市業務或電商。只要跑起來，橫財就會跟著來！</span>`);
+        }
+        if ((selfStrength === '身強' && has_ShiShangShengCai || has_YiMaPianCai) && has_BreakawayForce) {
+            messages.push(`<div style="margin-top:12px; padding:12px; background:rgba(180,100,220,0.1); border-left:3px solid #CE93D8; border-radius:6px;"><strong style="color:#CE93D8;">🔥 破釜沉舟的原始動力</strong><br><span style="font-size:13px; color:var(--txD);">流年出現『破壞安穩』的訊號。代表你對死薪水已忍無可忍。這股不爽的能量正是你開創事業的最好燃料！</span></div>`);
+        }
+    }
+    if (messages.length === 0 && !isLandmine) {
+        messages.push(`<strong style="color:var(--txD); font-size:15px;">🌱 潛龍勿用，累積資源 (創業指數：⭐⭐⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">流年磁場穩健保守，未見強烈的創業引動訊號。適合做市場調查、充實知識或累積人脈，把子彈留著等東風。</span>`);
+    }
+
+    // 🚀 流月雷達掃描
+    let cyStemIdx = SA.indexOf(cyStem);
+    let startMonthIdx = ((cyStemIdx % 5) * 2 + 2) % 10;
+    let monthMsgs = [];
+    for (let i = 0; i < 12; i++) {
+        let mStem = SA[(startMonthIdx + i) % 10]; let mBranch = BMA[i];
+        let mTG = [getTG(dStem, mStem), getTG(dStem, HS[mBranch] ? HS[mBranch][0] : '')];
+        let reasons = [];
+        
+        if ((mTG.includes('食神') || mTG.includes('傷官')) && (mTG.includes('正財') || mTG.includes('偏財'))) reasons.push('食傷生財(點子變現/業績大爆發)');
+        if ((mTG.includes('比肩') || mTG.includes('劫財')) && (mTG.includes('正財') || mTG.includes('偏財'))) reasons.push('比劫奪財(合夥糾紛/嚴防坑殺)');
+        if (mTG.includes('偏印') && mTG.includes('食神')) reasons.push('梟神奪食(靈感枯竭/資金卡關)');
+        if (['寅', '申', '巳', '亥'].includes(mBranch) && mTG.includes('偏財')) reasons.push('驛馬偏財(動中求財/跨區接單)');
+
+        if (reasons.length > 0) monthMsgs.push(`👉 <strong>${i+1}月 (${mStem}${mBranch})</strong>：[${reasons.join('、')}]`);
+    }
+
+    let finalHtml = messages.join('<br><br>');
+    if (monthMsgs.length > 0) {
+        finalHtml += `<div style="margin-top:16px; padding:15px; background:rgba(201,168,76,0.1); border-left:3px solid #C9A84C; border-radius:8px;"><strong style="color:#C9A84C; font-size:14px;">📅 流月商機與地雷雷達</strong><br><span style="font-size:13px; color:var(--txD); display:inline-block; margin-top:5px; margin-bottom:8px;">商場如戰場，請特別留意以下幾個關鍵月份的機會與風險：</span><br><span style="color:var(--tx); font-size:13px; line-height:1.8;">${monthMsgs.join('<br>')}</span></div>`;
+    }
+    ans = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold);">🎯 【${cyGz}年】創業時機與商業模式評估</div>` + finalHtml;
+  }
+  
+ // 🧭 8. 全方位天賦與人生羅盤診斷 (靈魂導航 + 財富 DNA 融合版)
+  else if (type === 'talent') {
+    title = "🧭 天賦潛能與人生羅盤診斷";
+    let dStem = curBz.day?.charAt(0);
+    let strInfo = calcStr(curBz);
+    let isCongGe = strInfo.r.includes('從');
+    let selfStrength = isCongGe ? '從格' : (strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和'));
+    let joyElements = strInfo.yongShen;
+    let zhis = [curBz.year?.charAt(1), curBz.month?.charAt(1), curBz.day?.charAt(1), curBz.time?.charAt(1)].filter(z => z && z !== '？');
+
+    // 1. 抓取原局所有十神來計算
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => {
+        let gz = curBz[p];
+        if(gz && gz !== '？？') {
+            myOriginalTenGods.push(getTG(dStem, gz.charAt(0)));
+            myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : ''));
+        }
+    });
+
+    let tgCounts = { '食傷':0, '官殺':0, '印星':0, '財星':0, '比劫':0 };
+    myOriginalTenGods.forEach(tg => {
+        if (tg === '食神' || tg === '傷官') tgCounts['食傷']++;
+        else if (tg === '正官' || tg === '七殺') tgCounts['官殺']++;
+        else if (tg === '正印' || tg === '偏印') tgCounts['印星']++;
+        else if (tg === '正財' || tg === '偏財') tgCounts['財星']++;
+        else if (tg === '比肩' || tg === '劫財') tgCounts['比劫']++;
+    });
+
+    let sortedTG = Object.keys(tgCounts).sort((a,b) => tgCounts[b] - tgCounts[a]);
+    let dominant_TenGod = sortedTG[0];
+    let has_PianYin = myOriginalTenGods.includes('偏印');
+
+    // -------------------------------------------------------------
+    // 🧭 第一部分：人生羅盤 (靈魂引擎 + 傳動系統)
+    // -------------------------------------------------------------
+    let engineName = "", engineDesc = "";
+    if (dominant_TenGod === '食傷') { engineName = "食傷引擎 (才華路)"; engineDesc = "你的靈魂引擎是『自由與自我表達』。你不適合被傳統框架束縛，適合靠才華吃飯、不斷研發新事物，走出一條專屬於你的獨創之路。"; }
+    else if (dominant_TenGod === '官殺') { engineName = "官殺引擎 (權力路)"; engineDesc = "你的靈魂引擎是『秩序與責任』。你天生帶有使命感，適合攀爬階級、維護規則、解決危機，在人群中建立威望。"; }
+    else if (dominant_TenGod === '印星') { engineName = "印星引擎 (修煉路)"; engineDesc = "你的靈魂引擎是『知識與安穩』。你追求內在的充實，適合研究學問、傳承文化、守護他人，賺的是靈魂與智慧的錢。"; }
+    else if (dominant_TenGod === '財星') { engineName = "財星引擎 (實業路)"; engineDesc = "你的靈魂引擎是『掌控與結果』。你對資源極度敏銳，適合買賣貿易、資源整合，你的天賦就是把夢想具象化、量化成真實的財富。"; }
+    else { engineName = "比劫引擎 (人脈路)"; engineDesc = "你的靈魂引擎是『平等與共創』。你具備極強的群眾魅力，適合建立團隊、拓展組織，靠著人脈與合夥打天下。"; }
+
+    let driveName = "", driveDesc = "";
+    if (selfStrength === '身強' || selfStrength === '中和' || selfStrength === '從格') {
+        driveName = "主動型傳動 (大將體質)"; driveDesc = "你具備『開疆闢土』的底氣。適合獨資、當領頭羊、主動出擊，在沒有路的地方硬是劈出一條路來。";
+    } else {
+        driveName = "輔助型傳動 (軍師體質)"; driveDesc = "你具備『借力使力』的智慧。不適合單打獨鬥，適合加入團隊、依附大系統，或是擔任強者的軍師與合夥人，順風而行。";
+    }
+
+    let compassUI = `<div style="text-align:center; padding:15px; background:rgba(201,168,76,0.06); border:1px solid var(--goldB); border-radius:10px; margin-bottom:16px;">
+        <div style="font-size:11px; color:var(--txM); letter-spacing:2px; margin-bottom:4px;">⚙️ 核心引擎</div>
+        <div style="font-size:15px; color:var(--gold); font-weight:bold;">${engineName}</div>
+        <div style="font-size:12px; color:var(--txD); margin-top:4px; line-height:1.5;">${engineDesc}</div>
+        <div style="width:40px; height:1px; background:var(--goldB); margin:12px auto;"></div>
+        <div style="font-size:11px; color:var(--txM); letter-spacing:2px; margin-bottom:4px;">🛞 傳動系統</div>
+        <div style="font-size:15px; color:#E85D5D; font-weight:bold;">${driveName}</div>
+        <div style="font-size:12px; color:var(--txD); margin-top:4px; line-height:1.5;">${driveDesc}</div>
+    </div>`;
+
+    // -------------------------------------------------------------
+    // 🗺️ 第二部分：人生路徑地圖
+    // -------------------------------------------------------------
+    let pathMsgs = [];
+    let isArtisan = false; let isGuide = false;
+
+    if (dominant_TenGod === '食傷' && (selfStrength === '身強' || selfStrength === '中和' || selfStrength === '從格')) {
+        pathMsgs.push(`<strong style="color:#5DBB75; font-size:14px;">🛠️ 【自由職人路】不受拘束，技藝稱王</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">你不聽命於人，靈魂裡刻著職人精神。極度適合個人工作室或專業技術創業。無論是手握工具打造實體空間，還是運用獨特技術提供服務，只要把『手藝』與『才華』練到極致，市場就會自動為你買單。</span>`);
+        isArtisan = true;
+    }
+    if (['官殺', '印星'].includes(dominant_TenGod) && selfStrength === '身弱') {
+        pathMsgs.push(`<strong style="color:#8BA4C4; font-size:14px;">🏛️ 【體制菁英路】大樹乘涼，穩步高升</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">最佳策略是『在大樹下乘涼』。心思細膩、善於統籌，極度適合在大型機構、家族企業或公家機關中發展。進入穩定的體制內穩步上升，是最安全且舒適的發達路徑。</span>`);
+    }
+    if (['財星', '官殺'].includes(dominant_TenGod) && (selfStrength === '身強' || selfStrength === '從格')) {
+        pathMsgs.push(`<strong style="color:#E85D5D; font-size:14px;">🦅 【商界梟雄路】搏命演出，征戰沙場</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">天生的市場掠奪者！具備強大的抗壓力與野心，適合高風險投資、跨國貿易或自己當老闆。在變動劇烈的市場中求勝是本能，你的路就是一場搏命演出，報酬天花板極高。</span>`);
+    }
+    if (dominant_TenGod === '印星' || has_PianYin) {
+        pathMsgs.push(`<strong style="color:#CE93D8; font-size:14px;">🔮 【靈魂導師路】精神引領，渡化人心</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">天賦在於『精神層面的引領』。擁有極強直覺與洞察力，非常適合走身心靈、宗教、教育研究或命理諮詢。賺的不是快錢，而是『慢錢』與『深度的尊敬』，透過療癒他人成就自己。</span>`);
+        isGuide = true;
+    }
+    if (pathMsgs.length === 0) {
+        pathMsgs.push(`<strong style="color:#C9A84C; font-size:14px;">🤝 【共創融通路】穩紮穩打，和氣生財</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">你的路徑較為平穩多元，能靈活適應各種環境。適合在團隊中擔任橋樑，或經營貼近民生的服務業，用耐心與人和累積財富。</span>`);
+    }
+
+    let slashHtml = "";
+    if (isArtisan && isGuide) {
+        slashHtml = `<div style="margin-top:12px; padding:12px; background:rgba(180,100,220,0.1); border-left:3px solid #CE93D8; border-radius:6px;"><strong style="color:#CE93D8;">☯️ 神探專屬：完美斜槓潛力</strong><br><span style="font-size:13px; color:var(--txD); line-height:1.6;">神探特別捕捉到你命盤中的『跨維度能量』！你具備完美的斜槓潛力，能同時用實體技術打造空間（職人路），再用靈性智慧療癒人心（導師路），兩條路並行不悖，將讓你的成就與財富達到最大化！</span></div>`;
+    }
+
+    // -------------------------------------------------------------
+    // 💼 第三部分：財富守備與落地賽道 (原本的賽道導航)
+    // -------------------------------------------------------------
+    let has_WealthVault = zhis.some(z => ['辰', '戌', '丑', '未'].includes(z));
+    let has_WealthStar = tgCounts['財星'] > 0;
+    let vaultMsg = "";
+    if (has_WealthVault) vaultMsg = `<strong style="color:#C9A84C">🏦 天生自帶保險箱：</strong>賺得到也守得住！財富留存率高。`;
+    else if (has_WealthStar) vaultMsg = `<strong style="color:#E8B86D">💸 漏水錢包 (過路財神)：</strong>開銷巨大，賺到錢請立刻轉入不動產或強迫儲蓄。`;
+    else vaultMsg = `<strong style="color:#8BA4C4">📖 精神富足 (隱形財富)：</strong>對金錢執念較低，將精力投資在專業或名聲上。`;
+
+    let indList = [];
+    if (joyElements.includes('木')) indList.push('木(教育/裝修/出版)');
+    if (joyElements.includes('火')) indList.push('火(科技/餐飲/身心靈)');
+    if (joyElements.includes('土')) indList.push('土(房地產/保險/建築)');
+    if (joyElements.includes('金')) indList.push('金(金融/五金/外科)');
+    if (joyElements.includes('水')) indList.push('水(物流/貿易/傳播)');
+    if (indList.length === 0) indList.push('🌈 全領域適應 (五行極度均衡，任何賽道皆可)');
+
+    let hybridHtml = "";
+    if (joyElements.includes('木') && joyElements.includes('土')) hybridHtml = `<div style="margin-top:10px; padding:10px; background:rgba(201,168,76,0.1); border:1px solid #C9A84C; border-radius:8px;"><strong style="color:#C9A84C;">💡 混搭賽道：【實體建設家】</strong><br><span style="font-size:12px; color:var(--txD);">適合房產開發或大量材料應用的裝修大案！</span></div>`;
+    else if (joyElements.includes('火') && joyElements.includes('水')) hybridHtml = `<div style="margin-top:10px; padding:10px; background:rgba(93,157,232,0.1); border:1px solid #5D9DE8; border-radius:8px;"><strong style="color:#5D9DE8;">💡 混搭賽道：【數位媒體人】</strong><br><span style="font-size:12px; color:var(--txD);">極度適合電商、網紅或大數據資訊流動的工作！</span></div>`;
+    else if (joyElements.includes('金') && joyElements.includes('火')) hybridHtml = `<div style="margin-top:10px; padding:10px; background:rgba(232,93,93,0.1); border:1px solid #E85D5D; border-radius:8px;"><strong style="color:#E85D5D;">💡 混搭賽道：【精密技術者】</strong><br><span style="font-size:12px; color:var(--txD);">適合外科醫生或拿高精密儀器處理金屬元件的工程師！</span></div>`;
+
+    ans = `<div style="margin-bottom:12px; color:var(--gold); font-weight:bold; font-size:15px; text-align:center;">🎯 靈魂導航與天賦落地報告</div>` 
+          + compassUI 
+          + `<div style="font-size:14px; color:var(--gold); border-bottom:1px solid var(--goldB); padding-bottom:5px; margin-bottom:10px; margin-top:16px; font-weight:bold;">📍 人生路徑定位</div>`
+          + pathMsgs.join('<br><br>') + slashHtml
+          + `<div style="font-size:14px; color:var(--gold); border-bottom:1px solid var(--goldB); padding-bottom:5px; margin-bottom:10px; margin-top:20px; font-weight:bold;">💼 落地賽道與守備</div>`
+          + `<div style="font-size:13px; color:var(--txD); margin-bottom:10px;">${vaultMsg}</div>`
+          + `<strong style="color:var(--gold); font-size:13px;">🧭 建議深耕賽道：</strong><br><span style="font-size:13px; color:var(--txD);">${indList.join('、')}</span>` 
+          + hybridHtml;
+  }
+// 📈 9. 投資理財與資產配置 (完美整合版)
+  else if (type === 'invest') {
+    title = "📈 專屬理財模式與風險控管診斷";
+    let cy = new Date().getFullYear();
+    let cyGz = curLN ? curLN : getYGZ(cy);
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1);
+    let dStem = curBz.day?.charAt(0);
+    
+    let strInfo = calcStr(curBz);
+    let isCongGe = strInfo.r.includes('從');
+    let selfStrength = isCongGe ? '從格' : (strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和'));
+    let joyElements = strInfo.yongShen;
+
+    // 抓取原局十神與五行
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => {
+        let gz = curBz[p];
+        if(gz && gz !== '？？') {
+            myOriginalTenGods.push(getTG(dStem, gz.charAt(0)));
+            myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : ''));
+        }
+    });
+
+    // 判定財富屬性
+    let zhengCai = myOriginalTenGods.filter(g => g === '正財').length;
+    let pianCai = myOriginalTenGods.filter(g => g === '偏財').length;
+    let wealth_Pattern = (zhengCai === 0 && pianCai === 0) ? '無財星' : (pianCai > zhengCai ? '偏財格' : '正財格');
+
+    // 判定十神主導組合
+    let isShiShangShengCai = (myOriginalTenGods.includes('食神') || myOriginalTenGods.includes('傷官')) && (zhengCai > 0 || pianCai > 0);
+    let isGuanYinFlow = (myOriginalTenGods.includes('正官') || myOriginalTenGods.includes('七殺')) && (myOriginalTenGods.includes('正印') || myOriginalTenGods.includes('偏印'));
+    let isBiJieWang = myOriginalTenGods.filter(g => g === '比肩' || g === '劫財').length >= 2;
+
+    let tenGod_Combo = '';
+    if (isShiShangShengCai) tenGod_Combo = '食傷生財';
+    else if (isGuanYinFlow) tenGod_Combo = '官印相生';
+    else if (isBiJieWang) tenGod_Combo = '比劫旺';
+
+    // 判定流年與大運風險
+    let tenGodsNow = [getTG(dStem, cyStem), getTG(dStem, HS[cyBranch] ? HS[cyBranch][0] : '')];
+    let allTenGods = [...myOriginalTenGods, ...tenGodsNow];
+    let has_BiJieDuoCai = (tenGodsNow.includes('比肩') || tenGodsNow.includes('劫財')) && (allTenGods.includes('正財') || allTenGods.includes('偏財'));
+    let has_SuiYunBingLin = (curDY === cyGz); 
+
+    let daYun_Trend = '破財震盪運';
+    if (curDY && (joyElements.includes(getWX(curDY.charAt(0))) || joyElements.includes(getWX(curDY.charAt(1))))) {
+        daYun_Trend = '順風好運';
+    }
+
+    // 判定土地公體質
+    const C2E = {'木':'wood', '火':'fire', '土':'earth', '金':'metal', '水':'water'};
+    const E2C = {wood:'木', fire:'火', earth:'土', metal:'金', water:'水'};
+    let meEng = C2E[getWX(dStem)]; let yinEng = Object.keys(ER).find(k => ER[k].gen === meEng); let yinChi = E2C[yinEng];
+    let is_EarthJoy = joyElements.includes('土') || joyElements.includes(yinChi);
+
+    let messages = [];
+
+    // 🔴 模組一：終極防護罩與流年地雷
+    if (daYun_Trend === '破財震盪運') {
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">🚨 神探實戰警告：大運破財震盪期</strong><br><br><span style="color:var(--txD); line-height:1.6;">目前大運正處於破財震盪期。最好的理財就是『不理財』！請停止一切短線投機與合夥，將資金全數存入不動產，或是拿去報名課程充實自己（補印星）。投資自己，是你現階段唯一穩賺不賠的選擇！</span>`);
+    }
+    if (has_SuiYunBingLin) {
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">🌋 歲運併臨，極端震盪</strong><br><br><span style="color:var(--txD); line-height:1.6;">最高級別警示！逢『歲運併臨』，這是人生與財務的極端震盪期。今年投資宜守不宜攻，建議主動將部分資金拿去做公益捐款，並將剩餘資金轉入極度安全的避險資產。</span>`);
+    } else if (has_BiJieDuoCai) {
+        messages.push(`<strong style="color:#E8B86D; font-size:15px;">💣 財去人散，嚴防坑殺</strong><br><br><span style="color:var(--txD); line-height:1.6;">紅色警報！今年觸發『比劫奪財』，絕對不要聽信朋友推薦的明牌，更不要借錢或合資。肉包子打狗有去無回！今年請鎖死保險箱。</span>`);
+    }
+
+    // 🟢 模組二：投資心臟與操作策略
+    if (selfStrength === '從格') {
+        messages.push(`<strong style="color:#CE93D8; font-size:15px;">🦈 鯊魚型：順勢而為，極限槓桿</strong><br><br><span style="color:var(--txD); line-height:1.6;">特殊命盤解鎖！你屬於放棄抵抗、順從金錢力量的『從格』。你的投資心臟比誰都大！你是天生在資本市場裡衝浪的鯊魚，嗅覺極度敏銳，適合順勢操作與高風險的槓桿工具。</span>`);
+    } else if (selfStrength === '身強' || selfStrength === '中和') {
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">🔥 激進型：主動決策，高承載力</strong><br><br><span style="color:var(--txD); line-height:1.6;">你氣場足、抗壓性強，能『剋』得住財。非常適合主動投資，自己研究線圖或入股合夥。即便遇到市場崩盤，你也有體力跟意志力翻身，具備追求高報酬的心臟。</span>`);
+    } else {
+        messages.push(`<strong style="color:#8BA4C4; font-size:15px;">🧊 保守型：被動理財，拒絕盯盤</strong><br><br><span style="color:var(--txD); line-height:1.6;">你屬於容易被帳面數字影響情緒的體質。最適合『被動投資』，千萬不要天天盯盤。最忌諱『借錢投資』或開槓桿，那會壓垮你的身心，定時定額或交給專業機構才是上策。</span>`);
+    }
+
+    // 🔵 模組三：財富屬性與資產配置
+    if (wealth_Pattern === '無財星') {
+        messages.push(`<strong style="color:#B0B0B0; font-size:15px;">⛔ 空手奪刃 (風險警告)</strong><br><br><span style="color:var(--txD); line-height:1.6;">神探強烈警告：你命盤中缺乏財星，對金錢的抓取力較弱。硬去玩高槓桿當沖真的是在送錢！請將資金投入『自身專業技術的進修』，或交由專業機構代操。</span>`);
+    } else if (wealth_Pattern === '正財格') {
+        messages.push(`<strong style="color:#5DBB75; font-size:15px;">🛡️ 防禦性投資 (細水長流)</strong><br><br><span style="color:var(--txD); line-height:1.6;">你的財富必須靠『時間累積』，適合看得見、摸得著、且風險極低的投資工具。穩紮穩打才是發財路。<br>👉 <strong>推薦標的：</strong>定期定額、高股息 ETF (如 0050/00878)、儲蓄險、房地產。</span>`);
+    } else {
+        messages.push(`<strong style="color:#5D9DE8; font-size:15px;">⚔️ 攻擊型投資 (以小搏大)</strong><br><br><span style="color:var(--txD); line-height:1.6;">你的財富要靠『變動與時機』。不喜歡領死薪水或拿死利息。適度的風險與波動對你來說反而是推動力，具備以小搏大的投資眼光。<br>👉 <strong>推薦標的：</strong>波段股票、期貨、加密貨幣、新創事業投資。</span>`);
+    }
+
+    // 🟣 模組四：專屬資產與避坑指南
+    if (is_EarthJoy) {
+        messages.push(`<div style="margin-top:12px; padding:12px; background:rgba(201,168,76,0.1); border-left:3px solid #C9A84C; border-radius:6px;"><strong style="color:#C9A84C;">🏢 土地公體質</strong><br><span style="font-size:13px; color:var(--txD);">『土』元素與『印星』是你的超級喜用。你最穩的投資絕對是『房地產與土地』！把錢變成鋼筋水泥，是你這輩子最不會出錯的理財方式。</span></div>`);
+    }
+    if (tenGod_Combo === '食傷生財') {
+        messages.push(`<div style="margin-top:12px; padding:12px; background:rgba(93,187,117,0.1); border-left:3px solid #5DBB75; border-radius:6px;"><strong style="color:#5DBB75;">🧠 專業技術財 (降維打擊)</strong><br><span style="font-size:13px; color:var(--txD);">你的理財必須與『專業』掛鉤！例如你是室內裝修大師，就投資房產建材股；從事身心靈，就鎖定療癒或健康產業。用你的專業知識去賺錢。</span></div>`);
+    } else if (tenGod_Combo === '官印相生') {
+        messages.push(`<div style="margin-top:12px; padding:12px; background:rgba(201,168,76,0.1); border-left:3px solid #C9A84C; border-radius:6px;"><strong style="color:#C9A84C;">👑 名聲財指南</strong><br><span style="font-size:13px; color:var(--txD);">你的理財應以『避險與保值』為第一優先。你賺的是體制與名望帶來的福氣，適合購買黃金、土地，或是政府發行的穩健公債。</span></div>`);
+    } else if (tenGod_Combo === '比劫旺') {
+        messages.push(`<div style="margin-top:12px; padding:12px; background:rgba(232,184,109,0.1); border-left:3px solid #E8B86D; border-radius:6px;"><strong style="color:#E8B86D;">💸 漏財危機防禦</strong><br><span style="font-size:13px; color:var(--txD);">首要任務是『斷捨離』！一定要強迫儲蓄，或把現金轉成『不容易變現』的實體資產。否則錢一放在戶頭，極易被朋友借走或不知不覺花掉。</span></div>`);
+    }
+
+    ans = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold);">🎯 【${cyGz}年】專屬理財模式與資產配置報告</div>` + messages.join('<br><br>');
+  }
+  // 🏦 10. 財富天花板與階級躍升掃描
+  else if (type === 'wealth_ceiling') {
+    title = "🏦 財富天花板與階級躍升診斷";
+    let dStem = curBz.day?.charAt(0);
+    let zhis = [curBz.year?.charAt(1), curBz.month?.charAt(1), curBz.day?.charAt(1), curBz.time?.charAt(1)].filter(z => z && z !== '？');
+    let strInfo = calcStr(curBz); let selfStrength = strInfo.r.includes('從') ? '從格' : (strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和'));
+    let joyElements = strInfo.yongShen;
+
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => { let gz = curBz[p]; if(gz && gz !== '？？') { myOriginalTenGods.push(getTG(dStem, gz.charAt(0))); myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : '')); }});
+
+    let has_WealthStar = myOriginalTenGods.includes('正財') || myOriginalTenGods.includes('偏財');
+    let has_WealthVault = zhis.some(z => ['辰', '戌', '丑', '未'].includes(z));
+    let has_GuanYinFlow = (myOriginalTenGods.includes('正官') || myOriginalTenGods.includes('七殺')) && (myOriginalTenGods.includes('正印') || myOriginalTenGods.includes('偏印'));
+    
+    let cy = new Date().getFullYear(); let cyGz = curLN ? curLN : getYGZ(cy);
+    let activeZhis = [cyGz.charAt(1), curDY ? curDY.charAt(1) : '']; let is_VaultOpened_Joy = false;
+    zhis.forEach(z => {
+        if (z === '辰' && activeZhis.includes('戌')) is_VaultOpened_Joy = joyElements.includes('水') || joyElements.includes('木');
+        if (z === '戌' && activeZhis.includes('辰')) is_VaultOpened_Joy = joyElements.includes('金') || joyElements.includes('火');
+        if (z === '丑' && activeZhis.includes('未')) is_VaultOpened_Joy = joyElements.includes('金') || joyElements.includes('水');
+        if (z === '未' && activeZhis.includes('丑')) is_VaultOpened_Joy = joyElements.includes('木') || joyElements.includes('火');
+    });
+
+    let daYun_Quality = '忌神大運/泥濘路';
+    if (curDY && (joyElements.includes(getWX(curDY.charAt(0))) || joyElements.includes(getWX(curDY.charAt(1))))) daYun_Quality = '喜用大運/國道';
+
+    let score = 0; let messages = []; let bar_Vault = 0, bar_Status = 0, bar_Strength = 0;
+
+    if (has_WealthStar && has_WealthVault) { score += 30; bar_Vault = 100;
+        if (is_VaultOpened_Joy) { score += 10; messages.push(`<strong style="color:#E85D5D">🌋 爆發暴富：</strong>財富大門被強行撞開！你的財庫逢衝且為喜用，代表即將迎來爆發性增長，極易獲得巨大的橫財或資產翻倍！`); } 
+        else { messages.push(`<strong style="color:#5DBB75">🏦 財庫雙全：</strong>財星是現金，財庫是保險箱。你有財又有庫，賺進來的錢能穩穩鎖住，具備累積龐大資產的先天底蘊。`); }
+    } else if (has_WealthStar) { score += 10; bar_Vault = 40; messages.push(`<strong style="color:#E8B86D">💸 過路財神：</strong>賺錢能力強，但命中缺乏保險箱。錢財容易左手進右手出。建議賺到錢立刻轉為不動產或信託，人為建立財庫。`);
+    } else { bar_Vault = 20; messages.push(`<strong style="color:var(--txD)">🌱 財源待開發：</strong>原局財星不明顯，富貴來自於技術或名聲，不宜投機，應專注於本業價值的提升。`); }
+
+    if (has_GuanYinFlow) { score += 30; bar_Status = 100; messages.push(`<strong style="color:#C9A84C">👑 名利雙收：</strong>有錢不代表貴，真正的貴是擁有社會地位。你帶有『官印相生』，代表具備極高名望與實權，能躍升為社會貴人。`);
+    } else if (has_WealthStar) { score += 10; bar_Status = 40; messages.push(`<strong style="color:#E8B86D">💰 隱形富豪/土豪：</strong>財力雄厚但較缺乏掌握權力的基因。適合做低調賺錢的富豪，不宜過度追求政治或拋頭露面。`); }
+
+    if (selfStrength === '身強' || selfStrength === '從格' || selfStrength === '中和') { score += 30; bar_Strength = 100; messages.push(`<strong style="color:#5DBB75">🏋️ 巨金承載力：</strong>具備強大的力氣與心臟去舉起財富金磚。抗壓性極強，能穩穩守住並駕馭龐大的富貴與權力。`);
+    } else { bar_Strength = 30; messages.push(`<strong style="color:#CE93D8">🧱 財多壓身：</strong>目前屬於『富屋貧人』，富貴太大反而會壓垮你的健康或精神。建議透過『合夥』或『持續學習』來增強底氣。`); }
+
+    let finalMsg = "";
+    if (score >= 70 && daYun_Quality === '喜用大運/國道') finalMsg = `<div style="background:rgba(201,168,76,0.15); padding:15px; border-radius:10px; border:2px solid #C9A84C;"><strong style="color:#C9A84C; font-size:16px;">👑 頂級大富大貴命格</strong><br><br>格局清純且大運完美輔助！你這台頂級跑車正行駛在國道高速公路上，一路開掛，直通財富與權力的皇宮殿堂！</div>`;
+    else if (score >= 70) finalMsg = `<div style="background:rgba(180,100,220,0.1); padding:15px; border-radius:10px; border:1px solid #CE93D8;"><strong style="color:#CE93D8; font-size:16px;">🏎️ 懷才不遇/潛伏期</strong><br><br>你擁有極佳的命格體質（法拉利），但目前大運如同泥濘爛路，限制了發揮。這段時間請低調打磨實力，等待駛出爛泥巴路，必定一飛衝天！</div>`;
+    else if (daYun_Quality === '喜用大運/國道') finalMsg = `<div style="background:rgba(93,187,117,0.1); padding:15px; border-radius:10px; border:1px solid #5DBB75;"><strong style="color:#5DBB75; font-size:16px;">🚗 順風順水小富貴</strong><br><br>你的命局普通（省油小轎車），但這輩子大運走得極其漂亮！在高速公路上穩穩開，一樣能累積令人羨慕的財富，這叫『命好不如運好』。</div>`;
+    else finalMsg = `<div style="text-align:center; padding:10px; color:var(--txD);">「守成即是獲利」：目前處於修生養息期，不建議進行大規模擴張或高風險投資。</div>`;
+
+    let barsHtml = `<div style="margin-bottom:15px;"><div style="font-size:10px; color:var(--gold); margin-bottom:5px;">[保險箱容量/財庫]</div><div class="ebar-bg"><div class="ebar" style="width:${bar_Vault}%; background:#C9A84C;"></div></div><div style="font-size:10px; color:var(--wood); margin-top:10px; margin-bottom:5px;">[社會影響力/官印]</div><div class="ebar-bg"><div class="ebar" style="width:${bar_Status}%; background:#5DBB75;"></div></div><div style="font-size:10px; color:var(--fire); margin-top:10px; margin-bottom:5px;">[抗壓耐久度/強弱]</div><div class="ebar-bg"><div class="ebar" style="width:${bar_Strength}%; background:#E85D5D;"></div></div></div>`;
+    ans = barsHtml + messages.join('<br><br>') + "<br><br>" + finalMsg;
+  }
+  // ☔ 11. 終極財富防禦：漏財基因與天氣預報 (✨先天+後天並列版)
+  else if (type === 'loss') {
+    title = "☔ 終極財富防禦：漏財基因與天氣預報";
+    let cy = new Date().getFullYear(); let cyGz = curLN ? curLN : getYGZ(cy);
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1); 
+    let dStem = curBz.day?.charAt(0); let dBranch = curBz.day?.charAt(1);
+    let zhis = [curBz.year?.charAt(1), curBz.month?.charAt(1), curBz.day?.charAt(1), curBz.time?.charAt(1)].filter(z => z && z !== '？');
+    
+    let strInfo = calcStr(curBz); let selfStrength = strInfo.r.includes('從') ? '從格' : (strInfo.r.includes('強') ? '身強' : (strInfo.r.includes('弱') ? '身弱' : '中和'));
+
+    let myOriginalTenGods = []; let myStems = [curBz.year?.charAt(0), curBz.month?.charAt(0), curBz.time?.charAt(0)].filter(s => s && s !== '？' && s !== '-');
+    ['year','month','time'].forEach(p => { let gz = curBz[p]; if(gz && gz !== '？？') { myOriginalTenGods.push(getTG(dStem, gz.charAt(0))); myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : '')); }});
+
+    // -------------------------------------------------------------
+    // 🧬 第一部分：先天漏財基因診斷 (新增模組)
+    // -------------------------------------------------------------
+    let geneMessages = [];
+    let hasLeakageGene = false;
+
+    // 判定財星虛浮 (天干有財，地支無財庫或生源)
+    let hasStemWealth = myStems.some(s => getTG(dStem, s) === '正財' || getTG(dStem, s) === '偏財');
+    let hasRoot = zhis.some(z => {
+        let branchGod = getTG(dStem, HS[z] ? HS[z][0] : '');
+        return ['正財', '偏財', '食神', '傷官'].includes(branchGod);
+    });
+    let is_WealthRootless = hasStemWealth && !hasRoot;
+
+    // 判定比劫過旺 (大於等於3個)
+    let is_BiJieOverload = myOriginalTenGods.filter(g => g === '比肩' || g === '劫財').length >= 3;
+
+    // 判定空亡 (以日柱查空亡)
+    let getKongWang = (dayStem, dayBranch) => {
+        const xun = ['甲子','甲戌','甲申','甲午','甲辰','甲寅'];
+        const kwMap = {'甲子':['戌','亥'], '甲戌':['申','酉'], '甲申':['午','未'], '甲午':['辰','巳'], '甲辰':['寅','卯'], '甲寅':['子','丑']};
+        let offset = (SA.indexOf(dayStem) - BMA.indexOf(dayBranch) + 12) % 12;
+        let xunHead = SA[0] + BMA[(12 - offset) % 12];
+        return kwMap[xunHead] || [];
+    };
+    let kwZhis = getKongWang(dStem, dBranch);
+    let is_WealthVoid = zhis.some(z => kwZhis.includes(z) && ['正財', '偏財'].includes(getTG(dStem, HS[z] ? HS[z][0] : '')));
+
+    if (is_WealthRootless) {
+        geneMessages.push(`<strong style="color:#E8B86D; font-size:14px;">💸 表面風光，財星虛浮</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">你的命盤呈現『財星虛浮』，天干有財但地支無根。這叫作『表面風光』，代表錢財進來得快，但立刻就會因為各種原因轉手出去。你看起來現金流很大，但實際留下來的結餘卻不多。</span>`);
+        hasLeakageGene = true;
+    }
+    if (is_WealthVoid) {
+        geneMessages.push(`<strong style="color:#8BA4C4; font-size:14px;">🕳️ 財富幻影，財逢空亡</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">你的財星落入了『空亡位』。這代表財富對你來說有時像幻影，『看得到卻吃不到』，或是眼看要入袋的錢最後無疾而終。容易因為過度樂觀而高估實際財力，導致過度消費。</span>`);
+        hasLeakageGene = true;
+    }
+    if (is_BiJieOverload) {
+        geneMessages.push(`<strong style="color:#E85D5D; font-size:14px;">⚔️ 劫財大戶，千金散盡</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">你命中的『比劫』過旺，這是一台超級碎鈔機！你的漏財通常跟『人』有關——可能是朋友借錢、合夥被坑、或是為了面子過度請客社交。錢放在戶頭裡，就會莫名其妙被別人『分走』。</span>`);
+        hasLeakageGene = true;
+    }
+
+    let geneHtml = "";
+    if (hasLeakageGene) {
+        geneHtml = `<div style="margin-bottom:16px;">
+            <div style="font-size:14px; color:var(--gold); border-bottom:1px solid var(--goldB); padding-bottom:5px; margin-bottom:10px; font-weight:bold;">🧬 第一階段：先天漏財基因診斷</div>
+            ${geneMessages.join('<br><br>')}
+            <div style="margin-top:14px; padding:12px; background:rgba(232,184,109,0.1); border-left:3px solid #E8B86D; border-radius:8px;">
+                <strong style="color:#E8B86D; font-size:14px;">🛡️ 神探專屬防漏財指南 (物理防禦)</strong><br>
+                <span style="font-size:13px; color:var(--txD); line-height:1.7; display:block; margin-top:6px;">
+                1. <strong>把虛財變實財：</strong>賺到現金第一時間去購買『實體資產』（黃金、房產），這在命理上叫『補財庫』。<br>
+                2. <strong>鎖死資金：</strong>買長年期儲蓄險或強制扣款基金。讓錢『看得到但拿不出來』。<br>
+                3. <strong>降低戶頭水位：</strong>流通帳戶絕對不放太多現金，保持『帳面低調』，避開宇宙奪財頻率！
+                </span>
+            </div>
+        </div>`;
+    } else {
+        geneHtml = `<div style="margin-bottom:16px;">
+            <div style="font-size:14px; color:var(--gold); border-bottom:1px solid var(--goldB); padding-bottom:5px; margin-bottom:10px; font-weight:bold;">🧬 第一階段：先天漏財基因診斷</div>
+            <strong style="color:#5DBB75; font-size:14px;">🧱 財富底氣穩健，無明顯漏財破口</strong><br>
+            <span style="color:var(--txD); font-size:13px; line-height:1.6;">恭喜老闆！你的命格沒有嚴重的先天漏財基因。只要按部就班理財，財富的蓄水能力是非常健康的。</span>
+        </div>`;
+    }
+
+    // -------------------------------------------------------------
+    // ⛈️ 第二部分：後天財富天氣預報 (原本的破財預警)
+    // -------------------------------------------------------------
+    let weatherMessages = [];
+    let tgStem = getTG(dStem, cyStem); let tgBranch = getTG(dStem, HS[cyBranch] ? HS[cyBranch][0] : '');
+    let hasLossGate = false;
+    
+    if (selfStrength === '身強' && (tgStem === '比肩' || tgStem === '劫財' || tgBranch === '比肩' || tgBranch === '劫財')) {
+        weatherMessages.push(`<strong style="color:#E85D5D; font-size:14px;">👥 兄弟分錢，嚴防坑殺</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">今年要特別注意『人』帶來的損財。不要聽信明牌，更不要借錢合夥。錢容易被別人分走或因面子大失血。</span>`);
+        hasLossGate = true;
+    }
+    if ((myOriginalTenGods.includes('正印') || myOriginalTenGods.includes('偏印')) && (tgStem === '正財' || tgStem === '偏財')) {
+        weatherMessages.push(`<strong style="color:#E8B86D; font-size:14px;">📄 決策失誤，合約陷阱</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">今年最怕『貪小便宜吃大虧』。代表合約的印星被破壞，凡涉及簽名、投資、買房，務必找專業人士複審嚴防損失。</span>`);
+        hasLossGate = true;
+    }
+    if (myOriginalTenGods.includes('食神') && tgStem === '偏印') {
+        weatherMessages.push(`<strong style="color:#B0B0B0; font-size:14px;">🔌 財源受阻，斷水斷電</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">最辛苦的破財：斷水斷電。賺錢工具或機會可能突然停擺。這段時間不宜貿然轉型離職，請守住基本盤。</span>`);
+        hasLossGate = true;
+    }
+    if (!hasLossGate) {
+        weatherMessages.push(`<strong style="color:#5DBB75; font-size:14px;">☀️ 氣候晴朗，年度大破財機率低</strong><br><span style="color:var(--txD); font-size:13px; line-height:1.6;">今年流年大氣候並未觸發嚴重的破財地雷，整體財務體質相對健康。</span>`);
+    }
+
+    let myTreasuries = zhis.filter(z => ['辰','戌','丑','未'].includes(z));
+    let myWealthStems = myStems.filter(s => getTG(dStem, s) === '正財' || getTG(dStem, s) === '偏財');
+    let warningMonths = []; let cyStemIdx = SA.indexOf(cyStem); let startMonthIdx = ((cyStemIdx % 5) * 2 + 2) % 10;
+
+    for (let i = 0; i < 12; i++) {
+        let mStem = SA[(startMonthIdx + i) % 10]; let mBranch = BMA[i];
+        let isClash = false; let isCombine = false;
+        if (myTreasuries.some(t => BR["沖"][t] === mBranch)) isClash = true;
+        if (myWealthStems.some(ws => SM[ws] === mStem)) isCombine = true;
+        if (isClash || isCombine) {
+            let reasons = [];
+            if (isClash) reasons.push('金庫大門被撞開'); if (isCombine) reasons.push('財星被合走');
+            warningMonths.push(`👉 <strong>${i+1}月 (${mStem}${mBranch})</strong>：[${reasons.join('、')}]`);
+        }
+    }
+
+    let weatherHtml = `<div style="font-size:14px; color:var(--gold); border-bottom:1px solid var(--goldB); padding-bottom:5px; margin-bottom:10px; font-weight:bold;">⛈️ 第二階段：【${cyGz}年】財富天氣預報</div>` + weatherMessages.join('<br><br>');
+
+    if (warningMonths.length > 0) {
+        weatherHtml += `<div style="margin-top:14px; padding:15px; background:rgba(93,157,232,0.1); border-left:3px solid #5D9DE8; border-radius:8px;"><strong style="color:#5D9DE8; font-size:14px;">☔ 攜帶雨傘：流月破財警報</strong><br><span style="font-size:13px; color:var(--txD); display:inline-block; margin-top:5px; margin-bottom:8px;">下列月份觸發了你的資金破口。請在這些月份預留備用金，嚴防衝動消費：</span><br><span style="color:var(--tx); font-size:13px; line-height:1.8;">${warningMonths.join('<br>')}</span></div>`;
+    }
+
+    ans = `<div style="margin-bottom:12px; color:var(--gold); font-weight:bold; font-size:15px; text-align:center;">🎯 終極財富防禦診斷報告</div>` + geneHtml + weatherHtml;
+  }
+// 🎰 12. 橫財與偏財爆發預測掃描 (✨已升級流月引擎)
+  else if (type === 'lottery') {
+    title = "🎰 橫財與偏財爆發預測";
+    let cy = new Date().getFullYear(); 
+    let cyGz = curLN ? curLN : getYGZ(cy);
+    let cyStem = cyGz.charAt(0); let cyBranch = cyGz.charAt(1);
+    let dStem = curBz.day?.charAt(0);
+    let zhis = [curBz.year?.charAt(1), curBz.month?.charAt(1), curBz.day?.charAt(1), curBz.time?.charAt(1)].filter(z => z && z !== '？');
+
+    // 1. 抓取原局十神判斷偏財
+    let myOriginalTenGods = [];
+    ['year','month','time'].forEach(p => {
+        let gz = curBz[p];
+        if(gz && gz !== '？？') {
+            myOriginalTenGods.push(getTG(dStem, gz.charAt(0)));
+            myOriginalTenGods.push(getTG(dStem, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : ''));
+        }
+    });
+
+    let has_PianCai = myOriginalTenGods.includes('偏財');
+    let myTreasuries = zhis.filter(z => ['辰','戌','丑','未'].includes(z));
+    let has_WealthVault = myTreasuries.length > 0;
+    
+    // 年度大氣候：判斷流年是否精準衝開財庫
+    let is_VaultClashed = myTreasuries.some(t => BR["沖"][t] === cyBranch);
+    let messages = [];
+
+    if (has_PianCai && is_VaultClashed) {
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">🎰 偏財爆發，財庫大開</strong><br><br><span style="color:var(--txD); line-height:1.6;">今年你的偏財星閃耀，且命中的財庫大門被完美衝開。極度容易有意外之財入帳（如中獎、分紅、收到禮物或突發業績）。下班路過彩券行，千萬別錯過試手氣的黃金機會！</span>`);
+    } else if (!has_PianCai && is_VaultClashed) {
+        messages.push(`<strong style="color:#C9A84C; font-size:15px;">💰 金庫敞開，見好就收</strong><br><br><span style="color:var(--txD); line-height:1.6;">今年財庫門被打開了！雖然命中缺乏強烈偏財基因，不適合砸大錢買彩券，但極適合去『討債』、『請款』或是把積壓的庫存變現。把能抓到手的現金收進口袋最實在。</span>`);
+    } else if (has_PianCai && !is_VaultClashed) {
+        messages.push(`<strong style="color:#5D9DE8; font-size:15px;">🔋 偏財蓄力中</strong><br><br><span style="color:var(--txD); line-height:1.6;">你天生自帶偏財基因，對市場與意外之財嗅覺敏銳。但目前大氣候財庫大門緊閉，金雞母正在孵蛋。請耐心等待『衝開財庫』的流月爆發日，平常偶爾買個樂透當作公益即可。</span>`);
+    } else if (!has_PianCai && !has_WealthVault) {
+        messages.push(`<strong style="color:#8BA4C4; font-size:15px;">🧱 腳踏實地，拒絕投機</strong><br><br><span style="color:var(--txD); line-height:1.6;">你的命格屬於標準的『正財體質』，賺的都是實打實的技術錢與辛苦錢。抽獎或博弈對你來說通常是送錢給別人花。把心思專注在本業上，財富天花板一樣可以很高！</span>`);
+    } else {
+        messages.push(`<strong style="color:#5DBB75; font-size:15px;">🏦 守護金庫，穩健累積</strong><br><br><span style="color:var(--txD); line-height:1.6;">你命中帶有財庫，是能守住財富的體質，但目前缺乏強烈的偏財星與衝開財庫的氣流。建議穩健理財，等待財庫被衝開的時機再做資產變現。</span>`);
+    }
+
+    // 🚀 流月偏財雷達掃描
+    let cyStemIdx = SA.indexOf(cyStem);
+    let startMonthIdx = ((cyStemIdx % 5) * 2 + 2) % 10;
+    let monthMsgs = [];
+    for (let i = 0; i < 12; i++) {
+        let mStem = SA[(startMonthIdx + i) % 10]; let mBranch = BMA[i];
+        let mTG_stem = getTG(dStem, mStem);
+        let mTG_branch = getTG(dStem, HS[mBranch] ? HS[mBranch][0] : '');
+        
+        let reasons = [];
+        let isClash = myTreasuries.some(t => BR["沖"][t] === mBranch);
+        let isPianCai = (mTG_stem === '偏財' || mTG_branch === '偏財');
+
+        // 三種級別的偏財觸發
+        if (isClash && isPianCai) reasons.push('💣 財庫大開+偏財降臨 (核彈級中獎日！買彩券/簽大單)');
+        else if (isClash) reasons.push('金庫衝開 (極佳變現/討債/請款時機)');
+        else if (isPianCai) reasons.push('偏財星現 (小試手氣/意外驚喜機會)');
+
+        if (reasons.length > 0) monthMsgs.push(`👉 <strong>${i+1}月 (${mStem}${mBranch})</strong>：[${reasons.join('、')}]`);
+    }
+
+    let finalHtml = messages.join('<br><br>');
+    if (monthMsgs.length > 0) {
+        finalHtml += `<div style="margin-top:16px; padding:15px; background:rgba(232,93,93,0.1); border-left:3px solid #E85D5D; border-radius:8px;"><strong style="color:#E85D5D; font-size:14px;">📅 流月偏財與金庫雷達</strong><br><span style="font-size:13px; color:var(--txD); display:inline-block; margin-top:5px; margin-bottom:8px;">以下是今年偏財星閃耀或財庫被衝開的黃金月份，請把握這些時機試試手氣或進行資產變現：</span><br><span style="color:var(--tx); font-size:13px; line-height:1.8;">${monthMsgs.join('<br>')}</span></div>`;
+    }
+
+    ans = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold);">🎯 【${cyGz}年】橫財與偏財爆發掃描</div>` + finalHtml;
+  }
+// 🚨============================================================🚨
+  // 🚨 GLOBAL OVERRIDE: 「日主受剋」健康與崩潰預警攔截系統 🚨
+  // 🚨============================================================🚨
+  let cy_override = new Date().getFullYear();
+  let cyGz_override = curLN ? curLN : getYGZ(cy_override);
+  let dStem_override = curBz.day?.charAt(0);
+  
+  // 抓取全盤十神
+  let override_OrigGods = [];
+  ['year','month','time'].forEach(p => { 
+      let gz = curBz[p]; 
+      if(gz && gz !== '？？') { 
+          override_OrigGods.push(getTG(dStem_override, gz.charAt(0))); 
+          override_OrigGods.push(getTG(dStem_override, HS[gz.charAt(1)] ? HS[gz.charAt(1)][0] : '')); 
+      }
+  });
+  let override_NowGods = [getTG(dStem_override, cyGz_override.charAt(0)), getTG(dStem_override, HS[cyGz_override.charAt(1)] ? HS[cyGz_override.charAt(1)][0] : '')];
+  let override_AllGods = [...override_OrigGods, ...override_NowGods];
+
+  // 參數判定
+  let current_GuanSha_Level = (override_NowGods.includes('七殺') || override_NowGods.includes('正官')) ? '高' : '低';
+  let has_YinXing_Buffer = override_AllGods.includes('正印') || override_AllGods.includes('偏印');
+  let has_ShiShang_Counter = override_AllGods.includes('食神') || override_AllGods.includes('傷官');
+  let strInfo_override = calcStr(curBz); 
+  let self_Strength_override = strInfo_override.r.includes('從') ? '從格' : (strInfo_override.r.includes('強') ? '身強' : (strInfo_override.r.includes('弱') ? '身弱' : '中和'));
+
+  let overrideHtml = "";
+  let is_UnderAttack = false;
+
+  if (current_GuanSha_Level === '高') {
+      if (!has_YinXing_Buffer && !has_ShiShang_Counter) {
+          is_UnderAttack = true;
+          overrideHtml = `<div style="background:rgba(232,93,93,0.15); border:2px solid #E85D5D; border-radius:12px; padding:16px; margin-bottom:20px;">
+              <strong style="color:#E85D5D; font-size:18px;">🚨 泰山壓頂，緊急避險 (日主受剋)</strong><br><br>
+              <span style="color:var(--tx); font-size:14px; line-height:1.6;">【神探緊急避險指南】<br>系統偵測到近期為『日主受剋』極高壓期！所有的官殺壓力直接打在你身上，沒有任何緩衝。你會覺得莫名焦慮、失眠，甚至身體出現急性發炎。身邊每個人好像都在找你麻煩。<br><br><strong style="color:#E85D5D;">神明指示：</strong> 保命比賺錢重要！請全面降低 KPI、推掉不必要的社交。遇到不講理的人直接認慫，熬過就是贏家！<br><br><strong style="color:#C9A84C;">🧘‍♀️ 靈性急救包：</strong> 氣場太弱，強烈建議本週末安排一次深度<strong style="color:#E8B86D;">頌缽音療</strong>或能量調整，先把自己的印星防護罩建立起來！</span>
+          </div>`;
+      } else if (has_YinXing_Buffer) {
+          overrideHtml = `<div style="background:rgba(93,157,232,0.1); border-left:4px solid #5D9DE8; border-radius:8px; padding:12px; margin-bottom:16px;">
+              <strong style="color:#5D9DE8; font-size:15px;">🛡️ 印星護體，貴人化險</strong><br>
+              <span style="color:var(--txD); font-size:13px; line-height:1.6;">【高壓緩解提示】外在環境壓力極大（官殺旺），但好險你命帶『印星』防護罩！快崩潰時，定有貴人或制度來保護你。遇到困難立刻『討救兵』，多休息或安排頌缽放鬆（補印星能量），壓力將轉化為養分。</span>
+          </div>`;
+      } else if (has_ShiShang_Counter && (self_Strength_override === '身強' || self_Strength_override === '中和')) {
+          overrideHtml = `<div style="background:rgba(232,184,109,0.1); border-left:4px solid #E8B86D; border-radius:8px; padding:12px; margin-bottom:16px;">
+              <strong style="color:#E8B86D; font-size:15px;">⚔️ 食傷制殺，危機入市</strong><br>
+              <span style="color:var(--txD); font-size:13px; line-height:1.6;">【壓力反殺提示】官殺帶來極大危機與小人，但你擁有強大『食傷』武器。你不需要認慫！用你的專業技術或無可挑剔的口才正面迎擊。解決巨大危機後，江湖地位將大幅躍升，這是一場你能贏的硬仗！</span>
+          </div>`;
+      }
+  }
+
+  // ⚠️ 執行攔截與畫面覆蓋
+  let tpOvElement = document.getElementById('tpOV');
+  if (overrideHtml) {
+      // 若為最高警報且詢問進攻型問題，直接將原本的建議反灰並蓋上鎖定標籤
+      if (is_UnderAttack && ['invest', 'biz', 'career'].includes(type)) {
+          ans = overrideHtml + `<div style="position:relative; margin-top:20px;">
+              <div style="position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,26,59,0.65); z-index:10; border-radius:10px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px);">
+                  <span style="background:#E85D5D; color:#fff; padding:8px 16px; border-radius:20px; font-size:14px; font-weight:bold; letter-spacing:2px; transform:rotate(-10deg); box-shadow:0 4px 10px rgba(0,0,0,0.5);">⛔ 進攻型策略已鎖定</span>
+              </div>
+              <div style="filter:grayscale(100%); opacity:0.3; pointer-events:none;">${ans}</div>
+          </div>`;
+          tpOvElement.classList.add('danger-mode');
+      } else {
+          // 其他狀態或有護盾時，置頂顯示提醒即可
+          ans = overrideHtml + ans;
+          if(is_UnderAttack) tpOvElement.classList.add('danger-mode');
+          else tpOvElement.classList.remove('danger-mode');
+      }
+  } else {
+      tpOvElement.classList.remove('danger-mode');
+  }
+  // 🚨================= 攔截系統結束 =================🚨
+  // 👉 這四行負責將算好的結果顯示在提詞機上，絕不能少！
+  document.getElementById('tpTtl').innerText = title;
+  document.getElementById('tpBody').innerHTML = `<div class="tp-card" style="font-size:14px; line-height:1.8;">${ans}</div>`;
+  document.getElementById('tpBD').classList.add('on');
+  document.getElementById('tpOV').classList.add('on');
+};
+
+// ════════════════════════════════════════
+// 🤝 合盤引擎
+// ════════════════════════════════════════
+let matchGender = '男';
+window.selMatchGender = function(g) {
+  matchGender = g;
+  document.getElementById('mg-m').classList.toggle('on', g === '男');
+  document.getElementById('mg-f').classList.toggle('on', g === '女');
+};
+
+window.updateMatchSelect = function() {
+  const sel = document.getElementById('matchExistCust');
+  if(!sel) return;
+  let opts = '<option value="">-- 手動輸入資料 (不使用資料庫) --</option>';
+  for(let id in window.allCustData) {
+      if(id === curId) continue;
+      let c = window.allCustData[id];
+      opts += `<option value="${id}">${c['姓名']} (${c['性別']||''}) - ${c['出生日期']||''}</option>`;
+  }
+  sel.innerHTML = opts;
+};
+
+window.syncMatchUI = function() {
+  const id = document.getElementById('matchExistCust').value;
+  const manualDiv = document.getElementById('manualMatchInput');
+  if(!manualDiv) return;
+  if(id) {
+      manualDiv.style.opacity = '0.3';
+      manualDiv.style.pointerEvents = 'none';
+  } else {
+      manualDiv.style.opacity = '1';
+      manualDiv.style.pointerEvents = 'auto';
+  }
+};
+
+window.runMatch = function() {
+  if(!curBz) { alert("請先載入主客戶命盤！"); return; }
+  const targetId = document.getElementById('matchExistCust').value;
+  // ✅ 修正：移除重複宣告，統一用一組變數
+  let pData, pGender, uk;
+
+  if (targetId) {
+      const tData = window.allCustData[targetId];
+      if(!tData || !tData['八字']) { alert("對方資料庫格式異常！"); return; }
+      pData = tData['八字'];
+      pGender = tData['性別'];
+      uk = (pData.time === '？？');
+  } else {
+      const md = document.getElementById('matchDate').value;
+      if(!md) { alert("請選擇現有客戶，或手動輸入出生日期！"); return; }
+      uk = document.getElementById('matchUnkTime').checked;
+      let tm = document.getElementById('matchTime').value;
+      pGender = matchGender;
+      pData = calcBZ(md, tm || "12:00", uk, 120, 2, pGender);
+  }
+
+  const relation = document.getElementById('matchRelation').value;
+  let html = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold); font-size:14px; font-weight:bold;">🎯 雙人合盤分析結果</div>`;
+
+  let uDs = curBz.day.charAt(0), uDb = curBz.day.charAt(1);
+  let pDs = pData.day.charAt(0), pDb = pData.day.charAt(1);
+  let uMb = curBz.month.charAt(1), pMb = pData.month.charAt(1);
+  let uYb = curBz.year.charAt(1), pYb = pData.year.charAt(1);
+
+  let uStr = calcStr(curBz);
+  let pStr = calcStr(pData);
+  let uYongArr = uStr.yongShen.split('、');
+  let uJiArr = uStr.jiShen.split('、');
+
+  let pElems = calcElems(pData).sc;
+  let maxScore = -1; let pDomEn = '';
+  for(let k in pElems){ if(pElems[k] > maxScore){ maxScore = pElems[k]; pDomEn = k; } }
+  const E2C = {wood:'木', fire:'火', earth:'土', metal:'金', water:'水'};
+  const C2E = {'木':'wood', '火':'fire', '土':'earth', '金':'metal', '水':'water'};
+  let pDom = E2C[pDomEn];
+
+  let uMeE = gec(uDs);
+  let pMeE = gec(pDs);
+
+  // ✅ 修正：統一宣告 pHasTime 與 pTb（不重複）
+  let uHasTime = curBz.time && curBz.time !== '？？' && curBz.time !== '--';
+  let pHasTime = !uk;
+  let uTb = uHasTime ? curBz.time.charAt(1) : null;
+  let pTb = pHasTime ? pData.time?.charAt(1) : null;
+
+  let isTimeConflict = false;
+  if (uHasTime && pHasTime && uTb && pTb) {
+      if (BR["沖"][uTb] === pTb || BR["害"][uTb] === pTb) isTimeConflict = true;
+      if (BR["刑"]["無禮"].includes(uTb) && BR["刑"]["無禮"].includes(pTb) && uTb !== pTb) isTimeConflict = true;
+      if (uTb === pTb && BR["刑"]["自刑"].includes(uTb)) isTimeConflict = true;
+      if (BR["刑"]["無恩"].includes(uTb) && BR["刑"]["無恩"].includes(pTb) && uTb !== pTb) isTimeConflict = true;
+      if (BR["刑"]["恃勢"].includes(uTb) && BR["刑"]["恃勢"].includes(pTb) && uTb !== pTb) isTimeConflict = true;
+  }
+
+  const tianYiMap = {'甲':['丑','未'],'乙':['子','申'],'丙':['亥','酉'],'丁':['亥','酉'],'戊':['丑','未'],'己':['子','申'],'庚':['丑','未'],'辛':['午','寅'],'壬':['卯','巳'],'癸':['卯','巳']};
+  let uTianYi = tianYiMap[uDs] || [];
+  let hasTianYi = uTianYi.includes(pYb) || uTianYi.includes(pMb) || uTianYi.includes(pDb);
+  if (pHasTime && pTb) hasTianYi = hasTianYi || uTianYi.includes(pTb);
+
+  let uBiJieEl = E2C[uMeE];
+  let isBiJieDuoCai = (pDom === uBiJieEl && uJiArr.includes(uBiJieEl));
+
+  let messages = [];
+
+  if (relation === 'love') {
+      let uSpouseEl = (curGender === '男') ? E2C[ER[uMeE].con] : E2C[Object.keys(ER).find(k => ER[k].con === uMeE)];
+      if (uYongArr.includes(pDom) && SM[uDs] === pDs) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">💖 靈魂補給站，宿命相連</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">他是你專屬的『靈魂補給站』！你們兩個的氣場非常互補，他的強項剛好能補足你命盤的缺憾。加上你們天干相合，一見面就會有『上輩子就認識』的宿命感。跟他在一起時，你會覺得自己變得更完整、更安定，這是非常難得的正緣，遇到請務必好好把握！</span></div>`);
+      }
+      if (BR["沖"][uDb] === pDb) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">⚔️ 相愛相殺，水火不容</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">你們兩個是『相愛相殺』的組合！雖然彼此之間有很強的吸引力，但因為夫妻宮相衝，生活細節與價值觀上簡直是水火不容。如果想要長久走下去，必須要有一個人學會大幅度的退讓，否則這段關係在長期相處下，會耗盡你極大的心力。</span></div>`);
+      } else if (WXS[getWX(uDb)] === getWX(pDb) || WXS[getWX(pDb)] === getWX(uDb) || getWX(uDb) === getWX(pDb)) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(93,187,117,.3)"><strong style="color:#5DBB75; font-size:14px;">🏡 生活神隊友，步調和諧</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">你們在生活上是絕佳的神隊友！夫妻宮相生或相同，代表你們的生活習慣、對家庭的價值觀，甚至在親密關係上都非常合拍。這種關係不一定每天轟轟烈烈，但相處起來極度舒服、沒有壓力，是非常適合長久經營的組合。</span></div>`);
+      }
+      if (uYongArr.includes(uSpouseEl)) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(201,168,76,.3)"><strong style="color:var(--gold); font-size:14px;">👑 命中貴人，帶旺運勢</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">他就是你命中注定的頂級貴人！從八字來看，另一半的星位是你的『喜神』。這代表跟他在一起之後，你的氣場會被帶旺，事業會變順、財運也會跟著好起來。他不僅是你伴侶，更是那個能讓你在人生道路上變更好的人！</span></div>`);
+      } else if (uJiArr.includes(uSpouseEl)) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(180,100,220,.3)"><strong style="color:#CE93D8; font-size:14px;">⚠️ 虐戀警報，人生導師</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">他可能不是傳統定義上來陪你享福的『對的人』，他是來當你『人生導師』的。這段關係會讓你成長得非常快，但過程會很辛苦。跟他在一起後，你可能會覺得壓力變大、心情悶，甚至為了他破財。這是一場高難度的磨練，你要問問自己準備好承受這份『虐戀』的功課了嗎？</span></div>`);
+      }
+      if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">🍵 樸實平穩，細水長流</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方命盤五行交集較為平穩，沒有極端的衝突或宿命般的綑綁。屬於細水長流的緣分。</span></div>`);
+
+      let messages2 = [];
+      let uPalaceEl = E2C[gec(uDb)];
+      let uPalaceJoy = uYongArr.includes(uPalaceEl);
+      let uSpouseJoy = uYongArr.includes(uSpouseEl);
+      if (uPalaceJoy && !uSpouseJoy) {
+          messages2.push(`<div class="tp-card" style="border-color:rgba(232,184,109,.3)"><strong style="color:#E8B86D; font-size:14px;">🧸 情緒滿分，麵包不足</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">殘酷診斷：另一半對你可能非常體貼，家裡佈置得也很溫馨（夫妻宮為喜）。但現實是，對方的個人能力或上進心可能達不到你的期望（配偶星為忌）。這段關係你享受的是『情緒價值』，但必須由你來扛下更多的『經濟與現實壓力』。</span></div>`);
+      } else if (!uPalaceJoy && uSpouseJoy) {
+          messages2.push(`<div class="tp-card" style="border-color:rgba(180,100,220,.3)"><strong style="color:#CE93D8; font-size:14px;">💼 物質豐厚，情緒地獄</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">殘酷診斷：另一半在社會上非常有能力、多金或是個大老闆（配偶星為喜）。但回到家後，你們的相處卻充滿壓迫感甚至經常吵架（夫妻宮為忌）。這段關係你享受的是『物質與成就』，但必須忍受『情緒上的孤單與冷暴力』。</span></div>`);
+      }
+      if (BR["沖"][uMb] === pMb || BR["害"][uMb] === pMb) {
+          messages2.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">⚔️ 門神相衝，外在阻力</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">在亞洲社會，結婚是兩家人的事。你們的月柱產生了強烈衝突。即便你們愛得死去活來，雙方父母也極容易互看不順眼，或是兩家人生活水準差異極大。建議婚後務必『搬出去住』，用物理距離化解家族帶來的巨大壓力！</span></div>`);
+      }
+      let cy = new Date().getFullYear();
+      let uCurDy = curBz.daYun?.find(dy => cy >= dy.startYear && cy < dy.startYear + 10);
+      let pCurDy = pData?.daYun?.find(dy => cy >= dy.startYear && cy < dy.startYear + 10);
+      if (uCurDy && pCurDy) {
+          let uDyTg = getTG(uDs, uCurDy.ganzhi.charAt(0)), pDyTg = getTG(pDs, pCurDy.ganzhi.charAt(0));
+          const stableTg = ['正官', '正印', '偏印', '正財'];
+          if (stableTg.includes(uDyTg) !== stableTg.includes(pDyTg)) {
+              messages2.push(`<div class="tp-card" style="border-color:rgba(93,157,232,.3)"><strong style="color:#5D9DE8; font-size:14px;">⏳ 節奏錯位，生命時差</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">你現在渴望安定與家庭，他卻面臨事業變動、渴望自由與冒險（大運拉扯）。這段關係最大的考驗在於『大運的節奏錯位』，需要給予彼此極大的包容與發展空間，否則極易因為步伐不一而走散。</span></div>`);
+          }
+      }
+      if (uHasTime && pHasTime && isTimeConflict) {
+          messages2.push(`<div class="tp-card" style="border-color:rgba(150,150,150,.3)"><strong style="color:#B0B0B0; font-size:14px;">🛤️ 終點站不同，晚年分歧</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">日柱合是談戀愛的浪漫，時柱合才是過日子的心安。你們的時柱發生了衝突，這代表在『小孩怎麼教』以及『未來老後要過什麼生活』這兩大議題上，你們的價值觀有致命的分歧。建議在進入婚姻前，務必深度溝通與約法三章！</span></div>`);
+      }
+      html += messages.join('');
+      if (messages2.length > 0) {
+          html += `<div style="margin-top:24px; margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold); font-size:14px; font-weight:bold;">🔐 第二階段：進階避坑報告</div>` + messages2.join('');
+      }
+  }
+  else if (relation === 'team') {
+      let isUStrong = uStr.r.includes('強');
+      let isPStrong = pStr.r.includes('強');
+      if (isUStrong && isPStrong) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">⚔️ 兩強相爭，權力鬥爭</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方皆為身強格局。主觀意識都極強，互不相讓。合夥初期雖然戰鬥力驚人，但長期必生權力鬥爭。建議務必『明確劃分部門與決策權』，否則極易因誰也不服誰而拆夥。</span></div>`);
+      } else if (isUStrong !== isPStrong) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(93,187,117,.3)"><strong style="color:#5DBB75; font-size:14px;">🚂 主從分明，完美互補</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">身強與身弱的絕佳組合！就像火車頭與燃料，一個負責強勢決策衝鋒，一個負責幕後輔助與細節。只要主從關係確立，這是一個非常具有續航力與互補性的黃金團隊。</span></div>`);
+      }
+      if (isBiJieDuoCai) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,184,109,.3)"><strong style="color:#E8B86D; font-size:14px;">🧛 引狼入室，比劫奪財</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">高風險警告！對方最強勢的氣場剛好踩中你的『奪財地雷』。這意味著利潤極容易被對方分走、私吞，或是因為對方的決策失誤讓你扛下債務。財務必須極度透明，親兄弟明算帳！</span></div>`);
+      } else if (uYongArr.includes(pDom)) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(201,168,76,.3)"><strong style="color:var(--gold); font-size:14px;">🍀 開運神隊友，帶旺氣場</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">他就是你的財神爺！對方的強勢五行剛好是你的喜用神，跟他合夥能直接帶旺你的事業運與財運，屬於極度加分的開運神隊友！</span></div>`);
+      }
+      if (uHasTime && pHasTime && isTimeConflict) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(180,100,220,.3)"><strong style="color:#CE93D8; font-size:14px;">💣 時柱炸彈，獲利了結危機</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">你們的時柱（結果宮）發生了嚴重衝突！這代表合夥最危險的時刻不是現在，而是『公司賺錢要分潤』或是『準備退場拆夥』的時候。極易因為分錢不均或對未來的路線分歧而撕破臉，合夥協議務必提早寫死退場機制！</span></div>`);
+      }
+      if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">🤝 基礎合夥，規矩辦事</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方命盤無嚴重衝突，屬於中規中矩的合夥關係，照合約精神走即可。</span></div>`);
+      html += messages.join('');
+  }
+  else if (relation === 'boss') {
+      let uYinEl = E2C[Object.keys(ER).find(k => ER[k].gen === uMeE)];
+      let uGuanShaEl = E2C[Object.keys(ER).find(k => ER[k].con === uMeE)];
+      let uShiShangEl = E2C[ER[uMeE].gen];
+      let pGuanShaEl = E2C[Object.keys(ER).find(k => ER[k].con === pMeE)];
+      if (pDom === uYinEl && uYongArr.includes(uYinEl)) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(201,168,76,.3)"><strong style="color:var(--gold); font-size:14px;">🎓 提攜型大貴人</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">這個主管/業主是你的大貴人！他會願意教你真本事，甚至在你出包時幫你扛責任。跟他合作雖然要聽訓，但能學到非常多東西，請務必抱緊這條大腿。</span></div>`);
+      } else if (pDom === uGuanShaEl && uStr.r.includes('弱')) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(150,150,150,.3)"><strong style="color:#B0B0B0; font-size:14px;">⛓️ 窒息壓迫，身心俱疲</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">你的氣場完全被對方剋制死死的！面對這個主管，你會覺得壓力大到無法呼吸，動輒得咎。這是一段極度消耗你精神能量的關係，建議保持安全距離，或是設定好停損點。</span></div>`);
+      }
+      if (ER[C2E[uShiShangEl]] && ER[C2E[uShiShangEl]].con === C2E[pGuanShaEl]) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">🔥 天生冤家，水火不容</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">造反預警！你的『傷官』天生剋制對方的『正官』。你們的溝通極度不對頻：你覺得他古板難搞，他覺得你叛逆不聽話。這是一個非常容易爆發嚴重口角與衝突的組合，發言前請三思！</span></div>`);
+      }
+      if (hasTianYi) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(93,187,117,.3)"><strong style="color:#5DBB75; font-size:14px;">🌟 天乙神助攻</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">對方命盤自帶你的『天乙貴人』！這是一個超強護身符，不管他平時對你多兇多嚴格，只要遇到生死交關的嚴重失誤，他絕對會奇蹟似地拉你一把，不會見死不救。</span></div>`);
+      }
+      if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">💼 職場過客，公事公辦</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方屬於正常的職場從屬關係，拿錢辦事，保持專業即可。</span></div>`);
+      html += messages.join('');
+  }
+  else if (relation === 'client') {
+      if (SM[uDs] === pDs) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(93,187,117,.3)"><strong style="color:#5DBB75; font-size:14px;">🤝 一見鍾情成交</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">天干五合發威！你跟這個客戶有一種莫名其妙的信任感，幾乎不需要花太多時間推銷，只要誠意到了，合約自然就會簽下來。請好好把握這種『鐵粉』。</span></div>`);
+      } else if (ER[uMeE].con === pMeE) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(201,168,76,.3)"><strong style="color:var(--gold); font-size:14px;">💰 送財童子 (主導權 100%)</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">從八字看，你完全剋得住對方！在這個談判局裡你是老大，對方會不自覺地聽從你的專業建議。不要客氣，直接報價、開出你的條件，穩拿！</span></div>`);
+      } else if (ER[pMeE].con === uMeE) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">💼 挑剔型客戶 (硬仗防守)</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">對方氣場剋制你！這是一個覺得『出錢就是老大』的挑剔型客戶。極容易壓價或是提出苛刻的要求，你需要靠極致的耐心與無懈可擊的專業才能收服他，這是一場硬仗。</span></div>`);
+      }
+      if (isBiJieDuoCai) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(232,184,109,.3)"><strong style="color:#E8B86D; font-size:14px;">⚔️ 競爭激烈，嚴防攔胡</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">比劫奪財雷達響起！這個客戶手上絕對還有其他備案在比價，或者容易被同業攔截。請死死盯緊進度，多給一點甜頭促成簽約，否則煮熟的鴨子極易飛走。</span></div>`);
+      }
+      if (BR["合"][uYb] === pYb) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(180,100,220,.3)"><strong style="color:#CE93D8; font-size:14px;">🏢 企業級金主 / 放長線釣大魚</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方年柱相合！這代表他是一個可以為你帶來長期、穩定、甚至牽涉到大型企業資源的金主客戶。決策時間可能較長，但非常值得放長線釣大魚。</span></div>`);
+      } else if (BR["合"][uMb] === pMb) {
+          messages.push(`<div class="tp-card" style="border-color:rgba(93,157,232,.3)"><strong style="color:#5D9DE8; font-size:14px;">🤝 圈內熟客 / 快速成交</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方月柱相合！代表你們在事業理念或圈子內非常有共鳴。這種客戶通常靠信任與人脈介紹而來，溝通成本極低，決策與成交速度會非常快。</span></div>`);
+      }
+      if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">📝 一般過路客</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">氣場無特別牽扯，用常規的業務手段應對即可。</span></div>`);
+      html += messages.join('');
+
+      if (uk && relation === 'client') {
+          let blindMessages = [];
+          if (pDs === '庚') blindMessages.push(`<strong style="color:#E8B86D;">【鋼鐵直客】</strong> 對方是庚金日主，講話請乾脆，直接亮底牌，最討厭繞圈子與廢話。`);
+          if (pDs === '癸') blindMessages.push(`<strong style="color:#5D9DE8;">【細節控客】</strong> 對方是癸水日主，心思極細且多疑，請準備大量數據與保固條款給他安全感。`);
+          if (['申','酉','戌'].includes(pMb)) blindMessages.push(`<strong style="color:var(--tx);">【秋季原則派】</strong> 重合約、極度硬派，凡事按規矩與SOP辦事，不吃人情那一套。`);
+          if (['亥','子','丑'].includes(pMb)) blindMessages.push(`<strong style="color:#8BA4C4;">【冬季深沉派】</strong> 話少心防重，算得很精。談判時切勿給他壓迫感，要讓他覺得是自己做出的決定。`);
+          if(blindMessages.length > 0) {
+              html += `<div style="margin-top:24px; margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold); font-size:14px; font-weight:bold;">👁️ 情報不足：盲測快攻指南</div>`;
+              html += `<div class="tp-card" style="border-color:rgba(150,150,150,.3); line-height:1.8; font-size:13px; color:var(--txD);">` + blindMessages.join('<br><br>') + `</div>`;
+          }
+      }
+  }
+
+  document.getElementById('matchResult').innerHTML = html;
+};
+
+loadCust();
+</script>
+</body>
+</html>

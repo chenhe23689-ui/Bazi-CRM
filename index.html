@@ -2504,10 +2504,10 @@ function analDyn(bz,dy,ln,ly){
     if(!dg||!dz)return;
     let grouped = {};
     
-    // 🚨 擴充雷達：讓流年流月也會去掃描「當前大運」！
+    // 🚨 修正：直接使用傳入的 dy 參數，拔掉 window.curDY 確保流年流月 100% 抓得到大運！
     let checkTargets = [...ps];
-    if (dn !== '大運' && window.curDY) {
-        checkTargets.push({n:'大運', g:window.curDY.charAt(0), z:window.curDY.charAt(1), gz:window.curDY, desc:'十年氣場'});
+    if (dn !== '大運' && dy) {
+        checkTargets.push({n:'大運', g:dy.charAt(0), z:dy.charAt(1), gz:dy, desc:'十年氣場'});
     }
 
     checkTargets.forEach(p=>{

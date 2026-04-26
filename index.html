@@ -2713,23 +2713,26 @@ function analDyn(bz,dy,ln,ly){
     {n:'時柱',g:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(0):'？',z:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(1):'？',gz:bz.time, desc:'子女・晚年'}
   ];
   
+  // 🤖 智能總結引擎：統計計分板
+  let stats = { chong:0, he:0, xingHai:0, liang:0, fuYin:0 };
+
   const chk=(dn,dg,dz,dgz)=>{
     if(!dg||!dz)return;
     let grouped = {};
     
-    // 🚨 修正：直接使用傳入的 dy 參數，拔掉 window.curDY 確保流年流月 100% 抓得到大運！
     let checkTargets = [...ps];
     if (dn !== '大運' && dy) {
         checkTargets.push({n:'大運', g:dy.charAt(0), z:dy.charAt(1), gz:dy, desc:'十年氣場'});
     }
 
-   checkTargets.forEach(p=>{
+    checkTargets.forEach(p=>{
       if(p.g==='？'||p.z==='？')return;
       
       // 📜 【梁派秘傳】天干五合攔截器
       if (SM[p.g] === dg) {
           let liangText = (typeof LIANG_HE !== 'undefined' && LIANG_HE[dgz]) ? LIANG_HE[dgz][p.gz] : null;
           if (liangText) {
+              stats.liang++; // 智能統計+1
               let key = `Liang_${dg}合${p.g}`;
               if(!grouped[key]) {
                   grouped[key] = { 
@@ -2745,10 +2748,11 @@ function analDyn(bz,dy,ln,ly){
           }
       }
 
-      // 📜 【梁派秘傳】地支六合攔截器 (👉 這次新增的這段)
+      // 📜 【梁派秘傳】地支六合攔截器
       if (BR["合"][p.z] === dz) {
           let liangZhiText = (typeof LIANG_ZHI_HE !== 'undefined' && LIANG_ZHI_HE[dgz]) ? LIANG_ZHI_HE[dgz][p.gz] : null;
           if (liangZhiText) {
+              stats.liang++; // 智能統計+1
               let key = `Liang_${dz}合${p.z}`;
               if(!grouped[key]) {
                   grouped[key] = { 
@@ -2764,12 +2768,12 @@ function analDyn(bz,dy,ln,ly){
           }
       }
 
-
       let type = "", icon = "", title = "", desc = CK["沖"], isHe = false;
       let specialType = "";
-      if(p.g===dg && p.z===dz) specialType = "伏吟";
-      else if(SC[p.g]===dg && BR["沖"][p.z]===dz) specialType = "天剋地衝";
-      else if(SM[p.g]===dg && BR["合"][p.z]===dz) specialType = "天合地合";
+      if(p.g===dg && p.z===dz) { specialType = "伏吟"; stats.fuYin++; }
+      else if(SC[p.g]===dg && BR["沖"][p.z]===dz) { specialType = "天剋地衝"; stats.chong += 2; }
+      else if(SM[p.g]===dg && BR["合"][p.z]===dz) { specialType = "天合地合"; stats.he += 2; }
+      
       if(specialType){
         let spCls = specialType==="伏吟"?"a-fy":(specialType==="天剋地衝"?"a-chong":"a-ml");
         let spIco = specialType==="伏吟"?"⚠️":(specialType==="天剋地衝"?"💥":"🕸️");
@@ -2780,17 +2784,18 @@ function analDyn(bz,dy,ln,ly){
         grouped[key].locs.push(p.desc);
         return;
       }
-      if(BR["沖"][p.z]===dz) { type="a-chong"; icon="⚡"; title="衝"; desc=CK["沖"]; }
-      else if(BR["合"][p.z]===dz) { type="a-he"; icon="🤝"; title="合"; desc=CK["合"]; isHe=true; }
-      else if(BR["害"][p.z]===dz) { type="a-hai"; icon="⚠️"; title="害"; desc=CK["害"]; }
-      else if(BR["破"][p.z]===dz) { type="a-po"; icon="💔"; title="破"; desc=CK["破"]; }
+      
+      if(BR["沖"][p.z]===dz) { type="a-chong"; icon="⚡"; title="衝"; desc=CK["沖"]; stats.chong++; }
+      else if(BR["合"][p.z]===dz) { type="a-he"; icon="🤝"; title="合"; desc=CK["合"]; isHe=true; stats.he++; }
+      else if(BR["害"][p.z]===dz) { type="a-hai"; icon="⚠️"; title="害"; desc=CK["害"]; stats.xingHai++; }
+      else if(BR["破"][p.z]===dz) { type="a-po"; icon="💔"; title="破"; desc=CK["破"]; stats.xingHai++; }
       
       let isXing = false;
       if(BR["刑"]["無禮"].includes(p.z)&&BR["刑"]["無禮"].includes(dz)&&p.z!==dz) isXing=true;
       if(p.z===dz&&BR["刑"]["自刑"].includes(p.z)) isXing=true;
       if(BR["刑"]["無恩"].includes(p.z)&&BR["刑"]["無恩"].includes(dz)&&p.z!==dz) isXing=true;
       if(BR["刑"]["恃勢"].includes(p.z)&&BR["刑"]["恃勢"].includes(dz)&&p.z!==dz) isXing=true;
-      if(isXing) { type="a-xing"; icon="⚖️"; title="刑"; desc=CK["刑"]; }
+      if(isXing) { type="a-xing"; icon="⚖️"; title="刑"; desc=CK["刑"]; stats.xingHai++; }
       
       if(type){
         let key = `${type}_${title}`;
@@ -2815,6 +2820,51 @@ function analDyn(bz,dy,ln,ly){
   if(dy)chk("大運",dy.charAt(0),dy.charAt(1),dy);
   if(ln)chk("流年",ln.charAt(0),ln.charAt(1),ln);
   if(ly)chk("流月",ly.charAt(0),ly.charAt(1),ly);
+
+  // 🤖 智能總結生成區
+  if (alerts.length > 0) {
+      let aiMood = "平穩";
+      let aiColor = "var(--txD)";
+      let aiText = "";
+
+      if (stats.chong > 0 && stats.he > 0) {
+          aiMood = "先破後立";
+          aiColor = "#E8B86D";
+          aiText = "這是一個「變動與機遇並存」的時期。舊有的僵局會被打破，同時也會迎來新的合作或機會。切忌固執己見，順勢而為是最佳策略。";
+      } else if (stats.chong >= 2 || stats.fuYin > 0) {
+          aiMood = "高度戒備";
+          aiColor = "#E85D5D";
+          aiText = "近期氣場劇烈震盪，容易遇到突發狀況或人事糾紛。神探建議「宜守不宜攻」，重要決策請暫緩，凡事以和為貴，並留意健康與財務安全。";
+      } else if (stats.he >= 2) {
+          aiMood = "順風順水";
+          aiColor = "#5DBB75";
+          aiText = "恭喜！近期人氣與資源高度匯聚，是拓展人脈、談定合約或確立感情關係的絕佳黃金期。請積極把握身邊出現的貴人與機會。";
+      } else if (stats.liang > 0) {
+          aiMood = "大師指路";
+          aiColor = "#C9A84C";
+          aiText = "觸發了特定的命運契機！請特別留意上方【梁派秘傳】的專屬提示，這是你近期破局或避坑的最關鍵指引。";
+      } else if (stats.he > 0) {
+          aiMood = "微幅上揚";
+          aiColor = "#5D9DE8";
+          aiText = "整體運勢平順中帶有助力。有機會遇到契合的對象或合作夥伴，建議多參與社交或團隊活動。";
+      } else if (stats.xingHai > 0) {
+          aiMood = "小幅波動";
+          aiColor = "#CE93D8";
+          aiText = "近期會有一些繁瑣的小問題或背後的流言蜚語，容易造成精神內耗。保持耐心，將專注力放回自己身上即可，不足以撼動大局。";
+      }
+
+      let summaryHtml = `
+      <div style="margin-top:20px; padding:16px; background:var(--sf2); border:1px dashed ${aiColor}; border-radius:12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+          <div style="font-size:14px; font-weight:bold; color:${aiColor}; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+              <span>🧠 神探 AI 綜合判定：</span>
+              <span style="background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:6px; font-size:12px;">${aiMood}</span>
+          </div>
+          <div style="font-size:13px; color:var(--tx); line-height:1.6; letter-spacing:1px;">${aiText}</div>
+      </div>`;
+      
+      alerts.push(summaryHtml);
+  }
+
   return alerts.join('');
 }
 

@@ -3368,61 +3368,7 @@ window.openEdit = function(id) {
     
     // 切換成編輯模式的外觀
     document.querySelector('#p-add .hdr-title').innerText = '編 輯 客 戶';
-    document.getElementById('saveBtn').addEventListener('click', async() => {
-  const btn = document.getElementById('saveBtn');
-  const name = document.getElementById('custName').value;
-  const bd = document.getElementById('birthDate').value;
-  if(!name || !bd) { alert("請填寫姓名與出生日期"); return; }
-  
-  btn.disabled = true; 
-  btn.innerText = '☯ 處理中...';
-  
-  try {
-    const bt = document.getElementById('birthTime').value;
-    const uk = document.getElementById('unkTime').checked;
-    const ln = document.getElementById('longi').value;
-    const sc = document.getElementById('ziHour').value;
-    const bz = calcBZ(bd, bt, uk, ln, sc, curGender);
-    
-    // 打包基本資料
-    const payload = {
-      姓名: name,
-      性別: curGender,
-      出生日期: bd,
-      出生時間: bt,      // ✅ 以後都會存下最原始的時間
-      不知道時間: uk,
-      經度: ln,
-      子時設定: sc,
-      諮詢日期: document.getElementById('consultDate').value,
-      八字: bz
-    };
 
-    if (window.editCustId) {
-      // ✏️【編輯模式】用 updateDoc 覆蓋，絕對不會洗掉筆記與歷史紀錄！
-      await updateDoc(doc(db, "Customers", window.editCustId), payload);
-      btn.innerText = '✓ 更新成功！';
-    } else {
-      // ➕【新增模式】用 addDoc 建立新客戶
-      payload.專屬筆記 = "";
-      payload.身心靈紀錄 = [];
-      payload.建檔時間 = new Date();
-      await addDoc(collection(db, "Customers"), payload);
-      btn.innerText = '✓ 儲存成功！';
-    }
-    
-    setTimeout(() => {
-      window.resetAddForm(); // 儲存完後重置表單
-      btn.disabled = false;
-    }, 1500);
-    
-    loadCust();
-    navTo('p-home');
-  } catch(e) {
-    console.error(e);
-    btn.innerText = '✕ 失敗'; 
-    btn.disabled = false;
-  }
-});
     
     navTo('p-add'); // 切換到表單頁面
 };
@@ -3484,29 +3430,60 @@ window.doLogout = function() {
   }
 };
 
-document.getElementById('saveBtn').addEventListener('click',async()=>{
-  const btn=document.getElementById('saveBtn');
-  const name=document.getElementById('custName').value;
-  const bd=document.getElementById('birthDate').value;
-  if(!name||!bd){alert("請填寫姓名與出生日期");return;}
-  btn.disabled=true;btn.innerText='☯ 排盤中...';
-  try{
-    const bt=document.getElementById('birthTime').value;
-    const uk=document.getElementById('unkTime').checked;
-    const ln=document.getElementById('longi').value;
-    const sc=document.getElementById('ziHour').value;
-    const bz=calcBZ(bd,bt,uk,ln,sc,curGender);
-    await addDoc(collection(db,"Customers"),{
-      姓名:name,性別:curGender,出生日期:bd,
-      諮詢日期:document.getElementById('consultDate').value,
-      專屬筆記:"",八字:bz,建檔時間:new Date()
-    });
-    document.getElementById('custName').value='';
-    document.getElementById('birthDate').value='';
-    btn.innerText='✓ 儲存成功！';
-    setTimeout(()=>{btn.innerText='☯ 排盤並儲存至雲端';btn.disabled=false;},2000);
-    loadCust();navTo('p-home');
-  }catch(e){btn.innerText='✕ 儲存失敗';btn.disabled=false;}
+document.getElementById('saveBtn').addEventListener('click', async() => {
+  const btn = document.getElementById('saveBtn');
+  const name = document.getElementById('custName').value;
+  const bd = document.getElementById('birthDate').value;
+  if(!name || !bd) { alert("請填寫姓名與出生日期"); return; }
+  
+  btn.disabled = true; 
+  btn.innerText = '☯ 處理中...';
+  
+  try {
+    const bt = document.getElementById('birthTime').value;
+    const uk = document.getElementById('unkTime').checked;
+    const ln = document.getElementById('longi').value;
+    const sc = document.getElementById('ziHour').value;
+    const bz = calcBZ(bd, bt, uk, ln, sc, curGender);
+    
+    // 打包基本資料
+    const payload = {
+      姓名: name,
+      性別: curGender,
+      出生日期: bd,
+      出生時間: bt,      
+      不知道時間: uk,
+      經度: ln,
+      子時設定: sc,
+      諮詢日期: document.getElementById('consultDate').value,
+      八字: bz
+    };
+
+    if (window.editCustId) {
+      // ✏️【編輯模式】覆蓋舊資料，保留同一筆 ID
+      await updateDoc(doc(db, "Customers", window.editCustId), payload);
+      btn.innerText = '✓ 更新成功！';
+    } else {
+      // ➕【新增模式】建立新客戶
+      payload.專屬筆記 = "";
+      payload.身心靈紀錄 = [];
+      payload.建檔時間 = new Date();
+      await addDoc(collection(db, "Customers"), payload);
+      btn.innerText = '✓ 儲存成功！';
+    }
+    
+    setTimeout(() => {
+      window.resetAddForm(); // 儲存完後把表單洗乾淨
+      btn.disabled = false;
+    }, 1500);
+    
+    loadCust();
+    navTo('p-home');
+  } catch(e) {
+    console.error(e);
+    btn.innerText = '✕ 失敗'; 
+    btn.disabled = false;
+  }
 });
 document.getElementById('saveNotesBtn').addEventListener('click',async()=>{
   if(!curId)return;

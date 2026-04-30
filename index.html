@@ -51,9 +51,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .ccard-info{flex:1;min-width:0;}
 .ccard-name{font-size:15px;font-weight:700;}
 .ccard-meta{font-size:11px;color:var(--txD);margin-top:3px;}
-.ccard-del{background:rgba(232,93,93,.12);border:1px solid rgba(232,93,93,.3);
+.ccard-del {
+  background:rgba(232,93,93,.12);border:1px solid rgba(232,93,93,.3);
   border-radius:8px;padding:4px 8px;font-size:11px;color:#E85D5D;cursor:pointer;
-  display:none;position:absolute;top:8px;right:8px;}
+  position:absolute;top:8px;right:8px; /* 👈 已經移除了 display: none; */
+}
+.ccard-edit {
+  background:rgba(93,187,117,.12);border:1px solid rgba(93,187,117,.3);
+  border-radius:8px;padding:4px 8px;font-size:11px;color:#5DBB75;cursor:pointer;
+  position:absolute;top:8px;right:46px; /* 👈 已經移除了 display: none; */
+}
 .ccard:hover .ccard-del,.ccard:focus .ccard-del{display:block;}
 .fsec{margin-bottom:16px;}
 .fsec-ttl{font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:600;
@@ -234,7 +241,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <span class="srch-ico">🔍</span>
       <input class="srch" id="srchIn" type="text" placeholder="搜尋姓名或生日...">
     </div>
-    <button onclick="navTo('p-add')" style="flex-shrink:0;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#C9A84C,#7A5010);border:none;color:#070710;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">+</button>
+   <button onclick="window.resetAddForm(); navTo('p-add')" style="flex-shrink:0;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#C9A84C,#7A5010);border:none;color:#070710;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">+</button>
   </div>
   <div class="scroll" style="padding:8px 14px 14px">
     <div id="custList"><div class="loading">☯ 載入中...</div></div>
@@ -436,7 +443,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   <button class="nbtn on" id="nb-home" onclick="navTo('p-home')">
     <span class="nico">☰</span><span class="nlb">客戶</span>
   </button>
-  <button class="nbtn" id="nb-add" onclick="navTo('p-add')">
+ <button class="nbtn" id="nb-add" onclick="window.resetAddForm(); navTo('p-add')">
     <span class="nico">⊕</span><span class="nlb">新增</span>
   </button>
   <!-- ✅ 修正：移除 style="display:none"，改由 JS 控制顯示 -->
@@ -2743,7 +2750,8 @@ function analDyn(bz,dy,ln,ly){
                       targets: [], locs: [], adv: "" 
                   };
               }
-              grouped[key].targets.push(p.n);
+              // ✅ 修正：加上被合的天干字（例如：年柱己）
+              grouped[key].targets.push(`${p.n}${p.g}`);
               grouped[key].locs.push(`${p.desc} (${p.gz})`);
           }
       }
@@ -2763,7 +2771,8 @@ function analDyn(bz,dy,ln,ly){
                       targets: [], locs: [], adv: "" 
                   };
               }
-              grouped[key].targets.push(p.n);
+              // ✅ 修正：加上被合的地支字（例如：月柱丑）
+              grouped[key].targets.push(`${p.n}${p.z}`);
               grouped[key].locs.push(`${p.desc} (${p.gz})`);
           }
       }
@@ -2780,7 +2789,8 @@ function analDyn(bz,dy,ln,ly){
         let spTxt = specialType==="伏吟"?"諸事不順・思想起伏":(specialType==="天剋地衝"?"劇烈變動・易有意外":"糾纏阻滯・動彈不得");
         let key = `${spCls}_${specialType}`;
         if(!grouped[key]) grouped[key] = { cls:spCls, ico:spIco, ttl:`${dn} ${specialType}`, d:spTxt, targets:[], locs:[], adv:"" };
-        grouped[key].targets.push(p.n);
+        // ✅ 修正：特殊組合連天干地支一起印出來（例如：年柱甲午）
+        grouped[key].targets.push(`${p.n}${p.gz}`);
         grouped[key].locs.push(p.desc);
         return;
       }
@@ -2804,13 +2814,14 @@ function analDyn(bz,dy,ln,ly){
           if(dgz && p.gz && BCA[dgz]?.[p.gz]) grouped[key].adv = BCA[dgz][p.gz];
           else if(dgz && p.gz && BCA[p.gz]?.[dgz]) grouped[key].adv = BCA[p.gz][dgz];
         }
-        grouped[key].targets.push(p.n);
+        // ✅ 修正：一般沖合刑害加上被撞擊的地支字（例如：年柱午）
+        grouped[key].targets.push(`${p.n}${p.z}`);
         grouped[key].locs.push(p.desc);
       }
     });
     
     Object.values(grouped).forEach(v => {
-      let targetNames = v.targets.join('與');
+      let targetNames = v.targets.join(' 與 ');
       let locNames = v.locs.join('、');
       let adviceHtml = v.adv ? `<div class="ac-adv">👉 ${v.adv}</div>` : "";
       alerts.push(`<div class="ac ${v.cls}"><div class="ac-ttl">${v.ico} ${v.ttl} ${targetNames}</div><div class="ac-imp">📍 ${locNames}</div><div class="ac-imp">${v.d}</div>${adviceHtml}</div>`);
@@ -3254,9 +3265,10 @@ sn.forEach(dc=>{
       <div class="ccard-name">${esc(name)} <span style="font-size:11px;font-weight:400;color:var(--txD)">${esc(d['性別']||'')}</span></div>
       <div class="ccard-meta">🎂 ${esc(d['出生日期']||'未記錄')}</div>
     </div>
+    <button class="ccard-edit" onclick="event.stopPropagation();window.openEdit('${dc.id}')">✏️</button>
     <button class="ccard-del" onclick="event.stopPropagation();window.delCust('${dc.id}')">✕</button>
     <span style="color:var(--goldD);font-size:18px">›</span>
-  </div>`);
+</div>`);
 });
 list.innerHTML=frags.join('');
 
@@ -3314,6 +3326,106 @@ window.delCust=async function(id){
   await deleteDoc(doc(db,"Customers",id));
   loadCust(); // 刪除後重新載入列表
 }; // 👈 檢查這行，要有這個分號結束！
+window.editCustId = null; // 全域變數：記錄目前正在編輯的客戶 ID
+
+// 🧼 重置表單 (變成新增模式)
+window.resetAddForm = function() {
+    window.editCustId = null;
+    document.getElementById('custName').value = '';
+    document.getElementById('birthDate').value = '';
+    document.getElementById('birthTime').value = '';
+    document.getElementById('unkTime').checked = false;
+    document.getElementById('birthTime').disabled = false;
+    document.getElementById('longi').value = '120';
+    document.getElementById('ziHour').value = '2';
+    document.getElementById('consultDate').value = '';
+    selGender('男');
+    
+    // 切換回新增模式的外觀
+    document.querySelector('#p-add .hdr-title').innerText = '新 增 客 戶';
+    document.getElementById('saveBtn').innerText = '☯ 排盤並儲存至雲端';
+};
+
+// ✏️ 開啟編輯模式
+window.openEdit = function(id) {
+    const data = window.allCustData[id];
+    if (!data) return;
+    
+    window.editCustId = id; // 綁定 ID
+    
+    // 把舊資料填進去表單
+    document.getElementById('custName').value = data['姓名'] || '';
+    selGender(data['性別'] || '男');
+    document.getElementById('birthDate').value = data['出生日期'] || '';
+    document.getElementById('consultDate').value = data['諮詢日期'] || '';
+    
+    // 填入時間與經度 (如果有舊紀錄的話)
+    document.getElementById('unkTime').checked = data['不知道時間'] || false;
+    document.getElementById('birthTime').value = data['出生時間'] || '';
+    document.getElementById('birthTime').disabled = data['不知道時間'] || false;
+    document.getElementById('longi').value = data['經度'] || '120';
+    document.getElementById('ziHour').value = data['子時設定'] || '2';
+    
+    // 切換成編輯模式的外觀
+    document.querySelector('#p-add .hdr-title').innerText = '編 輯 客 戶';
+    document.getElementById('saveBtn').addEventListener('click', async() => {
+  const btn = document.getElementById('saveBtn');
+  const name = document.getElementById('custName').value;
+  const bd = document.getElementById('birthDate').value;
+  if(!name || !bd) { alert("請填寫姓名與出生日期"); return; }
+  
+  btn.disabled = true; 
+  btn.innerText = '☯ 處理中...';
+  
+  try {
+    const bt = document.getElementById('birthTime').value;
+    const uk = document.getElementById('unkTime').checked;
+    const ln = document.getElementById('longi').value;
+    const sc = document.getElementById('ziHour').value;
+    const bz = calcBZ(bd, bt, uk, ln, sc, curGender);
+    
+    // 打包基本資料
+    const payload = {
+      姓名: name,
+      性別: curGender,
+      出生日期: bd,
+      出生時間: bt,      // ✅ 以後都會存下最原始的時間
+      不知道時間: uk,
+      經度: ln,
+      子時設定: sc,
+      諮詢日期: document.getElementById('consultDate').value,
+      八字: bz
+    };
+
+    if (window.editCustId) {
+      // ✏️【編輯模式】用 updateDoc 覆蓋，絕對不會洗掉筆記與歷史紀錄！
+      await updateDoc(doc(db, "Customers", window.editCustId), payload);
+      btn.innerText = '✓ 更新成功！';
+    } else {
+      // ➕【新增模式】用 addDoc 建立新客戶
+      payload.專屬筆記 = "";
+      payload.身心靈紀錄 = [];
+      payload.建檔時間 = new Date();
+      await addDoc(collection(db, "Customers"), payload);
+      btn.innerText = '✓ 儲存成功！';
+    }
+    
+    setTimeout(() => {
+      window.resetAddForm(); // 儲存完後重置表單
+      btn.disabled = false;
+    }, 1500);
+    
+    loadCust();
+    navTo('p-home');
+  } catch(e) {
+    console.error(e);
+    btn.innerText = '✕ 失敗'; 
+    btn.disabled = false;
+  }
+});
+    
+    navTo('p-add'); // 切換到表單頁面
+};
 
 // ════════════════════════════════════════
 // 🔐 安全登入與權限驗證系統 (已獨立出來)

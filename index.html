@@ -4389,8 +4389,8 @@ window.syncMatchUI = function() {
 window.runMatch = function() {
   if(!curBz) { alert("請先載入主客戶命盤！"); return; }
   const targetId = document.getElementById('matchExistCust').value;
-  // ✅ 修正：移除重複宣告，統一用一組變數
   let pData, pGender, uk;
+  let partnerName = "合盤對象"; // 預設對象名稱
 
   if (targetId) {
       const tData = window.allCustData[targetId];
@@ -4398,6 +4398,7 @@ window.runMatch = function() {
       pData = tData['八字'];
       pGender = tData['性別'];
       uk = (pData.time === '？？');
+      partnerName = tData['姓名'] || "合盤對象";
   } else {
       const md = document.getElementById('matchDate').value;
       if(!md) { alert("請選擇現有客戶，或手動輸入出生日期！"); return; }
@@ -4405,17 +4406,60 @@ window.runMatch = function() {
       let tm = document.getElementById('matchTime').value;
       pGender = matchGender;
       pData = calcBZ(md, tm || "12:00", uk, 120, 2, pGender);
+      partnerName = "手動輸入對象";
   }
 
   const relation = document.getElementById('matchRelation').value;
   let html = `<div style="margin-bottom:12px; border-bottom:1px dashed var(--goldB); padding-bottom:8px; color:var(--gold); font-size:14px; font-weight:bold;">🎯 雙人合盤分析結果</div>`;
 
- // 新的
-let uDs = curBz.day?.charAt(0)||'', uDb = curBz.day?.charAt(1)||'';
-let pDs = pData.day?.charAt(0)||'', pDb = pData.day?.charAt(1)||'';
-let uMb = curBz.month?.charAt(1)||'', pMb = pData.month?.charAt(1)||'';
-let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
+  // ==========================================
+  // 🔮 新增：雙人命盤與當前大運儀表板
+  // ==========================================
+  let cy = new Date().getFullYear();
+  const getCurDY = (bz) => {
+      if (!bz || !bz.daYun) return '無資料';
+      let cur = bz.daYun.find(dy => cy >= dy.startYear && cy < dy.startYear + 10);
+      return cur ? cur.ganzhi : '交運中/無';
+  };
 
+  const renderMiniChart = (title, bzObj, dyText) => {
+      const getGZ = (str) => {
+          if (!str || str === '？？' || str === '--') return { g: '？', z: '？' };
+          return { g: str.charAt(0), z: str.charAt(1) };
+      };
+      let y = getGZ(bzObj.year), m = getGZ(bzObj.month), d = getGZ(bzObj.day), t = getGZ(bzObj.time);
+
+      return `
+      <div style="flex:1; background:var(--sf2); border:1px solid var(--goldB); border-radius:10px; padding:12px 8px; display:flex; flex-direction:column; justify-content:space-between; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+          <div style="text-align:center; font-size:12px; color:var(--gold); font-weight:700; margin-bottom:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">👤 ${title}</div>
+          <div style="display:flex; justify-content:space-between; text-align:center; margin-bottom:14px;">
+              <div style="flex:1;"><div style="font-size:10px; color:var(--txD); margin-bottom:6px;">年</div><div class="${gecCls(y.g)}" style="font-size:16px; font-weight:800;">${y.g}</div><div class="${gecCls(y.z)}" style="font-size:16px; font-weight:800; margin-top:2px;">${y.z}</div></div>
+              <div style="flex:1;"><div style="font-size:10px; color:var(--txD); margin-bottom:6px;">月</div><div class="${gecCls(m.g)}" style="font-size:16px; font-weight:800;">${m.g}</div><div class="${gecCls(m.z)}" style="font-size:16px; font-weight:800; margin-top:2px;">${m.z}</div></div>
+              <div style="flex:1; border-left:1px dashed rgba(201,168,76,0.3); border-right:1px dashed rgba(201,168,76,0.3);"><div style="font-size:10px; color:var(--gold); margin-bottom:6px;">日</div><div class="${gecCls(d.g)}" style="font-size:16px; font-weight:800;">${d.g}</div><div class="${gecCls(d.z)}" style="font-size:16px; font-weight:800; margin-top:2px;">${d.z}</div></div>
+              <div style="flex:1;"><div style="font-size:10px; color:var(--txD); margin-bottom:6px;">時</div><div class="${gecCls(t.g)}" style="font-size:16px; font-weight:800;">${t.g}</div><div class="${gecCls(t.z)}" style="font-size:16px; font-weight:800; margin-top:2px;">${t.z}</div></div>
+          </div>
+          <div style="text-align:center; font-size:11px; color:var(--tx); background:rgba(0,0,0,0.25); border-radius:6px; padding:6px 2px;">當前大運：<span style="color:var(--gold); font-weight:700;">${dyText}</span></div>
+      </div>
+      `;
+  };
+
+  let mainName = document.getElementById('chartName').innerText;
+  let uCurDyGz = getCurDY(curBz);
+  let pCurDyGz = getCurDY(pData);
+
+  // 將儀表板加入 HTML 最前方
+  html += `
+  <div style="display:flex; gap:8px; margin-bottom:20px;">
+      ${renderMiniChart(mainName, curBz, uCurDyGz)}
+      ${renderMiniChart(partnerName, pData, pCurDyGz)}
+  </div>
+  `;
+  // ==========================================
+
+  let uDs = curBz.day?.charAt(0)||'', uDb = curBz.day?.charAt(1)||'';
+  let pDs = pData.day?.charAt(0)||'', pDb = pData.day?.charAt(1)||'';
+  let uMb = curBz.month?.charAt(1)||'', pMb = pData.month?.charAt(1)||'';
+  let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
 
   let uStr = calcStr(curBz);
   let pStr = calcStr(pData);
@@ -4432,7 +4476,6 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
   let uMeE = gec(uDs);
   let pMeE = gec(pDs);
 
-  // ✅ 修正：統一宣告 pHasTime 與 pTb（不重複）
   let uHasTime = curBz.time && curBz.time !== '？？' && curBz.time !== '--';
   let pHasTime = !uk;
   let uTb = uHasTime ? curBz.time.charAt(1) : null;
@@ -4447,10 +4490,22 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
       if (BR["刑"]["恃勢"].includes(uTb) && BR["刑"]["恃勢"].includes(pTb) && uTb !== pTb) isTimeConflict = true;
   }
 
-  const tianYiMap = {'甲':['丑','未'],'乙':['子','申'],'丙':['亥','酉'],'丁':['亥','酉'],'戊':['丑','未'],'己':['子','申'],'庚':['丑','未'],'辛':['午','寅'],'壬':['卯','巳'],'癸':['卯','巳']};
+ const tianYiMap = {'甲':['丑','未'],'乙':['子','申'],'丙':['亥','酉'],'丁':['亥','酉'],'戊':['丑','未'],'己':['子','申'],'庚':['丑','未'],'辛':['午','寅'],'壬':['卯','巳'],'癸':['卯','巳']};
   let uTianYi = tianYiMap[uDs] || [];
-  let hasTianYi = uTianYi.includes(pYb) || uTianYi.includes(pMb) || uTianYi.includes(pDb);
-  if (pHasTime && pTb) hasTianYi = hasTianYi || uTianYi.includes(pTb);
+
+  // ==========================================
+  // 🌟 新增：精準定位天乙貴人雷達
+  // ==========================================
+  let tyMsgs = [];
+  if (uTianYi.includes(pYb)) tyMsgs.push('<strong style="color:var(--gold)">【年柱貴人】</strong>對方的原生家庭、長輩或大背景能為你帶來好運，屬於環境上的庇蔭。');
+  if (uTianYi.includes(pMb)) tyMsgs.push('<strong style="color:var(--wood)">【月柱貴人】</strong>對方是你事業與社交圈的超級神隊友，能實質幫助你的工作與人脈。');
+  if (uTianYi.includes(pDb)) tyMsgs.push('<strong style="color:#E85D5D">【日柱貴人】</strong>最頂級的貼身守護神！對方會無條件支持你，給予極大的情緒價值。');
+  if (pHasTime && pTb && uTianYi.includes(pTb)) tyMsgs.push('<strong style="color:var(--water)">【時柱貴人】</strong>對方能為你帶來未來的機會、靈感，或是幫你招來優秀的下屬與投資運。');
+
+  let tianYiCard = "";
+  if (tyMsgs.length > 0) {
+      tianYiCard = `<div class="tp-card" style="border-color:rgba(93,187,117,.6); background:rgba(93,187,117,.05);"><strong style="color:#5DBB75; font-size:14px;">🌟 終極護身符：天乙神助攻 (${tyMsgs.length}重加持)</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">對方命盤自帶你的『天乙貴人』！不管你們的關係是什麼，他天生就是來幫你的：<br><br>${tyMsgs.join('<br><br>')}</span></div>`;
+  }
 
   let uBiJieEl = E2C[uMeE];
   let isBiJieDuoCai = (pDom === uBiJieEl && uJiArr.includes(uBiJieEl));
@@ -4472,6 +4527,10 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
       } else if (uJiArr.includes(uSpouseEl)) {
           messages.push(`<div class="tp-card" style="border-color:rgba(180,100,220,.3)"><strong style="color:#CE93D8; font-size:14px;">⚠️ 虐戀警報，人生導師</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">他可能不是傳統定義上來陪你享福的『對的人』，他是來當你『人生導師』的。這段關係會讓你成長得非常快，但過程會很辛苦。跟他在一起後，你可能會覺得壓力變大、心情悶，甚至為了他破財。這是一場高難度的磨練，你要問問自己準備好承受這份『虐戀』的功課了嗎？</span></div>`);
       }
+      
+      // ✅ 插入貴人神卡
+      if (tianYiCard) messages.push(tianYiCard);
+
       if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">🍵 樸實平穩，細水長流</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方命盤五行交集較為平穩，沒有極端的衝突或宿命般的綑綁。屬於細水長流的緣分。</span></div>`);
 
       let messages2 = [];
@@ -4486,7 +4545,6 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
       if (BR["沖"][uMb] === pMb || BR["害"][uMb] === pMb) {
           messages2.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">⚔️ 門神相衝，外在阻力</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">在亞洲社會，結婚是兩家人的事。你們的月柱產生了強烈衝突。即便你們愛得死去活來，雙方父母也極容易互看不順眼，或是兩家人生活水準差異極大。建議婚後務必『搬出去住』，用物理距離化解家族帶來的巨大壓力！</span></div>`);
       }
-      let cy = new Date().getFullYear();
       let uCurDy = curBz.daYun?.find(dy => cy >= dy.startYear && cy < dy.startYear + 10);
       let pCurDy = pData?.daYun?.find(dy => cy >= dy.startYear && cy < dy.startYear + 10);
       if (uCurDy && pCurDy) {
@@ -4520,6 +4578,10 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
       if (uHasTime && pHasTime && isTimeConflict) {
           messages.push(`<div class="tp-card" style="border-color:rgba(180,100,220,.3)"><strong style="color:#CE93D8; font-size:14px;">💣 時柱炸彈，獲利了結危機</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">你們的時柱（結果宮）發生了嚴重衝突！這代表合夥最危險的時刻不是現在，而是『公司賺錢要分潤』或是『準備退場拆夥』的時候。極易因為分錢不均或對未來的路線分歧而撕破臉，合夥協議務必提早寫死退場機制！</span></div>`);
       }
+      
+      // ✅ 插入貴人神卡
+      if (tianYiCard) messages.push(tianYiCard);
+
       if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">🤝 基礎合夥，規矩辦事</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方命盤無嚴重衝突，屬於中規中矩的合夥關係，照合約精神走即可。</span></div>`);
       html += messages.join('');
   }
@@ -4536,9 +4598,10 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
       if (ER[C2E[uShiShangEl]] && ER[C2E[uShiShangEl]].con === C2E[pGuanShaEl]) {
           messages.push(`<div class="tp-card" style="border-color:rgba(232,93,93,.3)"><strong style="color:#E85D5D; font-size:14px;">🔥 天生冤家，水火不容</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">造反預警！你的『傷官』天生剋制對方的『正官』。你們的溝通極度不對頻：你覺得他古板難搞，他覺得你叛逆不聽話。這是一個非常容易爆發嚴重口角與衝突的組合，發言前請三思！</span></div>`);
       }
-      if (hasTianYi) {
-          messages.push(`<div class="tp-card" style="border-color:rgba(93,187,117,.3)"><strong style="color:#5DBB75; font-size:14px;">🌟 天乙神助攻</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">對方命盤自帶你的『天乙貴人』！這是一個超強護身符，不管他平時對你多兇多嚴格，只要遇到生死交關的嚴重失誤，他絕對會奇蹟似地拉你一把，不會見死不救。</span></div>`);
-      }
+      
+      // ✅ 插入貴人神卡
+      if (tianYiCard) messages.push(tianYiCard);
+
       if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">💼 職場過客，公事公辦</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方屬於正常的職場從屬關係，拿錢辦事，保持專業即可。</span></div>`);
       html += messages.join('');
   }
@@ -4558,6 +4621,10 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
       } else if (BR["合"][uMb] === pMb) {
           messages.push(`<div class="tp-card" style="border-color:rgba(93,157,232,.3)"><strong style="color:#5D9DE8; font-size:14px;">🤝 圈內熟客 / 快速成交</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">雙方月柱相合！代表你們在事業理念或圈子內非常有共鳴。這種客戶通常靠信任與人脈介紹而來，溝通成本極低，決策與成交速度會非常快。</span></div>`);
       }
+      
+      // ✅ 插入貴人神卡
+      if (tianYiCard) messages.push(tianYiCard);
+
       if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">📝 一般過路客</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">氣場無特別牽扯，用常規的業務手段應對即可。</span></div>`);
       html += messages.join('');
 
@@ -4575,6 +4642,8 @@ let uYb = curBz.year?.charAt(1)||'', pYb = pData.year?.charAt(1)||'';
   }
 
   document.getElementById('matchResult').innerHTML = html;
+};
+};
 };
 
 loadCust();

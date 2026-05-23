@@ -204,6 +204,64 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   border: 1px solid rgba(201, 168, 76, 0.4);
   border-left: 4px solid var(--gold);
 }
+/* 📅 萬年曆專屬樣式 */
+.cal-wrap {
+  margin-top: 15px;
+  background: var(--sf);
+  border: 1px solid var(--goldB);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+.cal-hdr {
+  text-align: center;
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-head {
+  text-align: center;
+  font-size: 10px;
+  color: var(--txM);
+  padding: 5px 0;
+  font-weight: 700;
+}
+.cal-day {
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  padding: 6px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 52px;
+  border: 1px solid transparent;
+}
+.cal-day.today {
+  border-color: var(--gold);
+  background: var(--goldD);
+}
+.cal-day-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--txD);
+  margin-bottom: 2px;
+}
+.cal-day-gz {
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+.cal-empty {
+  opacity: 0;
+}
 </style>
 </head>
 <body>
@@ -331,15 +389,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
 
   <div id="tab-dayun" class="ipg">
-    <div class="sp strip-lbl">⏳ 十年大運</div>
-    <div class="strip" id="dyStrip"></div>
-    <div id="lnSec" style="display:none">
-      <div class="sp strip-lbl" id="lnLbl">📅 流年</div>
-      <div class="strip" id="lnStrip"></div>
-    </div>
-    <div id="lySec" style="display:none">
-      <div class="sp strip-lbl" id="lyLbl">🌙 流月</div>
-      <div class="strip" id="lyStrip"></div>
+    <div class="scroll" style="padding-top:12px; padding-bottom:30px;">
+      <div class="sp strip-lbl">⏳ 十年大運</div>
+      <div class="strip" id="dyStrip"></div>
+      <div id="lnSec" style="display:none">
+        <div class="sp strip-lbl" id="lnLbl">📅 流年</div>
+        <div class="strip" id="lnStrip"></div>
+      </div>
+      <div id="lySec" style="display:none">
+        <div class="sp strip-lbl" id="lyLbl">🌙 流月</div>
+        <div class="strip" id="lyStrip"></div>
+      </div>
+      <div id="calSec" style="display:none; padding: 0 16px;">
+        <div class="sp strip-lbl">📅 日辰萬年曆</div>
+        <div id="calContainer"></div>
+      </div>
     </div>
   </div>
 
@@ -3149,6 +3213,59 @@ function renderDaYun(bz){
     }
   },300);
 }
+// 🔮 萬年曆生成引擎
+window.renderCalendar = function(year, month) {
+    const container = document.getElementById('calContainer');
+    const calSec = document.getElementById('calSec');
+    calSec.style.display = 'block';
+
+    // 取得當月 1 號的資訊
+    let firstDay = Solar.fromYmd(year, month, 1);
+    let daysInMonth = SolarMonth.fromYm(year, month).getDays().length;
+    let startWk = firstDay.getWeek(); // 0 是週日
+    
+    let today = new Date();
+    let isCurMonth = (today.getFullYear() === year && (today.getMonth() + 1) === month);
+    let todayDate = today.getDate();
+
+    let html = `<div class="cal-wrap">`;
+    html += `<div class="cal-hdr">${year}年 / ${month}月</div>`;
+    html += `<div class="cal-grid">`;
+    
+    // 星期標頭
+    ['日','一','二','三','四','五','六'].forEach(w => {
+        html += `<div class="cal-head">${w}</div>`;
+    });
+
+    // 填補月初空白
+    for (let i = 0; i < startWk; i++) {
+        html += `<div class="cal-day cal-empty"></div>`;
+    }
+
+    // 渲染每一天
+    for (let d = 1; d <= daysInMonth; d++) {
+        let sol = Solar.fromYmd(year, month, d);
+        let lun = sol.getLunar();
+        let bz = lun.getEightChar();
+        let dayGz = bz.getDay(); // 取得日干支
+        
+        let g = dayGz.charAt(0);
+        let z = dayGz.charAt(1);
+        let isToday = (isCurMonth && d === todayDate);
+
+        html += `
+        <div class="cal-day ${isToday ? 'today' : ''}">
+            <div class="cal-day-num">${d}</div>
+            <div class="cal-day-gz">
+                <span class="${gecCls(g)}">${g}</span><br>
+                <span class="${gecCls(z)}">${z}</span>
+            </div>
+        </div>`;
+    }
+
+    html += `</div></div>`;
+    container.innerHTML = html;
+};
 window.clickDY=function(sy,sa,gz,el,auto=false){
   document.querySelectorAll('#dyStrip .gc').forEach(c=>c.classList.remove('on'));
   el?.classList.add('on');curDY=gz;
@@ -3180,63 +3297,66 @@ window.clickLN=function(y,age,gz,dygz,el,auto=false){
   el?.classList.add('on');curLN=gz;
   document.getElementById('lyLbl').innerText=`🌙 流月 (${y}年 ${gz})`;
   const dm=curDM;const si=SA.indexOf(gz.charAt(0));const ms=((si%5)*2+2)%10;
+  
   document.getElementById('lyStrip').innerHTML=Array.from({length:12},(_,i)=>{
     let mg=SA[(ms+i)%10],mz=BMA[i];let tg=getTG(dm,mg);
     let hs=(HS[mz]||[]);
     let hh=hs.map(h=>`<div class="${gecCls(h)}" style="font-size:9px">${h} <span style="color:var(--txD);font-size:8px;margin-left:1px">${getTG(dm,h)}</span></div>`).join('');
-    return`<div class="gc" onclick="window.clickLY('${mg+mz}','${dygz}','${gz}',${age},this)">
+    
+    // 🚨 修正核心在這裡：onclick 裡面補上了 ${y}, ${i+1}，把年份跟月份傳給 clickLY！
+    return`<div class="gc" onclick="window.clickLY('${mg+mz}','${dygz}','${gz}',${age},this, ${y}, ${i+1})">
       <div class="gc-yr" style="font-size:10px">${i+1}月</div><div class="gc-tg">${tg}</div>
       <div class="gc-box"><div class="gc-g ${gecCls(mg)}">${mg}</div><div class="gc-dv"></div><div class="gc-z ${gecCls(mz)}">${mz}</div></div>
       <div class="gc-hid" style="margin-top:2px;">${hh}</div>
     </div>`;
   }).join('');
+  
   document.getElementById('lySec').style.display='block';
   document.getElementById('statAnal').innerHTML=analOrig(curBz,age);
   document.getElementById('dynAnal').innerHTML=analDyn(curBz,dygz,gz,null);
-  //if(!auto)window.openTP(gz,'流年');
+  
+  // 隱藏萬年曆，直到真正點擊某個流月才顯示
+  document.getElementById('calSec').style.display = 'none'; 
 };
-window.clickLY = function(lygz, dygz, lngz, age, el) {
-  document.querySelectorAll('#lyStrip .gc').forEach(c => c.classList.remove('on'));
-  el?.classList.add('on');
-  document.getElementById('statAnal').innerHTML = analOrig(curBz, age);
-  document.getElementById('dynAnal').innerHTML = analDyn(curBz, dygz, lngz, lygz);
-  
-  // 🚨 組合大運、流年、流月的 60 甲子字典
-  document.getElementById('tpTtl').innerText = `【流月提詞】運:${dygz} / 年:${lngz} / 月:${lygz}`;
-  const body = document.getElementById('tpBody');
-  
-  // 建立共用的卡片渲染器
-  const renderDict = (gz, label) => {
-    const d = JD[gz];
-    if(!d) return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;"><div class="tp-sec">📍 【${label}】${gz}</div><div style="color:var(--txM);font-size:12px">尚未建檔</div></div>`;
+window.clickLY = function(lygz, dygz, lngz, age, el, solarYear, solarMonth) {
+    document.querySelectorAll('#lyStrip .gc').forEach(c => c.classList.remove('on'));
+    el?.classList.add('on');
+    document.getElementById('statAnal').innerHTML = analOrig(curBz, age);
+    document.getElementById('dynAnal').innerHTML = analDyn(curBz, dygz, lngz, lygz);
     
-    let stars = (d.stars || '').split(/[、,・]/).filter(Boolean);
-    let tags = `<div style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:5px">
-      <span class="tp-tag" onclick="showTPS('${gz}','納音','${d.naYin||''}')">⚔️ ${d.naYin||'—'}</span>
-      <span class="tp-tag" style="background:rgba(93,187,117,.1);color:var(--wood)" onclick="showTPS('${gz}','長生','${d.phase||''}')">🌱 ${d.phase||'—'}</span>
-      ${stars.map(s => `<span class="tp-tag" onclick="showTPS('${gz}','神煞','${s.trim()}')">${s.trim()}</span>`).join('')}
-    </div>`;
-    let at = d.atmosphere || {};
-    let main = `
-      <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--gold)">總論</span>：${at["總論"]||"—"}</div>
-      <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--wood)">事業</span>：${at["事業"]||"—"}</div>
-      <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--fire)">感情</span>：${at["感情"]||"—"}</div>
-      <div style="font-size:12px;"><span style="font-weight:700;color:var(--water)">健康</span>：${at["健康"]||"—"}</div>
-    `;
-    return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;">
-      <div class="tp-sec">📍 【${label}】${gz}</div>${tags}${main}
-    </div>`;
-  };
+    // 🚨 1. 觸發萬年曆渲染
+    if(solarYear && solarMonth) {
+        window.renderCalendar(solarYear, solarMonth);
+    }
 
-  // 將三個層級的資料疊加，並放上標籤說明的容器 (tp-sub)
-  let html = `<div id="tp-sub" class="tp-sub" style="margin-bottom:12px;"></div>`; 
-  html += renderDict(dygz, '大運');
-  html += renderDict(lngz, '流年');
-  html += renderDict(lygz, '流月');
-
-  body.innerHTML = html;
-  document.getElementById('tpBD').classList.add('on');
-  document.getElementById('tpOV').classList.add('on');
+    // 🚨 2. 原本的 TP 提詞機邏輯 (保持不變)
+    document.getElementById('tpTtl').innerText = `【流月提詞】運:${dygz} / 年:${lngz} / 月:${lygz}`;
+    const body = document.getElementById('tpBody');
+    const renderDict = (gz, label) => {
+        const d = JD[gz];
+        if(!d) return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;"><div class="tp-sec">📍 【${label}】${gz}</div><div style="color:var(--txM);font-size:12px">尚未建檔</div></div>`;
+        let stars = (d.stars || '').split(/[、,・]/).filter(Boolean);
+        let tags = `<div style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:5px">
+            <span class="tp-tag" onclick="showTPS('${gz}','納音','${d.naYin||''}')">⚔️ ${d.naYin||'—'}</span>
+            <span class="tp-tag" style="background:rgba(93,187,117,.1);color:var(--wood)" onclick="showTPS('${gz}','長生','${d.phase||''}')">🌱 ${d.phase||'—'}</span>
+            ${stars.map(s => `<span class="tp-tag" onclick="showTPS('${gz}','神煞','${s.trim()}')">${s.trim()}</span>`).join('')}
+        </div>`;
+        let at = d.atmosphere || {};
+        return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;">
+            <div class="tp-sec">📍 【${label}】${gz}</div>${tags}
+            <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--gold)">總論</span>：${at["總論"]||"—"}</div>
+            <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--wood)">事業</span>：${at["事業"]||"—"}</div>
+            <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--fire)">感情</span>：${at["感情"]||"—"}</div>
+            <div style="font-size:12px;"><span style="font-weight:700;color:var(--water)">健康</span>：${at["健康"]||"—"}</div>
+        </div>`;
+    };
+    let html = `<div id="tp-sub" class="tp-sub" style="margin-bottom:12px;"></div>`; 
+    html += renderDict(dygz, '大運');
+    html += renderDict(lngz, '流年');
+    html += renderDict(lygz, '流月');
+    body.innerHTML = html;
+    document.getElementById('tpBD').classList.add('on');
+    document.getElementById('tpOV').classList.add('on');
 };
 
 // ════════════════════════════════════════

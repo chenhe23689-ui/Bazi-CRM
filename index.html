@@ -198,11 +198,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   animation: pulse-red 1.5s infinite !important; 
   border: 2px solid #E85D5D !important; 
 }
-/* 📜 梁派秘傳專屬卡片樣式 (古典金框黑底) */
+/* 📜 梁派秘傳專屬卡片樣式 (和諧統一版) */
 .a-liang {
-  background: rgba(201, 168, 76, 0.08);
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  border-left: 4px solid var(--gold);
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
 }
 /* 📅 萬年曆專屬樣式 */
 .cal-wrap {
@@ -375,7 +374,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   <div class="itabs">
     <div class="itab on" onclick="switchIT('tab-bazi',this)">命盤</div>
     <div class="itab" onclick="switchIT('tab-dayun',this)">大運</div>
-    <div class="itab" onclick="switchIT('tab-anal',this)">互動</div>
+    <div class="itab" onclick="switchIT('tab-anal',this)">運勢</div>
     <div class="itab" onclick="switchIT('tab-qa',this)">問答</div>
     <div class="itab" onclick="switchIT('tab-match',this)">合盤</div>
     <div class="itab" onclick="switchIT('tab-note',this)">筆記</div>
@@ -404,14 +403,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="sp strip-lbl">📅 日辰萬年曆</div>
         <div id="calContainer"></div>
       </div>
+      
+      <div id="collisionSec" style="display:none; padding: 16px 14px;">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid var(--goldB);padding-bottom:4px;font-weight:bold;">⚡ 原局與流運碰撞分析</div>
+        <div id="statAnal"></div>
+        <div id="dynAnal" style="margin-top:10px"></div>
+      </div>
     </div>
   </div>
 
   <div id="tab-anal" class="ipg">
-    <div class="scroll" style="padding:12px 14px">
-      <div style="font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">原局分析</div>
-      <div id="statAnal"></div>
-      <div id="dynAnal" style="margin-top:10px"></div>
+    <div class="scroll" style="padding:14px" id="yunshiDetails">
+       <div style="text-align:center;color:var(--txM);padding:40px 20px;font-size:13px;">請先至「大運」頁面點選流月，即可在此查看詳細運勢解析。</div>
     </div>
   </div>
 
@@ -1731,46 +1734,46 @@ const JD = {
   
 const ND = {
     // ⚔️ 【金系納音】
-    '海中金': '<strong>【核心意象】</strong>沉在海底的寶藏。<br><strong>【神探解讀】</strong>深藏不露，防備心極重。看起來溫和，骨子裡固執且極具潛力，必須用極大的耐心或利益去「打撈」他才會亮出底牌。',
-    '劍鋒金': '<strong>【核心意象】</strong>剛出爐的絕世好劍。<br><strong>【神探解讀】</strong>鋒芒畢露，銳利果斷。執行力極強，但也容易刺傷別人。適合當開路先鋒，不適合處理需要圓滑斡旋的公關危機。',
-    '白蠟金': '<strong>【核心意象】</strong>尚未成型的金屬礦石 / 熔化的軟金。<br><strong>【神探解讀】</strong>可塑性極高，耳根子相對較軟，正在尋找自己的定位。需要遇到好的長輩或體制來「定型」，否則容易隨波逐流。',
-    '砂中金': '<strong>【核心意象】</strong>混在沙礫中的黃金。<br><strong>【神探解讀】</strong>價值常被低估，需要經過時間的「淘洗」。做事可能看起來缺乏條理，但其實掌握著關鍵資源，屬於隱形的大神。',
-    '沙中金': '<strong>【核心意象】</strong>混在沙礫中的黃金。<br><strong>【神探解讀】</strong>價值常被低估，需要經過時間的「淘洗」。做事可能看起來缺乏條理，但其實掌握著關鍵資源，屬於隱形的大神。',
-    '金箔金': '<strong>【核心意象】</strong>貼在佛像或建築表面的薄金。<br><strong>【神探解讀】</strong>極度需要「舞台」與「靠山」。本身力量不夠硬，但只要附著在強大的體制或大老闆身邊，就能展現出極高的身價與華麗感。',
-    '釵釧金': '<strong>【核心意象】</strong>珍貴的首飾與髮簪。<br><strong>【神探解讀】</strong>自帶貴氣，氣質優雅，但也相對嬌貴。適合在和平、高級的環境中發揮美感與價值，受不了粗暴的對待與過度操勞。',
+    '海中金': '<strong>【核心意象】</strong>沉在海底的寶藏。<br><strong>【解讀】</strong>深藏不露，防備心極重。看起來溫和，骨子裡固執且極具潛力，必須用極大的耐心或利益去「打撈」他才會亮出底牌。',
+    '劍鋒金': '<strong>【核心意象】</strong>剛出爐的絕世好劍。<br><strong>【解讀】</strong>鋒芒畢露，銳利果斷。執行力極強，但也容易刺傷別人。適合當開路先鋒，不適合處理需要圓滑斡旋的公關危機。',
+    '白蠟金': '<strong>【核心意象】</strong>尚未成型的金屬礦石 / 熔化的軟金。<br><strong>【解讀】</strong>可塑性極高，耳根子相對較軟，正在尋找自己的定位。需要遇到好的長輩或體制來「定型」，否則容易隨波逐流。',
+    '砂中金': '<strong>【核心意象】</strong>混在沙礫中的黃金。<br><strong>【解讀】</strong>價值常被低估，需要經過時間的「淘洗」。做事可能看起來缺乏條理，但其實掌握著關鍵資源，屬於隱形的大神。',
+    '沙中金': '<strong>【核心意象】</strong>混在沙礫中的黃金。<br><strong>【解讀】</strong>價值常被低估，需要經過時間的「淘洗」。做事可能看起來缺乏條理，但其實掌握著關鍵資源，屬於隱形的大神。',
+    '金箔金': '<strong>【核心意象】</strong>貼在佛像或建築表面的薄金。<br><strong>【解讀】</strong>極度需要「舞台」與「靠山」。本身力量不夠硬，但只要附著在強大的體制或大老闆身邊，就能展現出極高的身價與華麗感。',
+    '釵釧金': '<strong>【核心意象】</strong>珍貴的首飾與髮簪。<br><strong>【解讀】</strong>自帶貴氣，氣質優雅，但也相對嬌貴。適合在和平、高級的環境中發揮美感與價值，受不了粗暴的對待與過度操勞。',
 
     // 🌳 【木系納音】
-    '大林木': '<strong>【核心意象】</strong>茂密的森林。<br><strong>【神探解讀】</strong>團隊型人格，極具包容力與庇護欲。喜歡群體行動，能照顧身邊的人，是當主管或老大的好材料，但有時會因為牽掛太多而拖慢腳步。',
-    '楊柳木': '<strong>【核心意象】</strong>隨風搖曳的柳樹。<br><strong>【神探解讀】</strong>身段極度柔軟，社交手腕極佳。懂得「西瓜偎大邊」，適應力極強。看似沒有主見，其實根扎得很深，是最難被折斷的生存大師。',
-    '松柏木': '<strong>【核心意象】</strong>傲雪凌霜的松樹。<br><strong>【神探解讀】</strong>骨氣極硬，原則性極強。在越艱困、越動盪的環境下越能展現韌性。適合扛下沒人想接的硬骨頭專案，非常有骨氣。',
-    '平地木': '<strong>【核心意象】</strong>被砍伐下來、準備蓋房子的木材。<br><strong>【神探解讀】</strong>實用主義者，是可以直接派上用場的建材。需要遇到懂他的伯樂（建築師）把他放在對的位置，就能發揮巨大的商業價值。',
-    '桑柘木': '<strong>【核心意象】</strong>養蠶吐絲的桑樹。<br><strong>【神探解讀】</strong>犧牲奉獻，產值極高。這類人通常默默做事，能產出極具價值的成果（蠶絲），適合做後勤、研發或教育，是公司的隱形印鈔機。',
-    '石榴木': '<strong>【核心意象】</strong>堅硬且多子的石榴樹。<br><strong>【神探解讀】</strong>外表看似剛硬、難以親近，但其實內在極度豐富（多子多孫）。一旦突破他的心防，他會給你帶來超乎想像的豐碩回報。',
+    '大林木': '<strong>【核心意象】</strong>茂密的森林。<br><strong>【解讀】</strong>團隊型人格，極具包容力與庇護欲。喜歡群體行動，能照顧身邊的人，是當主管或老大的好材料，但有時會因為牽掛太多而拖慢腳步。',
+    '楊柳木': '<strong>【核心意象】</strong>隨風搖曳的柳樹。<br><strong>【解讀】</strong>身段極度柔軟，社交手腕極佳。懂得「西瓜偎大邊」，適應力極強。看似沒有主見，其實根扎得很深，是最難被折斷的生存大師。',
+    '松柏木': '<strong>【核心意象】</strong>傲雪凌霜的松樹。<br><strong>【解讀】</strong>骨氣極硬，原則性極強。在越艱困、越動盪的環境下越能展現韌性。適合扛下沒人想接的硬骨頭專案，非常有骨氣。',
+    '平地木': '<strong>【核心意象】</strong>被砍伐下來、準備蓋房子的木材。<br><strong>【解讀】</strong>實用主義者，是可以直接派上用場的建材。需要遇到懂他的伯樂（建築師）把他放在對的位置，就能發揮巨大的商業價值。',
+    '桑柘木': '<strong>【核心意象】</strong>養蠶吐絲的桑樹。<br><strong>【解讀】</strong>犧牲奉獻，產值極高。這類人通常默默做事，能產出極具價值的成果（蠶絲），適合做後勤、研發或教育，是公司的隱形印鈔機。',
+    '石榴木': '<strong>【核心意象】</strong>堅硬且多子的石榴樹。<br><strong>【解讀】</strong>外表看似剛硬、難以親近，但其實內在極度豐富（多子多孫）。一旦突破他的心防，他會給你帶來超乎想像的豐碩回報。',
 
     // 🌊 【水系納音】
-    '澗下水': '<strong>【核心意象】</strong>山谷裡涓涓流淌的小溪。<br><strong>【神探解讀】</strong>個性溫和，不爭不搶，默默找尋出路。心思極度細膩，適合做精細的分析工作或心理輔導，不適合在鎂光燈下高調作秀。',
-    '泉中水': '<strong>【核心意象】</strong>湧動不息的清泉。<br><strong>【神探解讀】</strong>資源與點子源源不絕。只要不被污染，他就能持續提供強大的續航力，是非常優秀的創意人才或幕僚智庫。',
-    '長流水': '<strong>【核心意象】</strong>川流不息的長河。<br><strong>【神探解讀】</strong>行動力極強，一刻也停不下來。事業版圖喜歡往外擴張，適合做跨國貿易、物流或變動性極大的工作，但也容易因為擴張太快而缺乏沉澱。',
-    '天河水': '<strong>【核心意象】</strong>從天而降的雨水。<br><strong>【神探解讀】</strong>傲氣十足，因為他的資源是「天上掉下來的」，不依賴凡間的泥土。思考格局很高，喜歡居高臨下，有博愛精神，但也容易不接地氣。',
-    '大溪水': '<strong>【核心意象】</strong>匯聚眾流的寬廣溪水。<br><strong>【神探解讀】</strong>企圖心極強，喜歡吸納各種資源壯大自己。氣勢磅礴，做事雷厲風行，但也容易在順境時過度驕傲、淹沒旁人。',
-    '大海水': '<strong>【核心意象】</strong>廣闊無垠、深不見底的海洋。<br><strong>【神探解讀】</strong>城府極深，包容力最大。你永遠猜不透他心裡在想什麼，他可以極度平靜，也可以瞬間掀起海嘯。絕對不要輕易惹怒大海水的老闆。',
+    '澗下水': '<strong>【核心意象】</strong>山谷裡涓涓流淌的小溪。<br><strong>【解讀】</strong>個性溫和，不爭不搶，默默找尋出路。心思極度細膩，適合做精細的分析工作或心理輔導，不適合在鎂光燈下高調作秀。',
+    '泉中水': '<strong>【核心意象】</strong>湧動不息的清泉。<br><strong>【解讀】</strong>資源與點子源源不絕。只要不被污染，他就能持續提供強大的續航力，是非常優秀的創意人才或幕僚智庫。',
+    '長流水': '<strong>【核心意象】</strong>川流不息的長河。<br><strong>【解讀】</strong>行動力極強，一刻也停不下來。事業版圖喜歡往外擴張，適合做跨國貿易、物流或變動性極大的工作，但也容易因為擴張太快而缺乏沉澱。',
+    '天河水': '<strong>【核心意象】</strong>從天而降的雨水。<br><strong>【解讀】</strong>傲氣十足，因為他的資源是「天上掉下來的」，不依賴凡間的泥土。思考格局很高，喜歡居高臨下，有博愛精神，但也容易不接地氣。',
+    '大溪水': '<strong>【核心意象】</strong>匯聚眾流的寬廣溪水。<br><strong>【解讀】</strong>企圖心極強，喜歡吸納各種資源壯大自己。氣勢磅礴，做事雷厲風行，但也容易在順境時過度驕傲、淹沒旁人。',
+    '大海水': '<strong>【核心意象】</strong>廣闊無垠、深不見底的海洋。<br><strong>【解讀】</strong>城府極深，包容力最大。你永遠猜不透他心裡在想什麼，他可以極度平靜，也可以瞬間掀起海嘯。絕對不要輕易惹怒大海水的老闆。',
 
     // 🔥 【火系納音】
-    '爐中火': '<strong>【核心意象】</strong>煉鋼爐裡熊熊燃燒的火。<br><strong>【神探解讀】</strong>爆發力核彈級！但這把火必須被「控制在爐子裡」，且需要「木頭（資源）」持續供應。適合在有明確規則與後盾的體制內，做極具爆發力的業績。',
-    '山頭火': '<strong>【核心意象】</strong>遠方山頭上燃燒的野火。<br><strong>【神探解讀】</strong>高調、熱情、充滿戲劇性。他們需要被看見，行事作風比較狂野奔放，適合做公關、行銷或演藝圈，但也容易三分鐘熱度。',
-    '霹靂火': '<strong>【核心意象】</strong>打雷閃電交加的雷擊火。<br><strong>【神探解讀】</strong>性格急躁，做事講求「快、狠、準」。常常有顛覆性的創意與舉動，適合做危機處理或突發性的短線操作，常常能在一瞬間翻盤。',
-    '山下火': '<strong>【核心意象】</strong>傍晚西下的夕陽 / 螢火蟲之光。<br><strong>【神探解讀】</strong>鋒芒收斂，屬於隱形的影響力。不再追求大紅大紫，而是講求實際的餘熱，適合做幕後操盤手或傳承者，氣質較為深沉。',
-    '覆燈火': '<strong>【核心意象】</strong>黑暗中指路的夜間照明燈。<br><strong>【神探解讀】</strong>利基市場之王。在大家都很好的時候他不起眼，但在危機或低潮時，他就是救命稻草。非常適合從事命理、心理諮商、危機公關等「雪中送炭」的行業。',
-    '天上火': '<strong>【核心意象】</strong>普照大地的正午太陽。<br><strong>【神探解讀】</strong>天生的領袖氣場，極度自信且光明磊落。做事喜歡直來直往，受不了陰暗的算計。影響力極廣，適合經營大眾品牌。',
+    '爐中火': '<strong>【核心意象】</strong>煉鋼爐裡熊熊燃燒的火。<br><strong>【解讀】</strong>爆發力核彈級！但這把火必須被「控制在爐子裡」，且需要「木頭（資源）」持續供應。適合在有明確規則與後盾的體制內，做極具爆發力的業績。',
+    '山頭火': '<strong>【核心意象】</strong>遠方山頭上燃燒的野火。<br><strong>【解讀】</strong>高調、熱情、充滿戲劇性。他們需要被看見，行事作風比較狂野奔放，適合做公關、行銷或演藝圈，但也容易三分鐘熱度。',
+    '霹靂火': '<strong>【核心意象】</strong>打雷閃電交加的雷擊火。<br><strong>【解讀】</strong>性格急躁，做事講求「快、狠、準」。常常有顛覆性的創意與舉動，適合做危機處理或突發性的短線操作，常常能在一瞬間翻盤。',
+    '山下火': '<strong>【核心意象】</strong>傍晚西下的夕陽 / 螢火蟲之光。<br><strong>【解讀】</strong>鋒芒收斂，屬於隱形的影響力。不再追求大紅大紫，而是講求實際的餘熱，適合做幕後操盤手或傳承者，氣質較為深沉。',
+    '覆燈火': '<strong>【核心意象】</strong>黑暗中指路的夜間照明燈。<br><strong>【解讀】</strong>利基市場之王。在大家都很好的時候他不起眼，但在危機或低潮時，他就是救命稻草。非常適合從事命理、心理諮商、危機公關等「雪中送炭」的行業。',
+    '天上火': '<strong>【核心意象】</strong>普照大地的正午太陽。<br><strong>【解讀】</strong>天生的領袖氣場，極度自信且光明磊落。做事喜歡直來直往，受不了陰暗的算計。影響力極廣，適合經營大眾品牌。',
 
     // 🧱 【土系納音】
-    '路旁土': '<strong>【核心意象】</strong>馬路旁邊供人踩踏、生長野草的土。<br><strong>【神探解讀】</strong>個性極度平易近人，沒架子。是別人成功路上的「墊腳石」或好幫手。適合做服務業、平台營運，是最強的綠葉型神隊友。',
-    '城頭土': '<strong>【核心意象】</strong>堅固的城牆之土。<br><strong>【神探解讀】</strong>防禦心極強，講求原則與規矩。他的存在就是為了「劃清界線」與「保護體制」。適合從事法務、資安、保全，是不好攻破的談判對手。',
-    '屋上土': '<strong>【核心意象】</strong>蓋在屋頂上的瓦片之土。<br><strong>【神探解讀】</strong>喜歡高高在上，具備遮風避雨的功能。代表事情已經發展到「完成階段」，適合做收尾、包裝或品牌形象的維護，不太適合從零開始去底層拓荒。',
-    '壁上土': '<strong>【核心意象】</strong>牆壁上的泥土。<br><strong>【神探解讀】</strong>負責區隔內外，具備極佳的輔助與支撐能力。但壁上土需要「依附」在實體的牆上，代表他需要依附強大的公司或體制才能展現價值，不適合獨立創業。',
-    '大驛土': '<strong>【核心意象】</strong>寬廣無邊的高速公路與平原。<br><strong>【神探解讀】</strong>乘載量極大，心胸寬廣，能包容各種事物在上面奔跑。適合做交通、物流、大型平台或是需要大量吞吐資源的大型實業。',
-    '砂中土': '<strong>【核心意象】</strong>隨著風浪沉浮的沙土。<br><strong>【神探解讀】</strong>變化性極大，難以捉摸。看似是土，卻像水一樣會流動。適應力極強，但也容易給人一種不夠穩定的感覺，適合需要靈活變通的專案型工作。',
-    '沙中土': '<strong>【核心意象】</strong>隨著風浪沉浮的沙土。<br><strong>【神探解讀】</strong>變化性極大，難以捉摸。看似是土，卻像水一樣會流動。適應力極強，但也容易給人一種不夠穩定的感覺，適合需要靈活變通的專案型工作。'
+    '路旁土': '<strong>【核心意象】</strong>馬路旁邊供人踩踏、生長野草的土。<br><strong>【解讀】</strong>個性極度平易近人，沒架子。是別人成功路上的「墊腳石」或好幫手。適合做服務業、平台營運，是最強的綠葉型神隊友。',
+    '城頭土': '<strong>【核心意象】</strong>堅固的城牆之土。<br><strong>【解讀】</strong>防禦心極強，講求原則與規矩。他的存在就是為了「劃清界線」與「保護體制」。適合從事法務、資安、保全，是不好攻破的談判對手。',
+    '屋上土': '<strong>【核心意象】</strong>蓋在屋頂上的瓦片之土。<br><strong>【解讀】</strong>喜歡高高在上，具備遮風避雨的功能。代表事情已經發展到「完成階段」，適合做收尾、包裝或品牌形象的維護，不太適合從零開始去底層拓荒。',
+    '壁上土': '<strong>【核心意象】</strong>牆壁上的泥土。<br><strong>【解讀】</strong>負責區隔內外，具備極佳的輔助與支撐能力。但壁上土需要「依附」在實體的牆上，代表他需要依附強大的公司或體制才能展現價值，不適合獨立創業。',
+    '大驛土': '<strong>【核心意象】</strong>寬廣無邊的高速公路與平原。<br><strong>【解讀】</strong>乘載量極大，心胸寬廣，能包容各種事物在上面奔跑。適合做交通、物流、大型平台或是需要大量吞吐資源的大型實業。',
+    '砂中土': '<strong>【核心意象】</strong>隨著風浪沉浮的沙土。<br><strong>【解讀】</strong>變化性極大，難以捉摸。看似是土，卻像水一樣會流動。適應力極強，但也容易給人一種不夠穩定的感覺，適合需要靈活變通的專案型工作。',
+    '沙中土': '<strong>【核心意象】</strong>隨著風浪沉浮的沙土。<br><strong>【解讀】</strong>變化性極大，難以捉摸。看似是土，卻像水一樣會流動。適應力極強，但也容易給人一種不夠穩定的感覺，適合需要靈活變通的專案型工作。'
 };
 const CD = {
     '長生': '生命力最旺盛的起點！代表充滿生機、學習吸收力極強，遇到困難常有貴人相助，是一股向上的能量。',
@@ -2507,14 +2510,14 @@ const TGC = {
     '印剋食傷': { type:'剋', title:'【靈感枯竭，資源斷層】', business_msg:'過度保守的規矩、長輩的干預、或是資訊量超載，導致創意被扼殺、財源的入口被堵死。', action:'⚠️ 停滯警告！不要再輸入新資訊了，你現在需要的是放空。推掉不必要的顧問意見，找回自己的節奏。' }
 };
 const TGD = {
-    '正財坐劫財': { tag:'💣 破財地雷', title:'【表面風光，私下漏財】', business_msg:'招牌掛得很大，但利潤被嚴重瓜分。', action:'神探錦囊：請立刻重新檢視合約利潤分配，親兄弟明算帳，財務必須獨立核算！' },
-    '偏財坐食神': { tag:'💰 印鈔機配置', title:'【點子變現，財源滾滾】', business_msg:'絕佳的商業直覺加上強大的創造力。', action:'神探錦囊：大膽相信你的商業靈感，現在是擴大行銷預算、推出新產品的最佳時機！' },
-    '正官坐傷官': { tag:'🔥 權力危機', title:'【犯上作亂，招惹是非】', business_msg:'表面上有職位與權力，但私底下的行為或言論卻在破壞公司體制。', action:'神探錦囊：今日宜封口！收起你的傲氣與批評，凡事照著SOP走，別在長官背後抱怨。' },
-    '七殺坐偏印': { tag:'🦅 梟雄配置', title:'【權謀極致，跨界奇才】', business_msg:'魄力與深沉的謀略完美結合。', action:'神探錦囊：不要走傳統路線！用最冷門的策略去打擊對手，這個案子需要你的「狠勁」與「直覺」。' },
-    '正印坐正官': { tag:'👑 巔峰配置', title:'【名利雙收，步步高升】', business_msg:'官印相生，是最完美的職場晉升密碼。', action:'神探錦囊：大膽爭取更高的職位或投標大案子！現在你的招牌就是最好的通行證。' },
-    '偏印坐食神': { tag:'⚠️ 枯竭警報', title:'【梟神奪食，靈感斷線】', business_msg:'原本賺錢的點子被扼殺了。', action:'神探錦囊：暫停所有產出！你現在處於嚴重的內耗狀態，請放下工作去放空，硬做只會搞砸招牌。' },
-    '傷官坐正財': { tag:'📈 業務戰神', title:'【口才變現，精準行銷】', business_msg:'用絕佳的口才與技術，精準命中客戶的荷包。', action:'神探錦囊：立刻安排與最難搞的客戶開會！今天你的說服力滿分，能把石頭說成黃金。' },
-    '食神坐比肩': { tag:'🤝 團隊配置', title:'【和氣生財，共同研發】', business_msg:'與同儕、朋友之間有著極佳的默契。', action:'神探錦囊：今天不要單打獨鬥，找你的核心團隊一起喝杯咖啡開個會，金點子就在閒聊中誕生！' }
+    '正財坐劫財': { tag:'💣 破財地雷', title:'【表面風光，私下漏財】', business_msg:'招牌掛得很大，但利潤被嚴重瓜分。', action:'請立刻重新檢視合約利潤分配，親兄弟明算帳，財務必須獨立核算！' },
+    '偏財坐食神': { tag:'💰 印鈔機配置', title:'【點子變現，財源滾滾】', business_msg:'絕佳的商業直覺加上強大的創造力。', action:'大膽相信你的商業靈感，現在是擴大行銷預算、推出新產品的最佳時機！' },
+    '正官坐傷官': { tag:'🔥 權力危機', title:'【犯上作亂，招惹是非】', business_msg:'表面上有職位與權力，但私底下的行為或言論卻在破壞公司體制。', action:'今日宜封口！收起你的傲氣與批評，凡事照著SOP走，別在長官背後抱怨。' },
+    '七殺坐偏印': { tag:'🦅 梟雄配置', title:'【權謀極致，跨界奇才】', business_msg:'魄力與深沉的謀略完美結合。', action:'不要走傳統路線！用最冷門的策略去打擊對手，這個案子需要你的「狠勁」與「直覺」。' },
+    '正印坐正官': { tag:'👑 巔峰配置', title:'【名利雙收，步步高升】', business_msg:'官印相生，是最完美的職場晉升密碼。', action:'大膽爭取更高的職位或投標大案子！現在你的招牌就是最好的通行證。' },
+    '偏印坐食神': { tag:'⚠️ 枯竭警報', title:'【梟神奪食，靈感斷線】', business_msg:'原本賺錢的點子被扼殺了。', action:'暫停所有產出！你現在處於嚴重的內耗狀態，請放下工作去放空，硬做只會搞砸招牌。' },
+    '傷官坐正財': { tag:'📈 業務戰神', title:'【口才變現，精準行銷】', business_msg:'用絕佳的口才與技術，精準命中客戶的荷包。', action:'立刻安排與最難搞的客戶開會！今天你的說服力滿分，能把石頭說成黃金。' },
+    '食神坐比肩': { tag:'🤝 團隊配置', title:'【和氣生財，共同研發】', business_msg:'與同儕、朋友之間有著極佳的默契。', action:'今天不要單打獨鬥，找你的核心團隊一起喝杯咖啡開個會，金點子就在閒聊中誕生！' }
 };
 const BCA = {
     SanHui: {
@@ -2595,6 +2598,17 @@ function getTG(dm,t){
   if(s.elem===r.con)return d.pol===s.pol?"偏財":"正財";
   return"";
 }
+// 🔮 單柱坐基結構識別器
+window.getTGD = function(gz) {
+  if (!gz || gz.length < 2 || !curDM) return null;
+  const g = gz.charAt(0);
+  const z = gz.charAt(1);
+  const tgTop = getTG(curDM, g);
+  // 抓取地支主氣
+  const tgBottom = (HS[z] && HS[z].length > 0) ? getTG(curDM, HS[z][0]) : '';
+  const key = `${tgTop}坐${tgBottom}`;
+  return TGD[key] ? { key, ...TGD[key] } : null;
+};
 function getWX(c){
   if("甲乙寅卯".includes(c))return"木";
   if("丙丁巳午".includes(c))return"火";
@@ -2772,6 +2786,49 @@ function analOrig(bz,age){
   let zs=bs.map(b=>b.z);
   BR["三合"].forEach(g=>{if(g.every(z=>zs.includes(z)))res.push(`<div class="ac a-he">🌟 ${g.join('')}三合局・強大凝聚力</div>`);});
   BR["三會"].forEach(g=>{if(g.every(z=>zs.includes(z)))res.push(`<div class="ac a-he">🌊 ${g.join('')}三會方陣・同氣連枝</div>`);});
+  // (接在 BR["三會"].forEach... 的後面)
+
+  // 🚨 提取原局天生自帶的 TGC 商業格局
+  let origGods = [];
+  bs.forEach(b => {
+     if (b.gz) {
+         origGods.push(getTG(curDM, b.gz.charAt(0)));
+         if (HS[b.gz.charAt(1)]) origGods.push(getTG(curDM, HS[b.gz.charAt(1)][0]));
+     }
+  });
+  origGods = [...new Set(origGods.filter(Boolean))];
+
+  // 原局的優先級：看出他天生是靠什麼吃飯，或是天生帶有什麼缺陷
+  const ORIG_PRIORITY = [
+    {k:'食傷生財', req:[['食神','傷官'], ['正財','偏財']]},
+    {k:'官殺生印', req:[['正官','七殺'], ['正印','偏印']]},
+    {k:'食傷制官殺', req:[['食神','傷官'], ['正官','七殺']]},
+    {k:'比劫奪財', req:[['比肩','劫財'], ['正財','偏財']]},
+    {k:'財會壞印', req:[['正財','偏財'], ['正印','偏印']]},
+    {k:'印剋食傷', req:[['正印','偏印'], ['食神','傷官']]}
+  ];
+
+  let origTriggered = [];
+  for (let def of ORIG_PRIORITY) {
+     let hasA = def.req[0].some(t => origGods.includes(t));
+     let hasB = def.req[1].some(t => origGods.includes(t));
+     if (hasA && hasB) origTriggered.push(def.k);
+  }
+  
+  // 只取原局最強的 2 個天生格局
+  let finalOrigTGC = origTriggered.slice(0, 2);
+  finalOrigTGC.forEach(k => {
+     const c = TGC[k];
+     if(c) {
+        let cls = c.type === '生' ? 'a-he' : 'a-chong';
+        res.push(`
+        <div class="ac ${cls}">
+           <div class="ac-ttl">🧬 原局天賦：${k} <span style="font-weight:normal;">${c.title}</span></div>
+           <div class="ac-imp">📍 商業磁場：${c.business_msg}</div>
+        </div>`);
+     }
+  });
+
   return res.length?res.join(''):'<div style="text-align:center;color:var(--txM);padding:18px;font-size:12px">原局無明顯刑沖合會破害</div>';
 }
 
@@ -2784,13 +2841,11 @@ function analDyn(bz,dy,ln,ly){
     {n:'時柱',g:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(0):'？',z:(bz.time&&bz.time!=='--'&&bz.time!=='？？')?bz.time.charAt(1):'？',gz:bz.time, desc:'子女・晚年'}
   ];
   
-  // 🤖 智能總結引擎：統計計分板
   let stats = { chong:0, he:0, xingHai:0, liang:0, fuYin:0 };
 
   const chk=(dn,dg,dz,dgz)=>{
     if(!dg||!dz)return;
     let grouped = {};
-    
     let checkTargets = [...ps];
     if (dn !== '大運' && dy) {
         checkTargets.push({n:'大運', g:dy.charAt(0), z:dy.charAt(1), gz:dy, desc:'十年氣場'});
@@ -2799,43 +2854,27 @@ function analDyn(bz,dy,ln,ly){
     checkTargets.forEach(p=>{
       if(p.g==='？'||p.z==='？')return;
       
-      // 📜 【梁派秘傳】天干五合攔截器
       if (SM[p.g] === dg) {
           let liangText = (typeof LIANG_HE !== 'undefined' && LIANG_HE[dgz]) ? LIANG_HE[dgz][p.gz] : null;
           if (liangText) {
-              stats.liang++; // 智能統計+1
+              stats.liang++;
               let key = `Liang_${dg}合${p.g}`;
               if(!grouped[key]) {
-                  grouped[key] = { 
-                      cls: 'a-liang', 
-                      ico: '📜', 
-                      ttl: `${dn}天干合相 (${dg}合${p.g})`, 
-                      d: `<strong style="color:var(--gold); letter-spacing:1px;">【大師流年斷訣】</strong><br>${liangText}`, 
-                      targets: [], locs: [], adv: "" 
-                  };
+                  grouped[key] = { cls: 'a-liang', ico: '📜', ttl: `${dn}天干合相 (${dg}合${p.g})`, d: `<strong style="color:var(--gold); letter-spacing:1px;">【大師流年斷訣】</strong><br>${liangText}`, targets: [], locs: [], adv: "" };
               }
-              // ✅ 修正：加上被合的天干字（例如：年柱己）
               grouped[key].targets.push(`${p.n}${p.g}`);
               grouped[key].locs.push(`${p.desc} (${p.gz})`);
           }
       }
 
-      // 📜 【梁派秘傳】地支六合攔截器
       if (BR["合"][p.z] === dz) {
           let liangZhiText = (typeof LIANG_ZHI_HE !== 'undefined' && LIANG_ZHI_HE[dgz]) ? LIANG_ZHI_HE[dgz][p.gz] : null;
           if (liangZhiText) {
-              stats.liang++; // 智能統計+1
+              stats.liang++;
               let key = `Liang_${dz}合${p.z}`;
               if(!grouped[key]) {
-                  grouped[key] = { 
-                      cls: 'a-liang', 
-                      ico: '📜', 
-                      ttl: `${dn}地支六合 (${dz}合${p.z})`, 
-                      d: `<strong style="color:var(--gold); letter-spacing:1px;">【大師流年斷訣】</strong><br>${liangZhiText}`, 
-                      targets: [], locs: [], adv: "" 
-                  };
+                  grouped[key] = { cls: 'a-liang', ico: '📜', ttl: `${dn}地支六合 (${dz}合${p.z})`, d: `<strong style="color:var(--gold); letter-spacing:1px;">【大師流年斷訣】</strong><br>${liangZhiText}`, targets: [], locs: [], adv: "" };
               }
-              // ✅ 修正：加上被合的地支字（例如：月柱丑）
               grouped[key].targets.push(`${p.n}${p.z}`);
               grouped[key].locs.push(`${p.desc} (${p.gz})`);
           }
@@ -2853,7 +2892,6 @@ function analDyn(bz,dy,ln,ly){
         let spTxt = specialType==="伏吟"?"諸事不順・思想起伏":(specialType==="天剋地衝"?"劇烈變動・易有意外":"糾纏阻滯・動彈不得");
         let key = `${spCls}_${specialType}`;
         if(!grouped[key]) grouped[key] = { cls:spCls, ico:spIco, ttl:`${dn} ${specialType}`, d:spTxt, targets:[], locs:[], adv:"" };
-        // ✅ 修正：特殊組合連天干地支一起印出來（例如：年柱甲午）
         grouped[key].targets.push(`${p.n}${p.gz}`);
         grouped[key].locs.push(p.desc);
         return;
@@ -2878,7 +2916,6 @@ function analDyn(bz,dy,ln,ly){
           if(dgz && p.gz && BCA[dgz]?.[p.gz]) grouped[key].adv = BCA[dgz][p.gz];
           else if(dgz && p.gz && BCA[p.gz]?.[dgz]) grouped[key].adv = BCA[p.gz][dgz];
         }
-        // ✅ 修正：一般沖合刑害加上被撞擊的地支字（例如：年柱午）
         grouped[key].targets.push(`${p.n}${p.z}`);
         grouped[key].locs.push(p.desc);
       }
@@ -2896,37 +2933,87 @@ function analDyn(bz,dy,ln,ly){
   if(ln)chk("流年",ln.charAt(0),ln.charAt(1),ln);
   if(ly)chk("流月",ly.charAt(0),ly.charAt(1),ly);
 
-  // 🤖 智能總結生成區
-  if (alerts.length > 0) {
-      let aiMood = "平穩";
-      let aiColor = "var(--txD)";
-      let aiText = "";
+  
+// 🚨【大改版釋放】TGC 終極過濾器：精準抓取 Top 2 主導氣場
+  let activeGods = []; 
+  // 1. 只抓「當前點擊」的那一柱作為子彈
+  if (ly) {
+    activeGods.push(getTG(curDM, ly.charAt(0))); if(HS[ly.charAt(1)]) activeGods.push(getTG(curDM, HS[ly.charAt(1)][0]));
+  } else if (ln) {
+    activeGods.push(getTG(curDM, ln.charAt(0))); if(HS[ln.charAt(1)]) activeGods.push(getTG(curDM, HS[ln.charAt(1)][0]));
+  } else if (dy) {
+    activeGods.push(getTG(curDM, dy.charAt(0))); if(HS[dy.charAt(1)]) activeGods.push(getTG(curDM, HS[dy.charAt(1)][0]));
+  }
+  activeGods = [...new Set(activeGods.filter(Boolean))];
 
-      if (stats.chong > 0 && stats.he > 0) {
-          aiMood = "先破後立";
-          aiColor = "#E8B86D";
-          aiText = "這是一個「變動與機遇並存」的時期。舊有的僵局會被打破，同時也會迎來新的合作或機會。切忌固執己見，順勢而為是最佳策略。";
-      } else if (stats.chong >= 2 || stats.fuYin > 0) {
-          aiMood = "高度戒備";
-          aiColor = "#E85D5D";
-          aiText = "近期氣場劇烈震盪，容易遇到突發狀況或人事糾紛。神探建議「宜守不宜攻」，重要決策請暫緩，凡事以和為貴，並留意健康與財務安全。";
-      } else if (stats.he >= 2) {
-          aiMood = "順風順水";
-          aiColor = "#5DBB75";
-          aiText = "恭喜！近期人氣與資源高度匯聚，是拓展人脈、談定合約或確立感情關係的絕佳黃金期。請積極把握身邊出現的貴人與機會。";
-      } else if (stats.liang > 0) {
-          aiMood = "大師指路";
-          aiColor = "#C9A84C";
-          aiText = "觸發了特定的命運契機！請特別留意上方【梁派秘傳】的專屬提示，這是你近期破局或避坑的最關鍵指引。";
-      } else if (stats.he > 0) {
-          aiMood = "微幅上揚";
-          aiColor = "#5D9DE8";
-          aiText = "整體運勢平順中帶有助力。有機會遇到契合的對象或合作夥伴，建議多參與社交或團隊活動。";
-      } else if (stats.xingHai > 0) {
-          aiMood = "小幅波動";
-          aiColor = "#CE93D8";
-          aiText = "近期會有一些繁瑣的小問題或背後的流言蜚語，容易造成精神內耗。保持耐心，將專注力放回自己身上即可，不足以撼動大局。";
-      }
+  // 2. 抓取被碰撞的底盤 (原局 + 上層大運流年)
+  let baseGods = [];
+  ps.forEach(p => {
+    if (p.g !== '？') baseGods.push(getTG(curDM, p.g));
+    if (p.z !== '？' && HS[p.z]) baseGods.push(getTG(curDM, HS[p.z][0]));
+  });
+  if (ly) {
+    if (dy) { baseGods.push(getTG(curDM, dy.charAt(0))); if(HS[dy.charAt(1)]) baseGods.push(getTG(curDM, HS[dy.charAt(1)][0])); }
+    if (ln) { baseGods.push(getTG(curDM, ln.charAt(0))); if(HS[ln.charAt(1)]) baseGods.push(getTG(curDM, HS[ln.charAt(1)][0])); }
+  } else if (ln) {
+    if (dy) { baseGods.push(getTG(curDM, dy.charAt(0))); if(HS[dy.charAt(1)]) baseGods.push(getTG(curDM, HS[dy.charAt(1)][0])); }
+  }
+  baseGods = [...new Set(baseGods.filter(Boolean))];
+
+  // 3. 嚴格優先級排序：嚴重危機 > 重大機遇 > 輔助發展
+  const PRIORITY = [
+    {k:'比劫奪財', req:[['比肩','劫財'], ['正財','偏財']]},
+    {k:'財會壞印', req:[['正財','偏財'], ['正印','偏印']]},
+    {k:'食傷制官殺', req:[['食神','傷官'], ['正官','七殺']]},
+    {k:'印剋食傷', req:[['正印','偏印'], ['食神','傷官']]},
+    {k:'官殺制比劫', req:[['正官','七殺'], ['比肩','劫財']]},
+    {k:'食傷生財', req:[['食神','傷官'], ['正財','偏財']]},
+    {k:'官殺生印', req:[['正官','七殺'], ['正印','偏印']]},
+    {k:'財生官殺', req:[['正財','偏財'], ['正官','七殺']]},
+    {k:'印生比劫', req:[['正印','偏印'], ['比肩','劫財']]},
+    {k:'比劫生食傷', req:[['比肩','劫財'], ['食神','傷官']]}
+  ];
+
+  let triggered = [];
+  for (let def of PRIORITY) {
+    let hasA_act = def.req[0].some(t => activeGods.includes(t));
+    let hasB_act = def.req[1].some(t => activeGods.includes(t));
+    let hasA_bas = def.req[0].some(t => baseGods.includes(t));
+    let hasB_bas = def.req[1].some(t => baseGods.includes(t));
+    
+    // 必須是「流運子彈」自己組成，或是「流運子彈」撞「底盤」才算數
+    if ((hasA_act && hasB_act) || (hasA_act && hasB_bas) || (hasB_act && hasA_bas)) {
+      triggered.push(def.k);
+    }
+  }
+
+  // 4. 只抓前 2 名最關鍵的，解除邏輯死亡 XDD
+  let finalTGC = triggered.slice(0, 2);
+
+  finalTGC.forEach(k => {
+    const c = TGC[k];
+    if(c) {
+      let cls = c.type === '生' ? 'a-he' : 'a-chong';
+      let ico = c.type === '生' ? '🔄' : '⚡';
+      alerts.push(`
+      <div class="ac ${cls}">
+         <div class="ac-ttl">${ico} 關鍵引動：${k} <span style="font-weight:normal;">${c.title}</span></div>
+         <div class="ac-imp">📍 商業磁場：${c.business_msg}</div>
+         <div class="ac-imp" style="margin-top:4px; color:#5DBB75;">💡 戰略行動：${c.action}</div>
+      </div>`);
+    }
+  });
+
+  // (以下保留原本的 if (alerts.length > 0) { ... aiMood 綜合判定不動)
+
+  if (alerts.length > 0) {
+      let aiMood = "平穩"; let aiColor = "var(--txD)"; let aiText = "";
+      if (stats.chong > 0 && stats.he > 0) { aiMood = "先破後立"; aiColor = "#E8B86D"; aiText = "這是一個「變動與機遇並存」的時期。舊有的僵局會被打破，同時也會迎來新的合作或機會。切忌固執己見，順勢而為是最佳策略。"; } 
+      else if (stats.chong >= 2 || stats.fuYin > 0) { aiMood = "高度戒備"; aiColor = "#E85D5D"; aiText = "近期氣場劇烈震盪，容易遇到突發狀況或人事糾紛。神探建議「宜守不宜攻」，重要決策請暫緩，凡事以和為貴，並留意健康與財務安全。"; } 
+      else if (stats.he >= 2) { aiMood = "順風順水"; aiColor = "#5DBB75"; aiText = "恭喜！近期人氣與資源高度匯聚，是拓展人脈、談定合約或確立感情關係的絕佳黃金期。請積極把握身邊出現的貴人與機會。"; } 
+      else if (stats.liang > 0) { aiMood = "大師指路"; aiColor = "#C9A84C"; aiText = "觸發了特定的命運契機！請特別留意上方【梁派秘傳】的專屬提示，這是你近期破局或避坑的最關鍵指引。"; } 
+      else if (stats.he > 0) { aiMood = "微幅上揚"; aiColor = "#5D9DE8"; aiText = "整體運勢平順中帶有助力。有機會遇到契合的對象或合作夥伴，建議多參與社交或團隊活動。"; } 
+      else if (stats.xingHai > 0) { aiMood = "小幅波動"; aiColor = "#CE93D8"; aiText = "近期會有一些繁瑣的小問題或背後的流言蜚語，容易造成精神內耗。保持耐心，將專注力放回自己身上即可，不足以撼動大局。"; }
 
       let summaryHtml = `
       <div style="margin-top:20px; padding:16px; background:var(--sf2); border:1px dashed ${aiColor}; border-radius:12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
@@ -2936,13 +3023,10 @@ function analDyn(bz,dy,ln,ly){
           </div>
           <div style="font-size:13px; color:var(--tx); line-height:1.6; letter-spacing:1px;">${aiText}</div>
       </div>`;
-      
       alerts.push(summaryHtml);
   }
-
   return alerts.join('');
 }
-
 // ════════════════════════════════════════
 // 📱 狀態 & 導航
 // ════════════════════════════════════════
@@ -2984,61 +3068,51 @@ window.openTP = function(gz, pn, tg) {
     const body = document.getElementById('tpBody');
     const d = JD[gz];
 
-    if (!d) {
-        body.innerHTML = `<div style="text-align:center;color:var(--txM);padding:40px">【${gz}】命書尚未建檔</div>`;
-        return;
-    }
-
-    // 1. 核心意象區塊 (Image Header)
     let imageHeader = "";
-    if (false) {
-        imageHeader = `
-        <div style="background:linear-gradient(135deg, rgba(201,168,76,0.15), rgba(21,69,133,0.3)); border:1px solid var(--gold); border-radius:12px; padding:16px; margin-bottom:15px; text-align:center;">
-            <div style="font-size:10px; color:var(--gold); letter-spacing:3px; margin-bottom:6px; opacity:0.8;">CORE IMAGERY</div>
-            <div style="font-size:18px; color:var(--tx); font-weight:bold; letter-spacing:1px;">${d.image}</div>
-        </div>`;
-    }
+    let tags = "";
+    let mainContent = "";
 
-    // 2. 標籤列 (Tags)
-    let stars = (d.stars || '').split(/[、,・]/).filter(Boolean);
-    let tags = `
-    <div style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;">
-        <span class="tp-tag" style="border-color:var(--goldB);" onclick="showTPS('${gz}','納音','${d.naYin||''}')">⚔️ ${d.naYin||'—'}</span>
-        <span class="tp-tag" style="background:rgba(93,187,117,.1); color:var(--wood); border-color:rgba(93,187,117,.3);" onclick="showTPS('${gz}','長生','${d.phase||''}')">🌱 ${d.phase||'—'}</span>
-        ${stars.map(s => `<span class="tp-tag" onclick="showTPS('${gz}','神煞','${s.trim()}')">${s.trim()}</span>`).join('')}
-    </div>
-    <div id="tp-sub" class="tp-sub" style="margin-bottom:15px;"></div>`;
+    if (d) {
+        let stars = (d.stars || '').split(/[、,・]/).filter(Boolean);
+        tags = `
+        <div style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;">
+            <span class="tp-tag" style="border-color:var(--goldB);" onclick="showTPS('${gz}','納音','${d.naYin||''}')">⚔️ ${d.naYin||'—'}</span>
+            <span class="tp-tag" style="background:rgba(93,187,117,.1); color:var(--wood); border-color:rgba(93,187,117,.3);" onclick="showTPS('${gz}','長生','${d.phase||''}')">🌱 ${d.phase||'—'}</span>
+            ${stars.map(s => `<span class="tp-tag" onclick="showTPS('${gz}','神煞','${s.trim()}')">${s.trim()}</span>`).join('')}
+        </div>
+        <div id="tp-sub" class="tp-sub" style="margin-bottom:15px;"></div>`;
 
-    // 3. 內容分流判斷
-    let isOrig = ["年","月","日","時"].includes(pn);
-    let mainContent = '';
-
-    if (isOrig) {
-        // 👉 點擊原局：只顯示「被點的那一柱」
-        let pt = d.pillars?.[pn] || '（無此宮位資料）';
-        mainContent = `
-        <div class="tp-card" style="border-left:4px solid var(--gold);">
-            <div class="tp-sec">📍 【${gz}】在【${pn}柱】的展現</div>
-            <div style="font-size:13px; line-height:1.7;">${pt}</div>
-        </div>`;
-
-        // 附加十神特定分析 (如果有的話)
-        if (tg && TGD[tg]?.[pn]) {
-            mainContent += `
-            <div class="tp-card" style="border-color:rgba(93,187,117,0.4); background:rgba(93,187,117,0.05); border-left:4px solid var(--wood);">
-                <div style="font-size:13px; font-weight:bold; color:var(--wood); margin-bottom:5px;">🎭 十神【${tg}】在【${pn}柱】</div>
-                <span style="font-size:13px; line-height:1.7;">${TGD[tg][pn]}</span>
+        let isOrig = ["年","月","日","時"].includes(pn);
+        if (isOrig) {
+            let pt = d.pillars?.[pn] || '（無此宮位資料）';
+            mainContent = `
+            <div class="tp-card" style="border-left:4px solid var(--gold);">
+                <div class="tp-sec">📍 【${gz}】在【${pn}柱】的展現</div>
+                <div style="font-size:13px; line-height:1.7;">${pt}</div>
+            </div>`;
+        } else {
+            let at = d.atmosphere || {};
+            mainContent = `
+            <div class="tp-card" style="border-left:4px solid var(--gold);">
+                <div style="margin-bottom:12px;"><span style="font-weight:bold; color:var(--gold); font-size:14px;">📜 總論 (大環境氣場)</span><br><span style="font-size:13px; color:var(--tx); line-height:1.7;">${at["總論"] || "—"}</span></div>
+                <div style="margin-bottom:12px;"><span style="font-weight:bold; color:var(--wood); font-size:14px;">💼 整體事業表現</span><br><span style="font-size:13px; color:var(--txD); line-height:1.7;">${at["事業"] || "—"}</span></div>
+                <div style="margin-bottom:12px;"><span style="font-weight:bold; color:var(--fire); font-size:14px;">💞 整體人際感情</span><br><span style="font-size:13px; color:var(--txD); line-height:1.7;">${at["感情"] || "—"}</span></div>
+                <div><span style="font-weight:bold; color:#E85D5D; font-size:14px;">🚨 健康警報</span><br><span style="font-size:13px; color:var(--txD); line-height:1.7;">${at["健康"] || "—"}</span></div>
             </div>`;
         }
     } else {
-        // 👉 點擊運勢：顯示整體大環境氣候
-        let at = d.atmosphere || {};
-        mainContent = `
-        <div class="tp-card" style="border-left:4px solid var(--gold);">
-            <div style="margin-bottom:12px;"><span style="font-weight:bold; color:var(--gold); font-size:14px;">📜 總論 (大環境氣場)</span><br><span style="font-size:13px; color:var(--tx); line-height:1.7;">${at["總論"] || "—"}</span></div>
-            <div style="margin-bottom:12px;"><span style="font-weight:bold; color:var(--wood); font-size:14px;">💼 整體事業表現</span><br><span style="font-size:13px; color:var(--txD); line-height:1.7;">${at["事業"] || "—"}</span></div>
-            <div style="margin-bottom:12px;"><span style="font-weight:bold; color:var(--fire); font-size:14px;">💞 整體人際感情</span><br><span style="font-size:13px; color:var(--txD); line-height:1.7;">${at["感情"] || "—"}</span></div>
-            <div><span style="font-weight:bold; color:#E85D5D; font-size:14px;">🚨 健康警報</span><br><span style="font-size:13px; color:var(--txD); line-height:1.7;">${at["健康"] || "—"}</span></div>
+        mainContent = `<div style="text-align:center;color:var(--txM);padding:20px 0;font-size:12px;">【${gz}】命書條目尚未建檔</div>`;
+    }
+
+    // 🚨 解封：動態計算並注入 TGD 坐基結構卡片
+    let tgdInfo = window.getTGD(gz);
+    if (tgdInfo) {
+        mainContent += `
+        <div class="tp-card" style="border-color:rgba(232,184,109,0.3); background:rgba(232,184,109,0.05); border-left:3px solid var(--metal);">
+            <div style="font-size:11px; font-weight:bold; color:var(--metal); margin-bottom:6px;">🎭 柱體坐基結構分析 (${tgdInfo.key})</div>
+            <div style="font-size:14px; font-weight:700; color:var(--gold); margin-bottom:6px;">${tgdInfo.title}</div>
+            <div style="font-size:12px; color:var(--tx); margin-bottom:4px; line-height:1.6;">🔮 <strong>商戰意象：</strong>${tgdInfo.business_msg}</div>
+            <div style="font-size:12px; color:var(--txD); line-height:1.6;">💡 <strong>實戰錦囊：</strong>${tgdInfo.action}</div>
         </div>`;
     }
 
@@ -3284,14 +3358,20 @@ window.clickDY=function(sy,sa,gz,el,auto=false){
   }).join('');
   document.getElementById('lnSec').style.display='block';
   document.getElementById('lySec').style.display='none';
+  
+  // 🚨 修正：點擊大運時，萬年曆依然常在（不隱藏）
+  document.getElementById('collisionSec').style.display='block';
+  document.getElementById('calSec').style.display='block';
+  
   document.getElementById('statAnal').innerHTML=analOrig(curBz,sa);
   document.getElementById('dynAnal').innerHTML=analDyn(curBz,gz,null,null);
-  //if(!auto)window.openTP(gz,'大運');
+  
   if(auto)setTimeout(()=>{
     let el2=document.getElementById(`ln-${cy}`);
     if(el2){el2.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});window.clickLN(cy,sa+(cy-sy),getYGZ(cy),gz,el2,true);}
   },200);
 };
+
 window.clickLN=function(y,age,gz,dygz,el,auto=false){
   document.querySelectorAll('#lnStrip .gc').forEach(c=>c.classList.remove('on'));
   el?.classList.add('on');curLN=gz;
@@ -3303,7 +3383,6 @@ window.clickLN=function(y,age,gz,dygz,el,auto=false){
     let hs=(HS[mz]||[]);
     let hh=hs.map(h=>`<div class="${gecCls(h)}" style="font-size:9px">${h} <span style="color:var(--txD);font-size:8px;margin-left:1px">${getTG(dm,h)}</span></div>`).join('');
     
-    // 🚨 修正核心在這裡：onclick 裡面補上了 ${y}, ${i+1}，把年份跟月份傳給 clickLY！
     return`<div class="gc" onclick="window.clickLY('${mg+mz}','${dygz}','${gz}',${age},this, ${y}, ${i+1})">
       <div class="gc-yr" style="font-size:10px">${i+1}月</div><div class="gc-tg">${tg}</div>
       <div class="gc-box"><div class="gc-g ${gecCls(mg)}">${mg}</div><div class="gc-dv"></div><div class="gc-z ${gecCls(mz)}">${mz}</div></div>
@@ -3312,26 +3391,25 @@ window.clickLN=function(y,age,gz,dygz,el,auto=false){
   }).join('');
   
   document.getElementById('lySec').style.display='block';
+  document.getElementById('collisionSec').style.display='block';
+  
+  // 🚨 修正：點擊年份時萬年曆維持顯示。若是當前今年，就秀目前月份；若是點別的年份，預設先秀該年1月做為高情商預覽！
+  document.getElementById('calSec').style.display='block';
+  let t = new Date();
+  window.renderCalendar(y, y === t.getFullYear() ? t.getMonth() + 1 : 1);
+
   document.getElementById('statAnal').innerHTML=analOrig(curBz,age);
   document.getElementById('dynAnal').innerHTML=analDyn(curBz,dygz,gz,null);
-  
-  // 隱藏萬年曆，直到真正點擊某個流月才顯示
-  document.getElementById('calSec').style.display = 'none'; 
 };
 window.clickLY = function(lygz, dygz, lngz, age, el, solarYear, solarMonth) {
     document.querySelectorAll('#lyStrip .gc').forEach(c => c.classList.remove('on'));
     el?.classList.add('on');
+    
+    if(solarYear && solarMonth) { window.renderCalendar(solarYear, solarMonth); }
+    document.getElementById('collisionSec').style.display = 'block';
     document.getElementById('statAnal').innerHTML = analOrig(curBz, age);
     document.getElementById('dynAnal').innerHTML = analDyn(curBz, dygz, lngz, lygz);
     
-    // 🚨 1. 觸發萬年曆渲染
-    if(solarYear && solarMonth) {
-        window.renderCalendar(solarYear, solarMonth);
-    }
-
-    // 🚨 2. 原本的 TP 提詞機邏輯 (保持不變)
-    document.getElementById('tpTtl').innerText = `【流月提詞】運:${dygz} / 年:${lngz} / 月:${lygz}`;
-    const body = document.getElementById('tpBody');
     const renderDict = (gz, label) => {
         const d = JD[gz];
         if(!d) return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;"><div class="tp-sec">📍 【${label}】${gz}</div><div style="color:var(--txM);font-size:12px">尚未建檔</div></div>`;
@@ -3343,22 +3421,44 @@ window.clickLY = function(lygz, dygz, lngz, age, el, solarYear, solarMonth) {
         </div>`;
         let at = d.atmosphere || {};
         return `<div class="tp-card" style="margin-bottom:12px; margin-top:0;">
-            <div class="tp-sec">📍 【${label}】${gz}</div>${tags}
-            <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--gold)">總論</span>：${at["總論"]||"—"}</div>
-            <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--wood)">事業</span>：${at["事業"]||"—"}</div>
-            <div style="margin-bottom:6px; font-size:12px;"><span style="font-weight:700;color:var(--fire)">感情</span>：${at["感情"]||"—"}</div>
-            <div style="font-size:12px;"><span style="font-weight:700;color:var(--water)">健康</span>：${at["健康"]||"—"}</div>
+            <div class="tp-sec" style="font-size:14px;">📍 【${label}】${gz}</div>${tags}
+            <div style="margin-bottom:6px; font-size:13px;"><span style="font-weight:700;color:var(--gold)">總論</span>：${at["總論"]||"—"}</div>
+            <div style="margin-bottom:6px; font-size:13px;"><span style="font-weight:700;color:var(--wood)">事業</span>：${at["事業"]||"—"}</div>
+            <div style="margin-bottom:6px; font-size:13px;"><span style="font-weight:700;color:var(--fire)">感情</span>：${at["感情"]||"—"}</div>
+            <div style="font-size:13px;"><span style="font-weight:700;color:var(--water)">健康</span>：${at["健康"]||"—"}</div>
         </div>`;
     };
-    let html = `<div id="tp-sub" class="tp-sub" style="margin-bottom:12px;"></div>`; 
+    
+    // 🚨【大改版升級】TGD 坐基運勢排排站格式化工具
+    const formatTGDLine = (pGz, label) => {
+        let info = window.getTGD(pGz);
+        if(!info) return `<div style="margin-bottom:8px; font-size:13px; color:var(--txD);"><span style="font-weight:700;color:var(--gold)">${label}：</span>平安無事</div>`;
+        return `
+        <div style="margin-bottom:12px; font-size:13px; background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:8px; border-left:3px solid var(--gold);">
+            <span style="font-weight:700;color:var(--gold)">${label} (${pGz})</span>：<strong style="color:var(--metal)">${info.key} -> ${info.title}</strong>
+            <div style="margin-top:4px; font-size:12px; color:var(--txD); line-height:1.5;">📍 氣場徵兆：${info.business_msg}</div>
+            <div style="margin-top:2px; font-size:12px; color:#5DBB75; line-height:1.5;">💡 實戰策略：${info.action}</div>
+        </div>`;
+    };
+
+    let html = `<div style="font-size:14px; color:var(--gold); font-weight:700; margin-bottom:16px; text-align:center; border-bottom:1px solid var(--goldB); padding-bottom:8px;">【流月運勢大局】運:${dygz} / 年:${lngz} / 月:${lygz}</div>`; 
+    
+    // 🚨 注入 TGD 專屬戰術錦囊（去標籤化版本）
+    html += `
+    <div class="tp-card" style="border-color:rgba(201,168,76,.3); margin-top:0; margin-bottom:16px; padding:14px 12px;">
+        <div style="font-size:13px; font-weight:bold; color:var(--gold); margin-bottom:12px; letter-spacing:1px;">📊 坐基流運戰術盤點</div>
+        ${formatTGDLine(dygz, '大運')}
+        ${formatTGDLine(lngz, '流年')}
+        ${formatTGDLine(lygz, '流月')}
+    </div>`;
+
+    html += `<div id="tp-sub" class="tp-sub" style="margin-bottom:12px;"></div>`; 
     html += renderDict(dygz, '大運');
     html += renderDict(lngz, '流年');
     html += renderDict(lygz, '流月');
-    body.innerHTML = html;
-    document.getElementById('tpBD').classList.add('on');
-    document.getElementById('tpOV').classList.add('on');
+    
+    document.getElementById('yunshiDetails').innerHTML = html;
 };
-
 // ════════════════════════════════════════
 // 👥 客戶操作
 // ════════════════════════════════════════
@@ -3405,21 +3505,17 @@ window.openChart=async function(id){
   curId=id;
   curBz=bz;
   curDM=bz.day?.charAt(0)||'';
-  curGender=data['性別']||'男';  // ✅ 修正：設定客戶性別
+  curGender=data['性別']||'男'; 
   curDY=null;
   curLN=null;
 
-  // ✅ 修正：設定命盤頁頂部標題與副標題
   document.getElementById('chartName').innerText = data['姓名']||'命盤';
   document.getElementById('chartSub').innerText = `${data['性別']||''} ・ 生日 ${data['出生日期']||'未記錄'}`;
 
-  // ✅ 修正：載入筆記內容
   document.getElementById('notesTxt').value = data['專屬筆記']||'';
 
-  // ✅ 修正：顯示底部命盤 Nav 按鈕
   document.getElementById('nb-chart').style.display = 'flex';
 
-  // ✅ 修正：重置內頁 tabs 到第一頁（命盤）
   document.querySelectorAll('#p-chart .itab').forEach((t,i)=>t.classList.toggle('on',i===0));
   document.querySelectorAll('#p-chart .ipg').forEach((p,i)=>p.classList.toggle('on',i===0));
 
@@ -3432,14 +3528,20 @@ window.openChart=async function(id){
   document.getElementById('statAnal').innerHTML=analOrig(bz,null);
   document.getElementById('dynAnal').innerHTML='';
 
-  // 刷新合盤下拉選單（排除自己）
   updateMatchSelect();
   const matchExistEl = document.getElementById('matchExistCust');
   if(matchExistEl) { matchExistEl.value = ""; syncMatchUI(); }
 
+  // 🚨【改版新增】一開啟命盤，就讓萬年曆直接大方亮出來，並預設渲染出當前的西元年月！
+  document.getElementById('calSec').style.display = 'block';
+  let t = new Date();
+  window.renderCalendar(t.getFullYear(), t.getMonth() + 1);
+
+  document.getElementById('collisionSec').style.display = 'none'; 
+  document.getElementById('yunshiDetails').innerHTML = '<div style="text-align:center;color:var(--txM);padding:40px 20px;font-size:13px;">請先至「大運」頁面點選流月，即可在此查看詳細運勢解析。</div>'; 
+
   navTo('p-chart');
 };
-
 // 💡 修改這裡：確保 delCust 準時結束，登入系統獨立出來
 window.delCust=async function(id){
   if(!confirm("確定要刪除這筆資料嗎？"))return;
@@ -3802,11 +3904,11 @@ window.clickQA = function(type) {
     let messages = [];
 
     // 年度大氣候
-    if (isMonthClash && tenGodConflict === '傷官見官') messages.push(`<strong style="color:#E85D5D">🌋 強震地雷，冷靜止損</strong><br>目前處於『被迫轉職』高危險期！對體制極度不滿，容易衝動做決定。神探建議：容易『剛出虎口又入狼穴』，請務必找好下家再跳，切忌裸辭！`);
+    if (isMonthClash && tenGodConflict === '傷官見官') messages.push(`<strong style="color:#E85D5D">🌋 強震地雷，冷靜止損</strong><br>目前處於『被迫轉職』高危險期！對體制極度不滿，容易衝動做決定。建議：容易『剛出虎口又入狼穴』，請務必找好下家再跳，切忌裸辭！`);
     else if (isMonthCombine && tenGodConflict === '官印相生') messages.push(`<strong style="color:#5DBB75">🚀 順風啟航，職位升遷</strong><br>『順勢轉職』大好機會！有貴人提拔或權力交接。能帶來職位提升與好合約，請勇敢邁出舒適圈！`);
     else if (selfStrength === '身強' && tenGodConflict === '食傷生財') messages.push(`<strong style="color:#E8B86D">💡 點子變現，適合轉型</strong><br>能量爆棚，靈感處於巔峰！想靠才華闖一闖。現在轉職或開啟副業成功率極高。${isHorseTriggered ? '驛馬星動，遠方機會將帶來財富。' : ''}`);
     else if (tenGodConflict === '財破印') messages.push(`<strong style="color:#8BA4C4">📄 合約到期，重新定位</strong><br>對穩定感到疲躁，合約面臨到期。這股『破壞穩定』的力量是推動你走向更有利潤的方向，請爭取更好的條件。`);
-    else if (selfStrength === '身弱' && tenGodsNow.some(t => t.includes('財'))) messages.push(`<strong style="color:#B0B0B0">🛡️ 宜守不宜攻，先強身再出發</strong><br>現在不是換工作的好時機。你的『身弱』狀態扛不住新環境的壓力，強行跳槽容易陷入過勞。神探建議：留在原地累積底氣。`);
+    else if (selfStrength === '身弱' && tenGodsNow.some(t => t.includes('財'))) messages.push(`<strong style="color:#B0B0B0">🛡️ 宜守不宜攻，先強身再出發</strong><br>現在不是換工作的好時機。你的『身弱』狀態扛不住新環境的壓力，強行跳槽容易陷入過勞。建議：留在原地累積底氣。`);
 
     // 🚀 流月雷達掃描
     let cyStemIdx = SA.indexOf(cyStem);
@@ -3890,7 +3992,7 @@ window.clickQA = function(type) {
     // 年度大氣候
     if (has_BiJieDuoCai || has_XiaoShenDuoShi) {
         isLandmine = true; let warningType = has_BiJieDuoCai ? '比劫奪財' : '梟神奪食';
-        messages.push(`<strong style="color:#E85D5D; font-size:15px;">💣 凶星攔路，強制觀望 (創業指數：⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">嚴重破財警報！流年遇『${warningType}』。此時創業極度容易被合夥人坑錢、對手抄襲，或資金鏈斷裂。神探強烈建議：切勿砸錢創業，現金留身邊才是贏家！</span>`);
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">💣 凶星攔路，強制觀望 (創業指數：⭐)</strong><br><br><span style="color:var(--txD); line-height:1.6;">嚴重破財警報！流年遇『${warningType}』。此時創業極度容易被合夥人坑錢、對手抄襲，或資金鏈斷裂。強烈建議：切勿砸錢創業，現金留身邊才是贏家！</span>`);
     }
     if (!isLandmine) {
         if (selfStrength === '身強' && has_ShiShangShengCai) {
@@ -4019,7 +4121,7 @@ window.clickQA = function(type) {
 
     let slashHtml = "";
     if (isArtisan && isGuide) {
-        slashHtml = `<div style="margin-top:12px; padding:12px; background:rgba(180,100,220,0.1); border-left:3px solid #CE93D8; border-radius:6px;"><strong style="color:#CE93D8;">☯️ 神探專屬：完美斜槓潛力</strong><br><span style="font-size:13px; color:var(--txD); line-height:1.6;">神探特別捕捉到你命盤中的『跨維度能量』！你具備完美的斜槓潛力，能同時用實體技術打造空間（職人路），再用靈性智慧療癒人心（導師路），兩條路並行不悖，將讓你的成就與財富達到最大化！</span></div>`;
+        slashHtml = `<div style="margin-top:12px; padding:12px; background:rgba(180,100,220,0.1); border-left:3px solid #CE93D8; border-radius:6px;"><strong style="color:#CE93D8;">☯️ 完美斜槓潛力</strong><br><span style="font-size:13px; color:var(--txD); line-height:1.6;">特別捕捉到你命盤中的『跨維度能量』！你具備完美的斜槓潛力，能同時用實體技術打造空間（職人路），再用靈性智慧療癒人心（導師路），兩條路並行不悖，將讓你的成就與財富達到最大化！</span></div>`;
     }
 
     // -------------------------------------------------------------
@@ -4113,7 +4215,7 @@ window.clickQA = function(type) {
 
     // 🔴 模組一：終極防護罩與流年地雷
     if (daYun_Trend === '破財震盪運') {
-        messages.push(`<strong style="color:#E85D5D; font-size:15px;">🚨 神探實戰警告：大運破財震盪期</strong><br><br><span style="color:var(--txD); line-height:1.6;">目前大運正處於破財震盪期。最好的理財就是『不理財』！請停止一切短線投機與合夥，將資金全數存入不動產，或是拿去報名課程充實自己（補印星）。投資自己，是你現階段唯一穩賺不賠的選擇！</span>`);
+        messages.push(`<strong style="color:#E85D5D; font-size:15px;">🚨 實戰警告：大運破財震盪期</strong><br><br><span style="color:var(--txD); line-height:1.6;">目前大運正處於破財震盪期。最好的理財就是『不理財』！請停止一切短線投機與合夥，將資金全數存入不動產，或是拿去報名課程充實自己（補印星）。投資自己，是你現階段唯一穩賺不賠的選擇！</span>`);
     }
     if (has_SuiYunBingLin) {
         messages.push(`<strong style="color:#E85D5D; font-size:15px;">🌋 歲運併臨，極端震盪</strong><br><br><span style="color:var(--txD); line-height:1.6;">最高級別警示！逢『歲運併臨』，這是人生與財務的極端震盪期。今年投資宜守不宜攻，建議主動將部分資金拿去做公益捐款，並將剩餘資金轉入極度安全的避險資產。</span>`);
@@ -4132,7 +4234,7 @@ window.clickQA = function(type) {
 
     // 🔵 模組三：財富屬性與資產配置
     if (wealth_Pattern === '無財星') {
-        messages.push(`<strong style="color:#B0B0B0; font-size:15px;">⛔ 空手奪刃 (風險警告)</strong><br><br><span style="color:var(--txD); line-height:1.6;">神探強烈警告：你命盤中缺乏財星，對金錢的抓取力較弱。硬去玩高槓桿當沖真的是在送錢！請將資金投入『自身專業技術的進修』，或交由專業機構代操。</span>`);
+        messages.push(`<strong style="color:#B0B0B0; font-size:15px;">⛔ 空手奪刃 (風險警告)</strong><br><br><span style="color:var(--txD); line-height:1.6;">強烈警告：你命盤中缺乏財星，對金錢的抓取力較弱。硬去玩高槓桿當沖真的是在送錢！請將資金投入『自身專業技術的進修』，或交由專業機構代操。</span>`);
     } else if (wealth_Pattern === '正財格') {
         messages.push(`<strong style="color:#5DBB75; font-size:15px;">🛡️ 防禦性投資 (細水長流)</strong><br><br><span style="color:var(--txD); line-height:1.6;">你的財富必須靠『時間累積』，適合看得見、摸得著、且風險極低的投資工具。穩紮穩打才是發財路。<br>👉 <strong>推薦標的：</strong>定期定額、高股息 ETF (如 0050/00878)、儲蓄險、房地產。</span>`);
     } else {
@@ -4263,7 +4365,7 @@ window.clickQA = function(type) {
             <div style="font-size:14px; color:var(--gold); border-bottom:1px solid var(--goldB); padding-bottom:5px; margin-bottom:10px; font-weight:bold;">🧬 第一階段：先天漏財基因診斷</div>
             ${geneMessages.join('<br><br>')}
             <div style="margin-top:14px; padding:12px; background:rgba(232,184,109,0.1); border-left:3px solid #E8B86D; border-radius:8px;">
-                <strong style="color:#E8B86D; font-size:14px;">🛡️ 神探專屬防漏財指南 (物理防禦)</strong><br>
+                <strong style="color:#E8B86D; font-size:14px;">🛡️ 防漏財指南 (物理防禦)</strong><br>
                 <span style="font-size:13px; color:var(--txD); line-height:1.7; display:block; margin-top:6px;">
                 1. <strong>把虛財變實財：</strong>賺到現金第一時間去購買『實體資產』（黃金、房產），這在命理上叫『補財庫』。<br>
                 2. <strong>鎖死資金：</strong>買長年期儲蓄險或強制扣款基金。讓錢『看得到但拿不出來』。<br>
@@ -4427,7 +4529,7 @@ window.clickQA = function(type) {
           is_UnderAttack = true;
           overrideHtml = `<div style="background:rgba(232,93,93,0.15); border:2px solid #E85D5D; border-radius:12px; padding:16px; margin-bottom:20px;">
               <strong style="color:#E85D5D; font-size:18px;">🚨 泰山壓頂，緊急避險 (日主受剋)</strong><br><br>
-              <span style="color:var(--tx); font-size:14px; line-height:1.6;">【神探緊急避險指南】<br>系統偵測到近期為『日主受剋』極高壓期！所有的官殺壓力直接打在你身上，沒有任何緩衝。你會覺得莫名焦慮、失眠，甚至身體出現急性發炎。身邊每個人好像都在找你麻煩。<br><br><strong style="color:#E85D5D;">神明指示：</strong> 保命比賺錢重要！請全面降低 KPI、推掉不必要的社交。遇到不講理的人直接認慫，熬過就是贏家！<br><br><strong style="color:#C9A84C;">🧘‍♀️ 靈性急救包：</strong> 氣場太弱，強烈建議本週末安排一次深度<strong style="color:#E8B86D;">頌缽音療</strong>或能量調整，先把自己的印星防護罩建立起來！</span>
+              <span style="color:var(--tx); font-size:14px; line-height:1.6;">【緊急避險指南】<br>系統偵測到近期為『日主受剋』極高壓期！所有的官殺壓力直接打在你身上，沒有任何緩衝。你會覺得莫名焦慮、失眠，甚至身體出現急性發炎。身邊每個人好像都在找你麻煩。<br><br><strong style="color:#E85D5D;">神明指示：</strong> 保命比賺錢重要！請全面降低 KPI、推掉不必要的社交。遇到不講理的人直接認慫，熬過就是贏家！<br><br><strong style="color:#C9A84C;">🧘‍♀️ 靈性急救包：</strong> 氣場太弱，強烈建議本週末安排一次深度<strong style="color:#E8B86D;">頌缽音療</strong>或能量調整，先把自己的印星防護罩建立起來！</span>
           </div>`;
       } else if (has_YinXing_Buffer) {
           overrideHtml = `<div style="background:rgba(93,157,232,0.1); border-left:4px solid #5D9DE8; border-radius:8px; padding:12px; margin-bottom:16px;">

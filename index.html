@@ -380,13 +380,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="itab" onclick="switchIT('tab-note',this)">筆記</div>
   </div>
 
+ <!-- 命盤區塊 -->
   <div id="tab-bazi" class="ipg on">
     <div class="scroll">
       <div id="baziGrid" class="bazi-grid"></div>
       <div id="elemGrid" class="elems"></div>
+      
+      <!-- 🚨【搬移過來】原局結構與天賦分析，直接接在五行健康下方 -->
+      <div style="padding: 0 14px 20px;">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid var(--goldB);padding-bottom:4px;font-weight:bold;">🧬 原局結構與天生格局</div>
+        <div id="statAnal"></div>
+      </div>
     </div>
   </div>
 
+  <!-- 大運區塊 -->
   <div id="tab-dayun" class="ipg">
     <div class="scroll" style="padding-top:12px; padding-bottom:30px;">
       <div class="sp strip-lbl">⏳ 十年大運</div>
@@ -404,9 +412,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
         <div id="calContainer"></div>
       </div>
       
+      <!-- 🚨【乾淨俐落】現在這裡純粹只剩下「流運動態碰撞」 -->
       <div id="collisionSec" style="display:none; padding: 16px 14px;">
-        <div style="font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid var(--goldB);padding-bottom:4px;font-weight:bold;">⚡ 原局與流運碰撞分析</div>
-        <div id="statAnal"></div>
+        <div style="font-size:10px;color:#E85D5D;letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid rgba(232,93,93,0.3);padding-bottom:4px;font-weight:bold;">⚡ 流運動態碰撞雷達</div>
         <div id="dynAnal" style="margin-top:10px"></div>
       </div>
     </div>
@@ -2510,6 +2518,7 @@ const TGC = {
     '印剋食傷': { type:'剋', title:'【靈感枯竭，資源斷層】', business_msg:'過度保守的規矩、長輩的干預、或是資訊量超載，導致創意被扼殺、財源的入口被堵死。', action:'⚠️ 停滯警告！不要再輸入新資訊了，你現在需要的是放空。推掉不必要的顧問意見，找回自己的節奏。' }
 };
 const TGD = {
+    // === 🌟 徒弟原創的 8 組精華 ===
     '正財坐劫財': { tag:'💣 破財地雷', title:'【表面風光，私下漏財】', business_msg:'招牌掛得很大，但利潤被嚴重瓜分。', action:'請立刻重新檢視合約利潤分配，親兄弟明算帳，財務必須獨立核算！' },
     '偏財坐食神': { tag:'💰 印鈔機配置', title:'【點子變現，財源滾滾】', business_msg:'絕佳的商業直覺加上強大的創造力。', action:'大膽相信你的商業靈感，現在是擴大行銷預算、推出新產品的最佳時機！' },
     '正官坐傷官': { tag:'🔥 權力危機', title:'【犯上作亂，招惹是非】', business_msg:'表面上有職位與權力，但私底下的行為或言論卻在破壞公司體制。', action:'今日宜封口！收起你的傲氣與批評，凡事照著SOP走，別在長官背後抱怨。' },
@@ -2517,7 +2526,38 @@ const TGD = {
     '正印坐正官': { tag:'👑 巔峰配置', title:'【名利雙收，步步高升】', business_msg:'官印相生，是最完美的職場晉升密碼。', action:'大膽爭取更高的職位或投標大案子！現在你的招牌就是最好的通行證。' },
     '偏印坐食神': { tag:'⚠️ 枯竭警報', title:'【梟神奪食，靈感斷線】', business_msg:'原本賺錢的點子被扼殺了。', action:'暫停所有產出！你現在處於嚴重的內耗狀態，請放下工作去放空，硬做只會搞砸招牌。' },
     '傷官坐正財': { tag:'📈 業務戰神', title:'【口才變現，精準行銷】', business_msg:'用絕佳的口才與技術，精準命中客戶的荷包。', action:'立刻安排與最難搞的客戶開會！今天你的說服力滿分，能把石頭說成黃金。' },
-    '食神坐比肩': { tag:'🤝 團隊配置', title:'【和氣生財，共同研發】', business_msg:'與同儕、朋友之間有著極佳的默契。', action:'今天不要單打獨鬥，找你的核心團隊一起喝杯咖啡開個會，金點子就在閒聊中誕生！' }
+    '食神坐比肩': { tag:'🤝 團隊配置', title:'【和氣生財，共同研發】', business_msg:'與同儕、朋友之間有著極佳的默契。', action:'今天不要單打獨鬥，找你的核心團隊一起喝杯咖啡開個會，金點子就在閒聊中誕生！' },
+
+    // === 🚨 師傅加碼：核彈級危機與嚴重地雷 (17組) ===
+    '傷官坐正官': { tag:'☢️ 法務核彈', title:'【砲打司令部，百禍俱生】', business_msg:'用強烈的情緒或技術去挑戰業主底線或官方審查，極易引發解約或官司。', action:'絕對不要跟業主、審查單位或法規硬碰硬！吞下傲氣，讓合約與法理來溝通。' },
+    '劫財坐正財': { tag:'🩸 現金斷鏈', title:'【引狼入室，血本無歸】', business_msg:'盲目擴張或聽信熟人，導致核心現金流與本金被徹底掏空。', action:'立刻停止任何墊款或借貸！清查案場現金流，當心合夥人或親近的人在背後動手腳。' },
+    '正印坐正財': { tag:'📉 貪財壞印', title:'【因小失大，砸爛招牌】', business_msg:'為了眼前的蠅頭小利（暗盤、偷工減料），毀掉了長久累積的專業信任與名聲。', action:'拒絕任何遊走灰色地帶的利潤！名聲一旦毀了，花十倍的錢都買不回來。' },
+    '偏財坐劫財': { tag:'🎰 賭徒末路', title:'【高槓桿翻車，瞬間歸零】', business_msg:'過度樂觀的投資或投機操作，遭遇市場突變或小人劫奪，導致嚴重虧損。', action:'立刻平倉或停損！現在絕對不是玩高風險、高槓桿資金遊戲的時候。' },
+    '七殺坐七殺': { tag:'☠️ 壓力爆表', title:'【四面楚歌，身心崩潰】', business_msg:'遭遇連續的極端突發狀況、奧客刁難，超出個人所能承受的極限。', action:'承認自己扛不住！立刻對外求援，引入專業第三方或放慢進度，保命比賺錢重要。' },
+    '傷官坐傷官': { tag:'🧨 燃燒殆盡', title:'【狂妄自大，全盤皆輸】', business_msg:'過度自信、言辭極端鋒利，把所有客戶與合作夥伴都得罪光了。', action:'你現在是自走砲！請強制自己離開談判桌，把溝通交給別人，否則你會親手毀掉案子。' },
+    '劫財坐劫財': { tag:'🪓 割喉競爭', title:'【窮途末路，同歸於盡】', business_msg:'陷入毫無利潤的價格戰，或是遭遇極度惡劣的背叛與惡性競爭。', action:'退出這片紅海！寧可不接案，也不要為了搶市佔率而賠上老本。' },
+    '正官坐七殺': { tag:'🌪️ 體制混亂', title:'【官殺混雜，無所適從】', business_msg:'多頭馬車，指令朝令夕改。業主跟高層意見不合，導致你卡在中間當炮灰。', action:'釐清「誰才是真正付錢/簽字的人」！不要試圖討好所有人，鎖定最高決策者即可。' },
+    '七殺坐正官': { tag:'🎭 規則衝突', title:'【進退維谷，左右為難】', business_msg:'既要遵守死板的SOP，又要面對突發的極端要求，陷入怎麼做都錯的困境。', action:'白紙黑字的合約是你唯一的護身符！要求所有變更設計或追加指令，都必須有書面簽名。' },
+    '偏印坐偏印': { tag:'🕳️ 鑽牛角尖', title:'【過度焦慮，錯失良機】', business_msg:'深陷在不信任感與被害妄想中，把事情想得太複雜，導致案子停滯不前。', action:'停止過度分析！你的直覺現在被恐懼綁架了，請先執行最簡單的第一步，讓齒輪轉起來。' },
+    '偏印坐正財': { tag:'🦊 精明反被誤', title:'【計較小利，失去大局】', business_msg:'用太過精明、算計的方式去應對客戶，反而讓對方覺得你不夠大氣而跑單。', action:'展現你的格局！有時候「吃虧就是占便宜」，不要在幾百塊的零頭上跟重要業主計較。' },
+    '傷官坐偏印': { tag:'🗣️ 公關災難', title:'【言多必失，弄巧成拙】', business_msg:'自以為聰明的發言或行銷文案，卻踩到了大眾或客戶的道德地雷。', action:'發布任何對外文案或報價單前，務必找個「性格保守」的人幫你審稿把關！' },
+    '劫財坐七殺': { tag:'🔪 刀鋒舔血', title:'【凶險合夥，隨時背鍋】', business_msg:'跟具有強大資源但行事狠辣的人合作，看似賺錢，實則隨時會被推出去當替死鬼。', action:'保留所有的通訊對話與核准紀錄！做好隨時切割的準備，防人之心不可無。' },
+    '七殺坐劫財': { tag:'🏴‍☠️ 與虎謀皮', title:'【險中求勝，易遭反噬】', business_msg:'為了擺脫困境，動用非常規手段或灰色人脈，極易引火上身。', action:'這個捷徑有毒！請評估萬一事情敗露，你是否承受得起品牌與名譽的毀滅性打擊？' },
+    '正財坐比肩': { tag:'💸 溫水煮青蛙', title:'【無形消耗，利潤見底】', business_msg:'沒有發生大災難，但日常開銷、人事成本與無謂的交際費，正在榨乾你的現金庫。', action:'嚴格執行財務紀律！砍掉不必要的訂閱、取消無效的交際應酬，守住每一分辛苦錢。' },
+    '比肩坐比肩': { tag:'🚧 僧多粥少', title:'【過度擁擠，缺乏亮點】', business_msg:'投入的市場已經完全飽和，你的產品或技術跟競爭對手高度同質化。', action:'停止模仿同行！立刻找出你服務的「獨特差異化」，不然只能淪為比價的犧牲品。' },
+    '正印坐偏印': { tag:'🧩 理論癱瘓', title:'【紙上談兵，缺乏行動】', business_msg:'收集了大量的資料、上了無數的課程，卻遲遲不敢將服務推出市場驗證。', action:'完成比完美更重要！立刻丟出最小可行性產品（MVP）去測試市場，別再自我感覺良好了。' },
+
+    // === 🛠️ 師傅加碼：高難度但能翻轉局勢的特殊配置 (10組) ===
+    '七殺坐傷官': { tag:'⚔️ 以戰止戰', title:'【霸氣破局，不破不立】', business_msg:'面對強大的對手或極度不合理的業主，用比對方更強勢的專業與手段反擊。', action:'今天不需要溫良恭儉讓！拿出你的底氣，強勢主導會議，對方反而會被你的氣場懾服。' },
+    '食神坐七殺': { tag:'🛡️ 危機解密', title:'【單騎救主，化險為夷】', business_msg:'在極度混亂的危機中，你憑藉冷靜的專業技術與溝通能力，完美解決了問題。', action:'這是你建立神級口碑的時刻！勇敢接下別人不敢接的爛攤子，完成後你的身價將翻倍。' },
+    '正印坐傷官': { tag:'✨ 點石成金', title:'【權威背書，創意落地】', business_msg:'將天馬行空的設計與點子，包裝在極度專業且合乎法規的權威框架之下。', action:'拿出你的證照與得獎資歷來推銷你的創意！用「安全感」來包裝你的「創新」。' },
+    '傷官坐七殺': { tag:'🎯 劍走偏鋒', title:'【精準打擊，顛覆規則】', business_msg:'看穿了體制的漏洞，用極具破壞性的創新手法，一舉拿下市場份額。', action:'只要不違法，就大膽去顛覆傳統！這個企劃需要你發揮最狂野的反叛精神。' },
+    '正官坐正印': { tag:'🏛️ 官方認證', title:'【體制庇護，穩若泰山】', business_msg:'你的品牌與服務獲得了最高級別的認可，信任度滿點。', action:'適合去考取官方認證、申請政府補助或與大型機構談戰略合作，一路綠燈！' },
+    '食神坐正財': { tag:'🌱 穩健成長', title:'【一步一腳印，涓滴成河】', business_msg:'沒有暴利，但靠著優質的服務與產品，建立起極度忠誠且穩定的客源。', action:'專注於老客戶的維護與售後服務！他們會成為你最好的免費業務員，帶來穩定的轉介紹。' },
+    '偏印坐七殺': { tag:'👁️ 洞燭機先', title:'【直覺精準，避開大坑】', business_msg:'別人看好的市場，你卻敏銳地嗅到了潛藏的巨大危機。', action:'相信你那股「怪怪的」直覺！如果覺得這個案主或投資有問題，立刻抽身，你絕對是對的。' },
+    '比肩坐正官': { tag:'⚖️ 良性競爭', title:'【遇強則強，互相成就】', business_msg:'同行的競爭或法規的限制，反而逼出了你最強的潛力與產品質感。', action:'不要害怕對手的強大！把他們的優點學過來，用更高的標準去優化你自己的服務流程。' },
+    '正財坐食神': { tag:'🍯 甜蜜紅利', title:'【享受成果，順水推舟】', business_msg:'先前的技術與心血累積，現在開始輕鬆且持續地自動變現。', action:'不需要過度用力，順勢而為。趁這個機會好好慰勞自己與團隊，享受得來不易的獲利。' },
+    '偏財坐七殺': { tag:'🦅 獵手直覺', title:'【果斷出手，通吃全場】', business_msg:'在極高壓或別人不敢碰的市場空缺中，看準時機重倉押注，獲取暴利。', action:'高風險高報酬！只要你的市場調查夠透徹，現在就是你展現魄力、重磅出擊的時刻。' }
 };
 const BCA = {
     SanHui: {
@@ -2544,6 +2584,69 @@ const BCA = {
         '辰酉': { element:'金', name:'暗金之合', crm_msg:'表面客氣，私下卻有龐大金錢利益綁定的穩固合作。' },
         '巳申': { element:'水', name:'刑合交加', crm_msg:'相愛相殺！一邊合作賺錢，一邊又互相猜忌防備。' },
         '午未': { element:'土', name:'日月之合', crm_msg:'光明正大且穩定的結合，適合公開發布的結盟關係。' }
+    }
+};
+
+// 🤫 暗合：位置解釋字典
+const AH_LOC = {
+    '年柱': '與長輩、大環境、總公司的暗中互動',
+    '月柱': '與父母、直屬主管、工作環境的私下牽扯',
+    '日柱': '與配偶、感情狀態、內心私密世界的暗中變化',
+    '時柱': '與晚輩、員工、事業投資結果的檯面下佈局',
+    '大運': '十年間長期的隱密人脈與檯面下資源佈局'
+};
+
+// 🤫 暗合：五大組合與十神斷語庫
+const AH_DICT = {
+    '子戌': {
+        desc: '帶有現實包袱與沉重壓力的暗中進行。',
+        stars: {
+            '財星': '為了應付現實壓力而偷存私房錢；或出現帶有沉重包袱（如老少配、對方有家室）的低調地下情。',
+            '印星': '暗中進行帶有「保密防諜」性質的土地/房產交易，或在現實壓力下低調簽署某份重要協議。',
+            '官殺星': '在沉重的現實壓力下，暗中接下極具挑戰性、吃力不討好的重責大任；若是女命，則需注意發展出帶有現實阻礙（如地位懸殊、對方有沉重包袱）的隱密職場桃花或上司牽扯。',
+            '比劫星': '為了應付龐大的資金缺口或房產土地問題，私底下與同行或熟人進行帶有壓力的資源借貸與互換；表面上風平浪靜，底下卻扛著沉重的暗中負債或分潤協議。',
+            '食傷星': '迫於現實環境的無奈與壓力，只能將非常有創意的計畫轉入地下默默籌備；或是暗中進行與土地、傳統產業相關，且需要長期抗戰的保守型隱密投資。'
+        }
+    },
+    '寅丑': {
+        desc: '牽扯極廣、錯綜複雜的多方利益綁定。',
+        stars: {
+            '財星': '牽涉多方利益的檯面下龐大資金流動；或陷入極度錯綜複雜、難以抽身的多角地下戀情。',
+            '官殺星': '暗中捲入高層或體制內的複雜權力鬥爭；私底下承擔著多方角力帶來的巨大且隱秘的壓力。',
+            '印星': '檯面下進行著牽涉龐大利益的房產土地合併，或涉及多方利益分配的機密合約簽署。',
+            '食傷星': '腦中醞釀著極具野心且結構龐大的商業佈局；暗中投入需要長期策劃且牽扯極廣的秘密專案。',
+            '比劫星': '表面各自為政，私下卻有著剪不斷理還亂的家族或同行資源互換，形成緊密的利益共同體。'
+        }
+    },
+    '卯申': {
+        desc: '權力控制、相愛相殺、帶壓力的私下合作。',
+        stars: {
+            '財星': '在極大壓力或帶有控制慾的前提下，私下接獲的賺錢專案；感情上易出現帶有強烈佔有慾或權力不對等的地下情。',
+            '官殺星': '檯面下深受強勢主管的暗中施壓或指派；職場上出現帶有威脅性與控制意味的私下角力。',
+            '印星': '迫於權威或現實考量，暗中簽署具有強烈約束力、保密性或不平等條款的協議。',
+            '食傷星': '為了迎合某種權力或體制，私底下壓抑並修正自己的創意，執行帶有妥協性質的秘密計畫。',
+            '比劫星': '表面是同行夥伴，私底下卻存在著帶有威脅或互相牽制的資源交換，合作關係亦敵亦友。'
+        }
+    },
+    '午亥': {
+        desc: '人情交際、暗中交流、難以啟齒的糾葛。',
+        stars: {
+            '財星': '透過私下的交際應酬而獲得的暗財；感情上極易因人情往來而擦槍走火，發展出難以啟齒的暗桃花。',
+            '官殺星': '透過私下的飯局或交際手腕，暗中打通官方或高層關節；但需防備因人情而背負不名譽的黑鍋。',
+            '印星': '在觥籌交錯或私下交涉中，偷偷敲定合約、協議或房產買賣（這就是保密協議 NDA 經典場景）。',
+            '食傷星': '在檯面下的交流中獲得極佳的靈感；暗中用非正式管道與交際手腕來推動自己的投資與點子。',
+            '比劫星': '私底下頻繁的交際應酬，看似人脈熱絡，實則暗藏因人情而引發的破財或合夥利益分配不均。'
+        }
+    },
+    '巳酉': {
+        desc: '雙面人、明暗交加、熟人吃窩邊草。',
+        stars: {
+            '財星': '表面是正常商業往來，私底下卻有不可告人的豐厚油水；感情上極易發生辦公室戀情或「熟人吃窩邊草」的隱密桃花。',
+            '官殺星': '表面上是公事公辦的上下級關係，私底下卻深受主管暗中拔擢，或是承受著雙重身分帶來的無形壓力。',
+            '印星': '檯面上是公開的企劃或文書，私底下卻藏著另一套「陰陽合約」或是不可告人的機密條款。',
+            '食傷星': '表面上按部就班，私底下卻暗自磨練另一套截然不同的專業技術，或進行不為人知的副業投資。',
+            '比劫星': '表面上大家一團和氣、公開合作，私底下卻有錯綜複雜的利益輸送與分潤盤算，關係緊緊綁死。'
+        }
     }
 };
 
@@ -2749,6 +2852,29 @@ function calcBZ(dt,tm,uk,lon,sect,gen){
   };
 }
 
+// 🔮 將十神歸類為五大星曜，用於暗合斷語對照
+window.getStarCategory = function(tg) {
+    if(tg === '正財' || tg === '偏財') return '財星';
+    if(tg === '正官' || tg === '七殺') return '官殺星';
+    if(tg === '正印' || tg === '偏印') return '印星';
+    if(tg === '食神' || tg === '傷官') return '食傷星';
+    if(tg === '比肩' || tg === '劫財') return '比劫星';
+    return '未知';
+};
+
+// 🕵️‍♂️ 暗合精準判定器
+window.checkAnHe = function(z1, z2) {
+    if (!z1 || !z2 || z1 === '？' || z2 === '？' || z1 === z2) return null;
+    const pairs = ['子戌', '寅丑', '卯申', '午亥', '巳酉'];
+    for (let p of pairs) {
+        if ((p.charAt(0) === z1 && p.charAt(1) === z2) || 
+            (p.charAt(0) === z2 && p.charAt(1) === z1)) {
+            return p;
+        }
+    }
+    return null;
+};
+
 // ════════════════════════════════════════
 // 🔍 碰撞引擎
 // ════════════════════════════════════════
@@ -2782,6 +2908,23 @@ function analOrig(bz,age){
     if(BR["刑"]["無恩"].includes(b1.z)&&BR["刑"]["無恩"].includes(b2.z)&&b1.z!==b2.z)xing=true;
     if(BR["刑"]["恃勢"].includes(b1.z)&&BR["刑"]["恃勢"].includes(b2.z)&&b1.z!==b2.z)xing=true;
     if(xing)add('a-xing','⚖️',`${b1.n}柱${b1.z} 刑 ${b2.n}柱${b2.z}`,CK["刑"],false);
+
+    // 🚨【新增】原局自帶暗合掃描
+    let ahKey = window.checkAnHe(b1.z, b2.z);
+    if(ahKey) {
+        // 抓取被暗合的地支主氣十神
+        let star1 = window.getStarCategory(getTG(curDM, HS[b1.z]?.[0]));
+        let ahData = AH_DICT[ahKey];
+        let starDesc = ahData.stars[star1] || ahData.desc;
+        res.push(`
+        <div class="ac a-he">
+            <div class="ac-ttl">🤫 原局暗合：${b1.n}柱${b1.z} 暗合 ${b2.n}柱${b2.z} (${ahKey})</div>
+            <div class="ac-imp">📍 影響範圍：${PL[b1.n]} ↔ ${PL[b2.n]}</div>
+            <div class="ac-imp" style="margin-top:4px;"><strong>【暗合${star1}】</strong>${starDesc}</div>
+            <div class="ac-adv" style="color:#CE93D8; margin-top:6px;">👉 濾鏡：${ahData.desc}</div>
+        </div>`);
+    }
+    
   }
   let zs=bs.map(b=>b.z);
   BR["三合"].forEach(g=>{if(g.every(z=>zs.includes(z)))res.push(`<div class="ac a-he">🌟 ${g.join('')}三合局・強大凝聚力</div>`);});
@@ -2908,6 +3051,31 @@ function analDyn(bz,dy,ln,ly){
       if(BR["刑"]["無恩"].includes(p.z)&&BR["刑"]["無恩"].includes(dz)&&p.z!==dz) isXing=true;
       if(BR["刑"]["恃勢"].includes(p.z)&&BR["刑"]["恃勢"].includes(dz)&&p.z!==dz) isXing=true;
       if(isXing) { type="a-xing"; icon="⚖️"; title="刑"; desc=CK["刑"]; stats.xingHai++; }
+      
+      // 🚨【新增】流運動態暗合掃描
+      let ahKey = window.checkAnHe(p.z, dz);
+      if (ahKey) {
+          let star = window.getStarCategory(getTG(curDM, HS[p.z]?.[0]));
+          let detail = AH_DICT[ahKey].stars[star] || AH_DICT[ahKey].desc;
+          let locDesc = AH_LOC[p.n] || p.desc;
+          
+          let key = `AH_${ahKey}_${p.z}_${star}`;
+          if(!grouped[key]) {
+              grouped[key] = { 
+                  cls: 'a-he', // 維持天下大同的綠色
+                  ico: '🤫', 
+                  ttl: `${dn}${dz} 暗合 ${p.z} (${ahKey})`, 
+                  d: `<strong>【暗合${star}】</strong>${detail}`, 
+                  targets: [], 
+                  locs: [], 
+                  adv: AH_DICT[ahKey].desc 
+              };
+          }
+          grouped[key].targets.push(`${p.n}${p.z}`);
+          grouped[key].locs.push(locDesc);
+      }
+      
+  
       
       if(type){
         let key = `${type}_${title}`;
@@ -3363,7 +3531,7 @@ window.clickDY=function(sy,sa,gz,el,auto=false){
   document.getElementById('collisionSec').style.display='block';
   document.getElementById('calSec').style.display='block';
   
-  document.getElementById('statAnal').innerHTML=analOrig(curBz,sa);
+  //document.getElementById('statAnal').innerHTML=analOrig(curBz,sa);
   document.getElementById('dynAnal').innerHTML=analDyn(curBz,gz,null,null);
   
   if(auto)setTimeout(()=>{
@@ -3398,7 +3566,7 @@ window.clickLN=function(y,age,gz,dygz,el,auto=false){
   let t = new Date();
   window.renderCalendar(y, y === t.getFullYear() ? t.getMonth() + 1 : 1);
 
-  document.getElementById('statAnal').innerHTML=analOrig(curBz,age);
+  //document.getElementById('statAnal').innerHTML=analOrig(curBz,age);
   document.getElementById('dynAnal').innerHTML=analDyn(curBz,dygz,gz,null);
 };
 window.clickLY = function(lygz, dygz, lngz, age, el, solarYear, solarMonth) {
@@ -3407,7 +3575,7 @@ window.clickLY = function(lygz, dygz, lngz, age, el, solarYear, solarMonth) {
     
     if(solarYear && solarMonth) { window.renderCalendar(solarYear, solarMonth); }
     document.getElementById('collisionSec').style.display = 'block';
-    document.getElementById('statAnal').innerHTML = analOrig(curBz, age);
+    //document.getElementById('statAnal').innerHTML = analOrig(curBz, age);
     document.getElementById('dynAnal').innerHTML = analDyn(curBz, dygz, lngz, lygz);
     
     const renderDict = (gz, label) => {
@@ -4849,7 +5017,7 @@ window.runMatch = function() {
 
       if(messages.length === 0) messages.push(`<div class="tp-card"><strong style="color:var(--tx); font-size:14px;">📝 一般過路客</strong><br><br><span style="color:var(--txD);font-size:13px;line-height:1.6;">氣場無特別牽扯，用常規的業務手段應對即可。</span></div>`);
       html += messages.join('');
-
+ 
       if (uk && relation === 'client') {
           let blindMessages = [];
           if (pDs === '庚') blindMessages.push(`<strong style="color:#E8B86D;">【鋼鐵直客】</strong> 對方是庚金日主，講話請乾脆，直接亮底牌，最討厭繞圈子與廢話。`);

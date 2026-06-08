@@ -61,6 +61,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   border-radius:8px;padding:4px 8px;font-size:11px;color:#5DBB75;cursor:pointer;
   position:absolute;top:8px;right:46px; /* 👈 已經移除了 display: none; */
 }
+/* 🚀 拖曳時的專屬質感特效 */
+.sortable-chosen {
+  transform: scale(1.03);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  background: var(--sf2);
+  z-index: 100;
+  border-color: var(--gold);
+}
+.sortable-ghost {
+  opacity: 0.2;
+  border: 2px dashed var(--gold);
+}
+.drag-handle {
+  color: var(--txD);
+  font-size: 18px;
+  margin-left: 6px;
+  cursor: grab;
+}
+.ccard-move:active { background: rgba(201,168,76,.3); }
+.ccard-move.up { right: 118px; }
+.ccard-move.dn { right: 82px; }
 .ccard:hover .ccard-del,.ccard:focus .ccard-del{display:block;}
 .fsec{margin-bottom:16px;}
 .fsec-ttl{font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:600;
@@ -539,6 +560,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 </div>
 
 <script src="https://unpkg.com/lunar-javascript/lunar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import{getFirestore,collection,addDoc,getDocs,deleteDoc,doc,query,orderBy,getDoc,updateDoc}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -3864,37 +3886,50 @@ window.clickLY = function(lygz, dygz, lngz, age, el, solarYear, solarMonth) {
 // 👥 客戶操作
 // ════════════════════════════════════════
 window.allCustData = {};
+window.sortedCustIds = [];
 
-async function loadCust(){
-  const list=document.getElementById('custList');
-  list.innerHTML='<div class="loading">☯ 載入中...</div>';
-  try{
-    const q=query(collection(db,"Customers"),orderBy("建檔時間","desc"));
-    const sn=await getDocs(q);
-    if(sn.empty){list.innerHTML='<div class="empty"><div style="font-size:36px;opacity:.3">☯</div><div style="font-size:13px">尚無客戶資料</div></div>';return;}
-   // 新的
-list.innerHTML='';
-window.allCustData = {};
-const frags=[];
-sn.forEach(dc=>{
-  const d=dc.data();
-  window.allCustData[dc.id] = d;
-  const name=d['姓名']||'';
-  frags.push(`<div class="ccard" onclick="window.openChart('${dc.id}')">
-    <div class="ccard-av">${esc(name.charAt(0)||'?')}</div>
-    <div class="ccard-info">
-      <div class="ccard-name">${esc(name)} <span style="font-size:11px;font-weight:400;color:var(--txD)">${esc(d['性別']||'')}</span></div>
-      <div class="ccard-meta">🎂 ${esc(d['出生日期']||'未記錄')}</div>
-    </div>
-    <button class="ccard-edit" onclick="event.stopPropagation();window.openEdit('${dc.id}')">✏️</button>
-    <button class="ccard-del" onclick="event.stopPropagation();window.delCust('${dc.id}')">✕</button>
-    <span style="color:var(--goldD);font-size:18px">›</span>
-</div>`);
-});
-list.innerHTML=frags.join('');
+async function loadCust() {
+  const list = document.getElementById('custList');
+  list.innerHTML = '<div class="loading">☯ 載入中...</div>';
+  try {
+    const q = query(collection(db, "Customers"), orderBy("建檔時間", "desc"));
+    const sn = await getDocs(q);
+    if (sn.empty) { list.innerHTML = '<div class="empty"><div style="font-size:36px;opacity:.3">☯</div><div style="font-size:13px">尚無客戶資料</div></div>'; return; }
+    
+    list.innerHTML = '';
+    window.allCustData = {};
+    window.sortedCustIds = []; 
+    const frags = [];
+    
+    sn.forEach(dc => {
+      const d = dc.data();
+      window.allCustData[dc.id] = d;
+      window.sortedCustIds.push(dc.id); 
+      
+      const name = d['姓名'] || '';
+      // 💡 加入 data-id，移除按鈕，新增 drag-handle (☰)
+      frags.push(`<div class="ccard" data-id="${dc.id}" onclick="window.openChart('${dc.id}')">
+        <div class="ccard-av">${esc(name.charAt(0)||'?')}</div>
+        <div class="ccard-info">
+          <div class="ccard-name">${esc(name)} <span style="font-size:11px;font-weight:400;color:var(--txD)">${esc(d['性別']||'')}</span></div>
+          <div class="ccard-meta">🎂 ${esc(d['出生日期']||'未記錄')}</div>
+        </div>
+        <button class="ccard-edit" onclick="event.stopPropagation();window.openEdit('${dc.id}')">✏️</button>
+        <button class="ccard-del" onclick="event.stopPropagation();window.delCust('${dc.id}')">✕</button>
+        <span class="drag-handle">☰</span>
+      </div>`);
+    });
+    list.innerHTML = frags.join('');
 
     updateMatchSelect();
-  }catch(e){list.innerHTML=`<div class="empty"><div>載入失敗</div></div>`;}
+
+    // 🚨 啟動神級拖曳引擎
+    initDragAndDrop();
+
+  } catch(e) {
+    console.error(e);
+    list.innerHTML = `<div class="empty"><div>載入失敗</div></div>`;
+  }
 }
 
 // ✅ 修正：補全 openChart 函式，填入被省略的關鍵程式碼
@@ -3949,6 +3984,72 @@ window.delCust=async function(id){
   await deleteDoc(doc(db,"Customers",id));
   loadCust(); // 刪除後重新載入列表
 }; // 👈 檢查這行，要有這個分號結束！
+
+// 🚀 初始化拖曳與陣列重分配引擎
+function initDragAndDrop() {
+    const list = document.getElementById('custList');
+    
+    new Sortable(list, {
+        animation: 200,          // 絲滑的動畫過渡
+        delay: 250,              // 📱 手機端長按 0.25 秒才觸發 (完美防止跟上下滑動打架)
+        delayOnTouchOnly: true,  // 電腦滑鼠可以直接拖，手機才需要長按
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        
+        onEnd: async function (evt) {
+            // 如果只是按一下沒換位置，就不用浪費資源
+            if (evt.oldIndex === evt.newIndex) return;
+
+            // 防呆：畫面半透明，提示正在同步雲端
+            list.style.opacity = '0.5';
+            list.style.pointerEvents = 'none';
+
+            try {
+                // 1. 圈出受影響的陣列範圍 (例如從第 1 名拖到第 4 名)
+                let minIdx = Math.min(evt.oldIndex, evt.newIndex);
+                let maxIdx = Math.max(evt.oldIndex, evt.newIndex);
+
+                // 2. 把這段範圍「原本的建檔時間」(由大到小) 存起來
+                let originalTimes = [];
+                for (let i = minIdx; i <= maxIdx; i++) {
+                    let id = window.sortedCustIds[i];
+                    originalTimes.push(window.allCustData[id]['建檔時間']);
+                }
+
+                // 3. 取得拖曳後，HTML 上全新的 ID 順序
+                let newOrderIds = Array.from(list.children).map(el => el.getAttribute('data-id'));
+                
+                // 4. 完美發牌：照著新順序，把剛剛存起來的時間由大到小發回去
+                let promises = [];
+                for (let i = minIdx; i <= maxIdx; i++) {
+                    let currentId = newOrderIds[i];
+                    let properTime = originalTimes[i - minIdx]; // 確保時間永遠是遞減的
+                    
+                    // 同步更新記憶體與 Firebase
+                    window.allCustData[currentId]['建檔時間'] = properTime;
+                    promises.push(updateDoc(doc(db, "Customers", currentId), { 建檔時間: properTime }));
+                }
+
+                // 等待 Firebase 全部更新完畢
+                await Promise.all(promises);
+                
+                // 更新全域的排序陣列
+                window.sortedCustIds = newOrderIds;
+                
+                // 恢復畫面
+                list.style.opacity = '1';
+                list.style.pointerEvents = 'auto';
+            } catch (e) {
+                console.error("排序更新失敗", e);
+                // 如果網路斷線或失敗，重新載入恢復原狀
+                loadCust(); 
+                list.style.opacity = '1';
+                list.style.pointerEvents = 'auto';
+            }
+        }
+    });
+}
+
 window.editCustId = null; // 全域變數：記錄目前正在編輯的客戶 ID
 
 // 🧼 重置表單 (變成新增模式)
